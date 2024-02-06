@@ -72,6 +72,14 @@ ignore = [
     "D407", # removed dashes lines under sections
     "D417", # argument description in docstring (unreliable)
     "ISC001", # simplify implicit str concatenation (ruff-format recommended)
+    # To fix:
+    "N999", # Invalid module name
+    "T201", # print() found
+    "N806", # Variable should be lowercase
+    "ANN001", # Missing type annotation
+    "ERA001", # Commented out code
+    "E501", # Line too long
+    "PTH", # Generally using Pathlib
 ]
 per-file-ignores = {"tests*" = [
     "INP001",
