@@ -956,6 +956,7 @@ def get_registration_list() -> list[tuple[str, str, npt.NDArray, npt.NDArray]]:
         - Path to dataset being registered
         - Common point in full organ dataset
         - Common point in dataset being registered
+
     """
     registration_list: list[tuple[str, str, npt.NDArray, npt.NDArray]] = []
 
@@ -1011,17 +1012,19 @@ if __name__ == "__main__":
         log_file = glob.glob(
             f"{os.path.dirname(path_moved.rstrip('/'))}/registration_{os.path.basename(path_moved)}.log"
         )
-        if log_file:
-            if len(log_file) > 1:
-                sys.exit("Too many log files")
-            with open(log_file[0]) as file:
-                lines = [line.rstrip("\n") for line in file]
-            if "Total time =" in lines[-1]:
-                print(f"Log file {log_file[0]} already present and finished")
-                continue
+        if len(log_file) > 1:
+            print("More than one log file found, skipping dataset")
+            continue
+
+        with open(log_file[0]) as file:
+            lines = [line.rstrip("\n") for line in file]
+        if "Total time =" in lines[-1]:
+            print(f"Log file {log_file[0]} already present and finished")
+            continue
 
         start_time = time.time()
 
+        # Setup logging
         root_logger = logging.getLogger()
         root_logger.setLevel(logging.INFO)
         handler = logging.FileHandler(
@@ -1041,13 +1044,11 @@ if __name__ == "__main__":
         logging.info(f"\nPoint fixed = {pt_fixed}")
         logging.info(f"Point moved = {pt_moved}")
 
-        # try:
+        # Run registration
         registration_pipeline(path_fixed, path_moved, pt_fixed, pt_moved)
+
         print("--- %s seconds ---" % (time.time() - start_time))
         logging.info(f"\nTotal time = {time.time() - start_time}")
-        # except:
-        #     print("Error in registration")
-        #     pass
 
         logging.getLogger().removeHandler(logging.getLogger().handlers[0])
     print("List finished")
