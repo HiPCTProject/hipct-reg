@@ -37,7 +37,7 @@ optional-dependencies = {dev = [
 readme = "README.md"
 requires-python = ">=3.11"
 license.file = "LICENSE.md"
-urls.homepage = "https://github.com/dstansby/hipct-reg"
+urls.homepage = "https://github.com/HiPCTProject/hipct-reg"
 
 [tool.coverage]
 report = {skip_covered = true, sort = "cover"}

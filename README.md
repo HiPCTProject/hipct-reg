@@ -11,10 +11,10 @@
 -->
 
 <!-- prettier-ignore-start -->
-[tests-badge]:              https://github.com/dstansby/hipct-reg/actions/workflows/tests.yml/badge.svg
-[tests-link]:               https://github.com/dstansby/hipct-reg/actions/workflows/tests.yml
-[linting-badge]:            https://github.com/dstansby/hipct-reg/actions/workflows/linting.yml/badge.svg
-[linting-link]:             https://github.com/dstansby/hipct-reg/actions/workflows/linting.yml
+[tests-badge]:              https://github.com/HiPCTProject/hipct-reg/actions/workflows/tests.yml/badge.svg
+[tests-link]:               https://github.com/HiPCTProject/hipct-reg/actions/workflows/tests.yml
+[linting-badge]:            https://github.com/HiPCTProject/hipct-reg/actions/workflows/linting.yml/badge.svg
+[linting-link]:             https://github.com/HiPCTProject/hipct-reg/actions/workflows/linting.yml
 [conda-badge]:              https://img.shields.io/conda/vn/conda-forge/hipct-reg
 [conda-link]:               https://github.com/conda-forge/hipct-reg-feedstock
 [pypi-link]:                https://pypi.org/project/hipct-reg/
@@ -40,13 +40,13 @@ Code to register regions of interest with full organ datasets.
 We recommend installing in a project specific virtual environment created using a environment management tool such as [Mamba](https://mamba.readthedocs.io/en/latest/user_guide/mamba.html) or [Conda](https://conda.io/projects/conda/en/latest/). To install the latest development version of `hipct-reg` using `pip` in the currently active environment run
 
 ```sh
-pip install git+https://github.com/dstansby/hipct-reg.git
+pip install git+https://github.com/HiPCTProject/hipct-reg.git
 ```
 
 Alternatively create a local clone of the repository with
 
 ```sh
-git clone https://github.com/dstansby/hipct-reg.git
+git clone https://github.com/HiPCTProject/hipct-reg.git
 ```
 
 and then install in editable mode by running
