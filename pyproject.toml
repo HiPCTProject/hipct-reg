@@ -25,19 +25,26 @@ dynamic = [
 keywords = [
 ]
 name = "hipct-reg"
-optional-dependencies = {dev = [
-    "build",
-    "mypy",
-    "pre-commit",
-    "pytest",
-    "ruff",
-    "tox>=4",
-    "twine",
-]}
 readme = "README.md"
 requires-python = ">=3.11"
 license.file = "LICENSE.md"
 urls.homepage = "https://github.com/HiPCTProject/hipct-reg"
+
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+]
+dev = [
+    "hipct-reg[test]",
+    "build",
+    "mypy",
+    "pre-commit",
+    "ruff",
+    "tox>=4",
+    "twine",
+]
 
 [tool.coverage]
 report = {skip_covered = true, sort = "cover"}
@@ -117,9 +124,7 @@ legacy_tox_ini = """
     [testenv]
     commands =
         pytest --cov --cov-report=xml
-    deps =
-        pytest
-        pytest-cov
+    extras = test
 
     [tox]
     env_list =
