@@ -12,8 +12,8 @@ def send_slurm(registration_list_file: str) -> None:
     ----------
     registration_list_file : str
         Path to registration list .txt file.
-    """
 
+    """
     print("Starting script")
 
     job_dir = "/data/projects/hop/data_repository/Various/neuroglancer_pipeline/registration/slurm/job/"
@@ -28,26 +28,26 @@ def send_slurm(registration_list_file: str) -> None:
     sh_script = f"""#!/bin/bash
 #SBATCH --output={output_dir}/slurm-%x-%j.%a.out
 #SBATCH --partition=bm18
-#SBATCH --exclusive 
+#SBATCH --exclusive
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=0
 #SBATCH --job-name={job_name}
 #SBATCH --time=24:00:00
-echo ------------------------------------------------------ 
-                                                    
-echo SLURM_NNODES: $SLURM_NNODES                                                     
-echo SLURM_JOB_NODELIST: $SLURM_JOB_NODELIST                                                     
-echo SLURM_SUBMIT_DIR: $SLURM_SUBMIT_DIR                                                     
-echo SLURM_SUBMIT_HOST: $SLURM_SUBMIT_HOST                                                     
-echo SLURM_JOB_ID: $SLURM_JOB_ID                                                     
-echo SLURM_JOB_NAME: $SLURM_JOB_NAME                                                     
-echo SLURM_JOB_PARTITION: $SLURM_JOB_PARTITION                                                     
-echo SLURM_NTASKS: $SLURM_NTASKS 
-echo SLURM_CPUS-PER-TASK: $SLURM_CPUS_PER_TASK                                                    
-echo SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE                                                     
-echo SLURM_NTASKS_PER_NODE: $SLURM_NTASKS_PER_NODE                                                     
-echo ------------------------------------------------------ 
+echo ------------------------------------------------------
+
+echo SLURM_NNODES: $SLURM_NNODES
+echo SLURM_JOB_NODELIST: $SLURM_JOB_NODELIST
+echo SLURM_SUBMIT_DIR: $SLURM_SUBMIT_DIR
+echo SLURM_SUBMIT_HOST: $SLURM_SUBMIT_HOST
+echo SLURM_JOB_ID: $SLURM_JOB_ID
+echo SLURM_JOB_NAME: $SLURM_JOB_NAME
+echo SLURM_JOB_PARTITION: $SLURM_JOB_PARTITION
+echo SLURM_NTASKS: $SLURM_NTASKS
+echo SLURM_CPUS-PER-TASK: $SLURM_CPUS_PER_TASK
+echo SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE
+echo SLURM_NTASKS_PER_NODE: $SLURM_NTASKS_PER_NODE
+echo ------------------------------------------------------
 
 echo Starting virtual environment
 source /home/esrf/joseph08091994/python/pyEnv2/bin/activate

@@ -30,6 +30,7 @@ def import_im(
         If given, crop the number of slices in the z-direction.
     bin_factor :
         Downsample the image by a binning factor before returning.
+
     """
     bin_factor = int(bin_factor)
     pixelType = sitk.sitkInt16

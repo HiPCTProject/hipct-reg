@@ -239,7 +239,7 @@ def registration_ITKelastix(fixed_image, moving_image, trans_point, zrot, pt_fix
     print("\n\n\nENNND222222222\n")
 
     print("\n-----------------")
-    print("\End of initialization")
+    print(r"End of initialization")
     print("\n-----------------\n")
 
     # use a Python trick to create the offset list based on the dimension
@@ -474,7 +474,7 @@ def registration_simpleElastix(
     )
 
     print("\n-----------------")
-    print("\End of initialization")
+    print(r"End of initialization")
     print("\n-----------------\n")
 
     # use a Python trick to create the offset list based on the dimension
@@ -605,7 +605,7 @@ def registration_simpleElastix(
 
     sitk.PrintParameterMap(R.GetTransformParameterMap()[0])
     print("\n-----------------")
-    print("\End of registration")
+    print(r"End of registration")
     print("\n-----------------\n")
 
     R.PrintParameterMap()
@@ -697,6 +697,7 @@ def registration_pipeline(
         Common point in the fixed dataset.
     pt_moved :
         Common point in the dataset being moved.
+
     """
     # Crop the zoom scan to transform the circle fov into a square, thus avoiding the NaN part in the image
     crop_circle_moved = False
@@ -793,7 +794,6 @@ def registration_pipeline(
         path_moved,
         pixel_size_moved,
         crop_z=moved_z,
-        crop_circle=crop_circle_moved,
         bin_factor=binning_moved,
     )
     logging.info("---Moving image imported successfully")
@@ -836,7 +836,6 @@ def registration_pipeline(
         path_fixed,
         pixel_size_fixed,
         crop_z=fixed_z,
-        crop_circle=False,
         bin_factor=binning_fixed,
     )
     logging.info("---Fixed image imported successfully")
@@ -846,9 +845,9 @@ def registration_pipeline(
     print(fixed_image.GetPixelIDTypeAsString())
     print(fixed_image.GetSpacing())
 
-    print("\IMPORTATION DONE\n\n")
+    print("IMPORTATION DONE\n\n")
     print("---------------------------------------------------")
-    print("\REGISTRATION\n\n")
+    print("REGISTRATION\n\n")
     print("---------------------------------------------------")
     logging.info(
         "\n---------------------------------------------------\nREGISTRATION\n"
@@ -908,7 +907,7 @@ def registration_pipeline(
     logging.info(
         "\n---------------------------------------------------\nFORMATED PARAMETERS FOR NEUROGLANCER\n"
     )
-    logging.info(f"\nTRANSLATIONS")
+    logging.info("\nTRANSLATIONS")
 
     final_transform_inverse = final_transform.GetInverse()
 
@@ -928,12 +927,12 @@ def registration_pipeline(
     print("\n\n")
     print("-------------------------------------------")
     print("ROTATION :\n")
-    logging.info(f"\nROTATION")
+    logging.info("\nROTATION")
 
     logging.info(f"Inverse rotation matrix = {final_transform_inverse.GetMatrix()}")
 
     print("\n\n")
-    logging.info(f"\nSCALE")
+    logging.info("\nSCALE")
 
     scale = final_transform_inverse.GetScale()
     print("\nScale= pixel size * ", scale)
@@ -971,7 +970,6 @@ def get_registration_list() -> list[tuple[str, str, npt.NDArray, npt.NDArray]]:
                 registration_list.append(process_line(l))
             except:
                 print("Could not read line")
-                pass
     elif len(sys.argv) == 2:
         registration_file = sys.argv[1]
         with open(registration_file) as file:
@@ -981,7 +979,6 @@ def get_registration_list() -> list[tuple[str, str, npt.NDArray, npt.NDArray]]:
                 registration_list.append(process_line(l))
             except:
                 print("Could not read line")
-                pass
 
     elif len(sys.argv) < 4 and len(sys.argv) > 1:
         sys.exit(
@@ -1036,7 +1033,7 @@ if __name__ == "__main__":
         logging.info(
             f"Command: python3 ITK_registration.py {path_fixed} {path_moved} [{pt_fixed[0]},{pt_fixed[1]},{pt_fixed[2]}] [{pt_moved[0]},{pt_moved[1]},{pt_moved[2]}]\n"
         )
-        logging.info(f"REGISTRATION:\n")
+        logging.info("REGISTRATION:\n")
         logging.info(f"Fixed image = {path_fixed}")
         logging.info(f"Moving image = {path_moved}")
         logging.info(f"\nPoint fixed = {pt_fixed}")

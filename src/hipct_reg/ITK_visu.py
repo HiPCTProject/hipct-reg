@@ -199,7 +199,7 @@ def visu_from_file(log_file, res_factor):
     print(fixed_image.GetPixelIDTypeAsString())
     print(fixed_image.GetSpacing())
 
-    print("\IMPORTATION DONE\n\n")
+    print("IMPORTATION DONE\n\n")
     print("---------------------------------------------------")
     print("\nVisualization\n\n")
     print("---------------------------------------------------")
@@ -348,7 +348,6 @@ if __name__ == "__main__":
                 registration_list.append(ll)
             except:
                 print("Could not read line")
-                pass
     elif len(sys.argv) == 2:
         registration_file = sys.argv[1]
         with open(registration_file) as file:
@@ -361,7 +360,6 @@ if __name__ == "__main__":
                 registration_list.append(ll)
             except:
                 print("Could not read line")
-                pass
 
     else:
         sys.exit("ERROR: too much arguments\n")
@@ -395,7 +393,7 @@ if __name__ == "__main__":
 
         f = open(output_dir + flag + ".txt", "w")
         f.close()
-        file_summary = f"./output_visu/summary.txt"
+        file_summary = "./output_visu/summary.txt"
         with open(file_summary, "a") as f:
             f.write(f"{os.path.basename(path_moved)}: {flag}\n")
 
@@ -441,6 +439,5 @@ if __name__ == "__main__":
             print("--- %s seconds ---" % (time.time() - start_time))
         except Exception as e:
             print(f"Error during visu_from_file: {e}")
-            pass
 
     print("Finished")

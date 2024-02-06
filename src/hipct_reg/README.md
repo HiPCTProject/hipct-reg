@@ -1,5 +1,6 @@
 # How To Check Registration
-----
+
+---
 
 - Connect to `rnice`
 - Open a terminal
@@ -20,4 +21,3 @@ source /data/projects/hop/data_repository/Various/neuroglancer_pipeline/NP_env/b
 ```sh
 python3 /data/projects/hop/data_repository/Various/neuroglancer_pipeline/registration/ITK_visu.py
 ```
-
