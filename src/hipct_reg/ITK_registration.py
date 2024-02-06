@@ -701,8 +701,6 @@ def registration_pipeline(
     """
     # Crop the zoom scan to transform the circle fov into a square, thus avoiding the NaN part in the image
     crop_circle_moved = False
-    # Crop the z of both scans to use less ram (the parameter height_factor control the height)
-    crop_z = True
 
     pixel_size_fixed = get_pixel_size(path_fixed)
     pixel_size_moved = get_pixel_size(path_moved)
@@ -786,7 +784,7 @@ def registration_pipeline(
         "\n---------------------------------------------------\nIMPORTATION OF SCAN TO REGISTER\n"
     )
 
-    moved_z = [0, N_moved]
+    moved_z = (0, N_moved)
     logging.info(f"Moving scan crop z = {moved_z}")
 
     logging.info("\n---Start importation of Moving image")
@@ -803,29 +801,24 @@ def registration_pipeline(
     print(moving_image.GetPixelIDTypeAsString())
     print(moving_image.GetSpacing())
 
-    fixed_z = []
-    if crop_z:
-        fixed_z = [
-            int(
-                pt_fixed[2]
-                - 1.2 * ((pt_moved[2]) * pixel_size_moved / pixel_size_fixed)
-            ),
-            int(
-                pt_fixed[2]
-                + 1.2
-                * (
-                    ((moved_z[1] - moved_z[0]) - pt_moved[2])
-                    * pixel_size_moved
-                    / pixel_size_fixed
-                )
-            ),
-        ]
-        if fixed_z[0] < 0:
-            fixed_z[0] = 0
-        if fixed_z[1] > N_fixed:
-            fixed_z[1] = int(N_fixed)
-        trans_point[2] = trans_point[2] - fixed_z[0]
-        pt_fixed[2] = pt_fixed[2] - fixed_z[0]
+    zmin = int(
+        pt_fixed[2] - 1.2 * ((pt_moved[2]) * pixel_size_moved / pixel_size_fixed)
+    )
+    zmax = int(
+        pt_fixed[2]
+        + 1.2
+        * (
+            ((moved_z[1] - moved_z[0]) - pt_moved[2])
+            * pixel_size_moved
+            / pixel_size_fixed
+        )
+    )
+    zmin = max(zmin, 0)
+    zmax = min(zmax, int(N_fixed))
+
+    fixed_z = (zmin, zmax)
+    trans_point[2] = trans_point[2] - fixed_z[0]
+    pt_fixed[2] = pt_fixed[2] - fixed_z[0]
     logging.info(f"\nFixed scan crop z = {fixed_z}")
 
     print("---------------------------------------------------")
