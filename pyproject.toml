@@ -35,6 +35,9 @@ urls.homepage = "https://github.com/HiPCTProject/hipct-reg"
 test = [
     "pytest",
     "pytest-cov",
+    "numpy~=1.26",
+    "scikit-image~=0.22",
+    "tifffile==2024.1.30",
 ]
 dev = [
     "hipct-reg[test]",
@@ -58,6 +61,7 @@ paths.source = [
 
 [tool.mypy]
 explicit_package_bases = true
+strict = true
 
 [tool.pytest.ini_options]
 addopts = """
