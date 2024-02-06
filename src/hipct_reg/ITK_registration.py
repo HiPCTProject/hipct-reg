@@ -947,6 +947,15 @@ def process_line(line: str) -> tuple[str, str, npt.NDArray, npt.NDArray]:
 def get_registration_list() -> list[tuple[str, str, npt.NDArray, npt.NDArray]]:
     """
     Get list of datasets to register.
+
+    Returns
+    -------
+    list
+        Each item in the list contains:
+        - Path to full organ dataset
+        - Path to dataset being registered
+        - Common point in full organ dataset
+        - Common point in dataset being registered
     """
     registration_list: list[tuple[str, str, npt.NDArray, npt.NDArray]] = []
 
