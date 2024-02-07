@@ -79,6 +79,7 @@ ignore = [
     "D407", # removed dashes lines under sections
     "D417", # argument description in docstring (unreliable)
     "ISC001", # simplify implicit str concatenation (ruff-format recommended)
+    "G004", # logging statement uses f-string
     # To fix:
     "N999", # Invalid module name
     "T201", # print() found
@@ -87,6 +88,13 @@ ignore = [
     "ERA001", # Commented out code
     "E501", # Line too long
     "PTH", # Generally using Pathlib
+    "ARG001", # unused function argument
+    "D", # General docstring stuff
+    "PLR", # general complexity (?)
+    "N", # naming
+    "ANN", # annotations
+    "PLW", # some global stuff (?)
+    "F841", # unused variables
 ]
 per-file-ignores = {"tests*" = [
     "INP001",
