@@ -693,7 +693,7 @@ def get_pixel_size(path: str) -> float:
     """
     if path[-1] == "/":
         path = path[:-1]
-    return float(path_fixed.split("/")[-1].split("um")[0]) / 1000
+    return float(path.split("/")[-1].split("um")[0]) / 1000
 
 
 def registration_pipeline(
