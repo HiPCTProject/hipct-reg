@@ -41,7 +41,6 @@ def registration_rot(
     fiji=True,
 ):
     pixel_size_fixed = fixed_image.GetSpacing()[0]
-    pixel_size_moved = moving_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
 
@@ -193,7 +192,6 @@ def registration_ITKelastix(fixed_image, moving_image, trans_point, zrot, pt_fix
     print("\n-----------------\n")
 
     pixel_size_fixed = fixed_image.GetSpacing()[0]
-    pixel_size_moved = moving_image.GetSpacing()[0]
 
     iniParameterMap = itk.ParameterObject.New()
     parameterMap = iniParameterMap.GetDefaultParameterMap("rigid")
@@ -286,9 +284,6 @@ def registration_ITKelastix(fixed_image, moving_image, trans_point, zrot, pt_fix
     print("TESTTTTTT")
 
     print(initial_transform)
-
-    result_image_transformix = itk.transformix_filter(moving_image, initial_transform)
-
     checkerboard(moving_image, initial_transform, pattern=5)
 
     sys.exit()
@@ -448,7 +443,6 @@ def registration_simpleElastix(
     print("\n-----------------\n")
 
     pixel_size_fixed = fixed_image.GetSpacing()[0]
-    pixel_size_moved = moving_image.GetSpacing()[0]
 
     R_ini = sitk.ElastixImageFilter()
     R_ini.SetFixedImage(fixed_image)
@@ -517,7 +511,6 @@ def registration_simpleElastix(
         str(translation[2]),
     )
 
-    moving_image_save = moving_image
     moving_image = sitk.Transformix(moving_image, initial_transform)
     sitk.Show(0.5 * moving_image + 0.5 * fixed_image, "3")
 
