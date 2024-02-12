@@ -20,6 +20,7 @@ dependencies = [
     "dask-image~=2023.08",
     "itk~=5.3",
     "numpy~=1.26",
+    "psutil~=5.9",
     "scikit-image~=0.22",
     "simpleitk~=2.3",
 ]
