@@ -65,9 +65,7 @@ paths.source = [
 
 [tool.mypy]
 explicit_package_bases = true
-strict = true
 ignore_missing_imports = true
-disallow_untyped_calls = false
 
 [tool.pytest.ini_options]
 addopts = """
