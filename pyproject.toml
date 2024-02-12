@@ -85,6 +85,7 @@ select = [
     "W",
     "I",
     "UP",
+    "NPY",
 ]
 target-version = "py311"
 isort.known-first-party = [
