@@ -321,25 +321,25 @@ if __name__ == "__main__":
         )
         with open(registration_file) as file:
             lines = [line.rstrip("\n") for line in file]
-        for l in lines:
+        for line in lines:
             try:
-                ll = l.split()
+                ll = line.split()
                 ll[2] = ast.literal_eval(ll[2])
                 ll[3] = ast.literal_eval(ll[3])
                 registration_list.append(ll)
-            except:
+            except Exception:
                 print("Could not read line")
     elif len(sys.argv) == 2:
         registration_file = sys.argv[1]
         with open(registration_file) as file:
             lines = [line.rstrip("\n") for line in file]
-        for l in lines:
+        for line in lines:
             try:
-                ll = l.split()
+                ll = line.split()
                 ll[2] = ast.literal_eval(ll[2])
                 ll[3] = ast.literal_eval(ll[3])
                 registration_list.append(ll)
-            except:
+            except Exception:
                 print("Could not read line")
 
     else:

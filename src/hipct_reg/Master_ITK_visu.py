@@ -73,6 +73,6 @@ if __name__ == "__main__":
     f = open(file_summary, "w")
     f.close()
 
-    for l in registration_list:
-        print(l)
-        send_slurm(l)
+    for line in registration_list:
+        print(line)
+        send_slurm(line)

@@ -73,13 +73,15 @@ testpaths = [
 fix = true
 force-exclude = true
 ignore = [
+    "E501" # Line length
 ]
 per-file-ignores = {"tests*" = [
     "INP001",
     "S101",
 ]}
 select = [
-    "F"
+    "F",
+    "E",
 ]
 target-version = "py311"
 isort.known-first-party = [
