@@ -424,7 +424,7 @@ if __name__ == "__main__":
             )
             if len(log_file) > 1:
                 print("Too many log files")
-            log_file = max(log_file, key=os.path.getctime)
+            log_file = max(log_file, key=os.path.getctime)  # type: ignore[arg-type]
             print(log_file)
 
             ans = "1"
