@@ -38,7 +38,7 @@ def registration_rot(
     zrot: float,
     angle_range: float,
     angle_step: float,
-    fiji: bool = True,
+    fiji: bool = False,
 ):
     """
     Parameters
@@ -309,7 +309,7 @@ def registration_ITKelastix(fixed_image, moving_image, trans_point, zrot, pt_fix
 
 
 def registration_sitk(
-    fixed_image, moving_image, trans_point, zrot, pt_fixed, fiji=True
+    fixed_image, moving_image, trans_point, zrot, pt_fixed, fiji=False
 ):
     pixel_size_fixed = fixed_image.GetSpacing()[0]
     pixel_size_moved = moving_image.GetSpacing()[0]
@@ -456,7 +456,7 @@ def registration_sitk(
 
 
 def registration_simpleElastix(
-    fixed_image, moving_image, trans_point, zrot, pt_fixed, fiji=True
+    fixed_image, moving_image, trans_point, zrot, pt_fixed, fiji=False
 ):
     print("\n-----------------")
     print("\nBeginning of initialization")
