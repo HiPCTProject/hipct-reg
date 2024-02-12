@@ -82,6 +82,7 @@ per-file-ignores = {"tests*" = [
 select = [
     "F",
     "E",
+    "W",
 ]
 target-version = "py311"
 isort.known-first-party = [
