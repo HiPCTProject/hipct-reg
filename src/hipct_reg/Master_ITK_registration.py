@@ -73,6 +73,6 @@ if __name__ == "__main__":
         f"/data/projects/hop/data_repository/Various/neuroglancer_pipeline/registration/registration_list/{prefix}*.txt"
     )
 
-    for l in registration_list:
-        print(l)
-        send_slurm(l)
+    for line in registration_list:
+        print(line)
+        send_slurm(line)

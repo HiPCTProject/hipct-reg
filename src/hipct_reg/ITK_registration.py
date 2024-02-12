@@ -1,7 +1,8 @@
 """
 Author: Joseph Brunet (joseph.brunet@ucl.ac.uk)
 
-This script do the registration of HiP-CT high-resolution volume to low-resolution volume
+This script does the registration of HiP-CT high-resolution volumes to low-resolution
+volumes.
 """
 
 import ast
@@ -41,7 +42,6 @@ def registration_rot(
     fiji=True,
 ):
     pixel_size_fixed = fixed_image.GetSpacing()[0]
-    pixel_size_moved = moving_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
 
@@ -120,7 +120,6 @@ def registration_rot(
         print(
             f"{method.GetOptimizerIteration()} "
             + f"= {method.GetMetricValue()} "
-            # + f": {trans_point+np.array(method.GetOptimizerPosition())/pixel_size_fixed}"
             + f"\nTRANSLATION: {np.array(method.GetOptimizerPosition())[3:]/pixel_size_fixed}"
             + f"\nROTATION: {np.rad2deg(np.array(method.GetOptimizerPosition()))[0:3]}"
             + f"\nCPU usage: {psutil.cpu_percent()}"
@@ -193,7 +192,6 @@ def registration_ITKelastix(fixed_image, moving_image, trans_point, zrot, pt_fix
     print("\n-----------------\n")
 
     pixel_size_fixed = fixed_image.GetSpacing()[0]
-    pixel_size_moved = moving_image.GetSpacing()[0]
 
     iniParameterMap = itk.ParameterObject.New()
     parameterMap = iniParameterMap.GetDefaultParameterMap("rigid")
@@ -286,9 +284,6 @@ def registration_ITKelastix(fixed_image, moving_image, trans_point, zrot, pt_fix
     print("TESTTTTTT")
 
     print(initial_transform)
-
-    result_image_transformix = itk.transformix_filter(moving_image, initial_transform)
-
     checkerboard(moving_image, initial_transform, pattern=5)
 
     sys.exit()
@@ -448,7 +443,6 @@ def registration_simpleElastix(
     print("\n-----------------\n")
 
     pixel_size_fixed = fixed_image.GetSpacing()[0]
-    pixel_size_moved = moving_image.GetSpacing()[0]
 
     R_ini = sitk.ElastixImageFilter()
     R_ini.SetFixedImage(fixed_image)
@@ -517,7 +511,6 @@ def registration_simpleElastix(
         str(translation[2]),
     )
 
-    moving_image_save = moving_image
     moving_image = sitk.Transformix(moving_image, initial_transform)
     sitk.Show(0.5 * moving_image + 0.5 * fixed_image, "3")
 
@@ -699,7 +692,8 @@ def registration_pipeline(
         Common point in the dataset being moved.
 
     """
-    # Crop the zoom scan to transform the circle fov into a square, thus avoiding the NaN part in the image
+    # Crop the zoom scan to transform the circle fov into a square, thus avoiding the
+    # NaN part in the image
     crop_circle_moved = False
 
     pixel_size_fixed = get_pixel_size(path_fixed)
@@ -780,9 +774,8 @@ def registration_pipeline(
 
     print("---------------------------------------------------")
     print("\nIMPORTATION OF SCAN TO REGISTER\n")
-    logging.info(
-        "\n---------------------------------------------------\nIMPORTATION OF SCAN TO REGISTER\n"
-    )
+    logging.info("\n---------------------------------------------------")
+    logging.info("IMPORTATION OF SCAN TO REGISTER\n")
 
     moved_z = (0, N_moved)
     logging.info(f"Moving scan crop z = {moved_z}")
@@ -968,19 +961,19 @@ def get_registration_list() -> list[tuple[str, str, npt.NDArray, npt.NDArray]]:
         )
         with open(registration_file) as file:
             lines = [line.rstrip("\n") for line in file]
-        for l in lines:
+        for line in lines:
             try:
-                registration_list.append(process_line(l))
-            except:
+                registration_list.append(process_line(line))
+            except Exception:
                 print("Could not read line")
     elif len(sys.argv) == 2:
         registration_file = sys.argv[1]
         with open(registration_file) as file:
             lines = [line.rstrip("\n") for line in file]
-        for l in lines:
+        for line in lines:
             try:
-                registration_list.append(process_line(l))
-            except:
+                registration_list.append(process_line(line))
+            except Exception:
                 print("Could not read line")
 
     elif len(sys.argv) < 4 and len(sys.argv) > 1:

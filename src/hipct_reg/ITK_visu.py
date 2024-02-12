@@ -48,12 +48,6 @@ def visu_from_file(log_file, res_factor):
         if "Zoom volume - Binning factor = " in row:
             binning_moved = int(float(get_str(row, "Zoom volume - Binning factor = ")))
 
-        if "Crop the zoom volume to avoid external circle =" in row:
-            if "True" in row:
-                crop_circle_moved = True
-            else:
-                crop_circle_moved = False
-
         if "Moving scan crop z = " in row:
             moved_z = get_str(row, "Moving scan crop z = ")
         if "Fixed scan crop z" in row:
@@ -67,12 +61,6 @@ def visu_from_file(log_file, res_factor):
             pt_moved = get_str(row, "Point moved = ")
             pt_moved = np.fromstring(pt_moved[1:-1], sep=",")
 
-        if "height_factor" in row:
-            # height_factor = float(row[row.startswith('height_factor is ') and len('height_factor is '):].strip('\n') )
-            height_factor = get_str(row, "height_factor")
-
-            height_factor = float(row.split("= ")[-1])
-
         if "Translation = " in row:
             translation = get_str(row, "Translation = ")
 
@@ -84,14 +72,7 @@ def visu_from_file(log_file, res_factor):
             rot_matrix = get_str(row, "Matrix = ")
             rot_matrix = np.fromstring(rot_matrix[1:-1], sep=",")
             rot_matrix = rot_matrix.reshape((3, 3))
-        if "Scale = " in row:
-            scale = float(get_str(row, "Scale = "))
 
-    # binning_fixed = binning_fixed * res_factor
-    # binning_moved = binning_moved * res_factor
-
-    # crop_circle_moved = True #Crop the zoom scan to transform the circle fov into a square, thus avoiding the NaN part in the image
-    crop_circle_moved = False  # Crop the zoom scan to transform the circle fov into a square, thus avoiding the NaN part in the image
     crop_z = True  # Crop the z of both scans to use less ram (the parameter height_factor control the height)
 
     print(
@@ -340,25 +321,25 @@ if __name__ == "__main__":
         )
         with open(registration_file) as file:
             lines = [line.rstrip("\n") for line in file]
-        for l in lines:
+        for line in lines:
             try:
-                ll = l.split()
+                ll = line.split()
                 ll[2] = ast.literal_eval(ll[2])
                 ll[3] = ast.literal_eval(ll[3])
                 registration_list.append(ll)
-            except:
+            except Exception:
                 print("Could not read line")
     elif len(sys.argv) == 2:
         registration_file = sys.argv[1]
         with open(registration_file) as file:
             lines = [line.rstrip("\n") for line in file]
-        for l in lines:
+        for line in lines:
             try:
-                ll = l.split()
+                ll = line.split()
                 ll[2] = ast.literal_eval(ll[2])
                 ll[3] = ast.literal_eval(ll[3])
                 registration_list.append(ll)
-            except:
+            except Exception:
                 print("Could not read line")
 
     else:
@@ -424,7 +405,7 @@ if __name__ == "__main__":
             )
             if len(log_file) > 1:
                 print("Too many log files")
-            log_file = max(log_file, key=os.path.getctime)
+            log_file = max(log_file, key=os.path.getctime)  # type: ignore[arg-type]
             print(log_file)
 
             ans = "1"

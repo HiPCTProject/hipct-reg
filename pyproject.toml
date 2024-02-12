@@ -73,35 +73,19 @@ testpaths = [
 fix = true
 force-exclude = true
 ignore = [
-    "COM812", # trailing commas (ruff-format recommended)
-    "D203", # no-blank-line-before-class
-    "D212", # multi-line-summary-first-line
-    "D407", # removed dashes lines under sections
-    "D417", # argument description in docstring (unreliable)
-    "ISC001", # simplify implicit str concatenation (ruff-format recommended)
-    "G004", # logging statement uses f-string
-    # To fix:
-    "N999", # Invalid module name
-    "T201", # print() found
-    "N806", # Variable should be lowercase
-    "ANN001", # Missing type annotation
-    "ERA001", # Commented out code
-    "E501", # Line too long
-    "PTH", # Generally using Pathlib
-    "ARG001", # unused function argument
-    "D", # General docstring stuff
-    "PLR", # general complexity (?)
-    "N", # naming
-    "ANN", # annotations
-    "PLW", # some global stuff (?)
-    "F841", # unused variables
+    "E501" # Line length
 ]
 per-file-ignores = {"tests*" = [
     "INP001",
     "S101",
 ]}
 select = [
-    "ALL",
+    "F",
+    "E",
+    "W",
+    "I",
+    "UP",
+    "NPY",
 ]
 target-version = "py311"
 isort.known-first-party = [
