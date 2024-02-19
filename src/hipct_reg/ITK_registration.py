@@ -32,15 +32,32 @@ MAX_THREADS = 0  # 0 if all
 
 
 def registration_rot(
-    fixed_image,
-    moving_image,
-    trans_point,
-    pt_fixed,
-    zrot,
-    angle_range=360,
-    angle_step=1,
-    fiji=True,
+    fixed_image: sitk.Image,
+    moving_image: sitk.Image,
+    trans_point: npt.NDArray,
+    pt_fixed: npt.NDArray,
+    zrot: float,
+    angle_range: float,
+    angle_step: float,
+    fiji: bool = True,
 ):
+    """
+    Parameters
+    ----------
+    fixed_image, moving_image :
+        The images being registered.
+    trans_point :
+        Vector from [0, 0, 0] voxel in fixed image to [0, 0, 0] voxel in moving image.
+    pt_fixed :
+        Common point in the fixed image. In units of pixels.
+    zrot :
+        Initial rotation for the registration. In units of degrees.
+    angle_range :
+        Range of angles to scan. In units of degrees.
+    angle_step :
+        Step to take when scanning range of angles. In units of degrees.
+
+    """
     pixel_size_fixed = fixed_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
