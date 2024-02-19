@@ -34,7 +34,7 @@ def registration_rot(
     fixed_image: sitk.Image,
     moving_image: sitk.Image,
     trans_point: npt.NDArray,
-    pt_fixed: npt.NDArray,
+    rotation_center_pix: npt.NDArray,
     zrot: float,
     angle_range: float,
     angle_step: float,
@@ -47,8 +47,9 @@ def registration_rot(
         The images being registered.
     trans_point :
         Vector from [0, 0, 0] voxel in fixed image to [0, 0, 0] voxel in moving image.
-    pt_fixed :
-        Common point in the fixed image. In units of pixels.
+    rotation_center :
+        Point in the fixed image about which the moving image will be rotated.
+        In units of pixels.
     zrot :
         Initial rotation for the registration. In units of degrees.
     angle_range :
@@ -79,8 +80,8 @@ def registration_rot(
     R.SetOptimizerScalesFromPhysicalShift()
 
     offset = pixel_size_fixed * trans_point
-
-    rotation_center = pt_fixed * pixel_size_fixed
+    # Convert from pixels to physical size
+    rotation_center = rotation_center_pix * pixel_size_fixed
 
     theta_x = 0.0
     theta_y = 0.0
@@ -129,7 +130,7 @@ def registration_rot(
         rotation_center,
         moving_image,
         fixed_image,
-        pt_fixed,
+        rotation_center_pix,
     ):
         global metric
         metric.append(method.GetMetricValue())
@@ -153,7 +154,7 @@ def registration_rot(
             rotation_center,
             moving_image,
             fixed_image,
-            pt_fixed,
+            rotation_center_pix,
         ),
     )
 
