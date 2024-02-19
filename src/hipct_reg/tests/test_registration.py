@@ -88,13 +88,12 @@ def test_registration_rot(full_organ_scan: sitk.Image, roi_scan: sitk.Image) -> 
     Test a really simple registration where the common point given is exactly the
     correct point, and there is no rotation between the two datasets.
     """
-    zrot = 0
-
     trans_point = np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET]) / BIN_FACTOR
     rotation_center = (
         trans_point + np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2 / BIN_FACTOR
     )
 
+    zrot = 0
     transform = registration_rot(
         full_organ_scan,
         roi_scan,
@@ -109,4 +108,23 @@ def test_registration_rot(full_organ_scan: sitk.Image, roi_scan: sitk.Image) -> 
     assert transform.GetAngleX() == 0
     assert transform.GetAngleY() == 0
     # This value should be close to zero
-    assert np.rad2deg(transform.GetAngleZ()) == pytest.approx(-2)
+    zrot = np.rad2deg(transform.GetAngleZ())
+    assert zrot == pytest.approx(-2)
+
+    # Try a smaller angular range at higher angular resolution
+    transform = registration_rot(
+        full_organ_scan,
+        roi_scan,
+        trans_point=trans_point,
+        rotation_center_pix=rotation_center,
+        zrot=zrot,
+        angle_range=5,
+        angle_step=0.1,
+    )
+
+    assert isinstance(transform, sitk.Euler3DTransform)
+    assert transform.GetAngleX() == 0
+    assert transform.GetAngleY() == 0
+    # This value should be close to zero
+    zrot = np.rad2deg(transform.GetAngleZ())
+    assert zrot == pytest.approx(-0.8)
