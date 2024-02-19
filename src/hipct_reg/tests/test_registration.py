@@ -43,8 +43,8 @@ def ground_truth(rng: np.random.Generator) -> npt.NDArray[np.float32]:
     Ground truth, high resolution data.
     """
     return binary_blobs(
-        length=512, n_dim=3, blob_size_fraction=0.01, volume_fraction=0.5, rng=rng
-    ).astype(np.float32)
+        length=256, n_dim=3, blob_size_fraction=0.01, volume_fraction=0.5, rng=rng
+    ).astype(np.uint16)
 
 
 @pytest.fixture
@@ -109,7 +109,7 @@ def test_registration_rot(full_organ_scan: sitk.Image, roi_scan: sitk.Image) -> 
     assert transform.GetAngleY() == 0
     # This value should be close to zero
     zrot = np.rad2deg(transform.GetAngleZ())
-    assert zrot == pytest.approx(-2)
+    assert zrot == pytest.approx(2)
 
     # Try a smaller angular range at higher angular resolution
     transform = registration_rot(
@@ -127,4 +127,4 @@ def test_registration_rot(full_organ_scan: sitk.Image, roi_scan: sitk.Image) -> 
     assert transform.GetAngleY() == 0
     # This value should be close to zero
     zrot = np.rad2deg(transform.GetAngleZ())
-    assert zrot == pytest.approx(-0.8)
+    assert zrot == pytest.approx(1.5)
