@@ -23,7 +23,6 @@ import psutil
 import SimpleITK as sitk
 import skimage.io
 import skimage.measure
-from itkwidgets import checkerboard
 from scipy.spatial.transform import Rotation as ROT
 
 from .helpers import import_im, test_file_type
@@ -32,15 +31,32 @@ MAX_THREADS = 0  # 0 if all
 
 
 def registration_rot(
-    fixed_image,
-    moving_image,
-    trans_point,
-    pt_fixed,
-    zrot,
-    angle_range=360,
-    angle_step=1,
-    fiji=True,
+    fixed_image: sitk.Image,
+    moving_image: sitk.Image,
+    trans_point: npt.NDArray,
+    pt_fixed: npt.NDArray,
+    zrot: float,
+    angle_range: float,
+    angle_step: float,
+    fiji: bool = True,
 ):
+    """
+    Parameters
+    ----------
+    fixed_image, moving_image :
+        The images being registered.
+    trans_point :
+        Vector from [0, 0, 0] voxel in fixed image to [0, 0, 0] voxel in moving image.
+    pt_fixed :
+        Common point in the fixed image. In units of pixels.
+    zrot :
+        Initial rotation for the registration. In units of degrees.
+    angle_range :
+        Range of angles to scan. In units of degrees.
+    angle_step :
+        Step to take when scanning range of angles. In units of degrees.
+
+    """
     pixel_size_fixed = fixed_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
@@ -103,7 +119,7 @@ def registration_rot(
         sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "before rot")
 
     global metric
-    metric = []
+    metric = []  # type: ignore[name-defined]
 
     def command_iteration(
         method,
@@ -284,6 +300,9 @@ def registration_ITKelastix(fixed_image, moving_image, trans_point, zrot, pt_fix
     print("TESTTTTTT")
 
     print(initial_transform)
+
+    from itkwidgets import checkerboard
+
     checkerboard(moving_image, initial_transform, pattern=5)
 
     sys.exit()
@@ -325,6 +344,7 @@ def registration_sitk(
 
     offset = pixel_size_fixed * trans_point
 
+    # Get coordinate of centre of rotation of the moving image
     rotation_center = offset.copy()
     rotation_center[0] = rotation_center[0] + int(
         pixel_size_moved * moving_image.GetSize()[0] / 2
@@ -687,9 +707,9 @@ def registration_pipeline(
     path_moved :
         Path to the dataset that is being registered.
     pt_fixed :
-        Common point in the fixed dataset.
+        Common point in the fixed dataset. In units of pixels.
     pt_moved :
-        Common point in the dataset being moved.
+        Common point in the dataset being moved. In units of pixels.
 
     """
     # Crop the zoom scan to transform the circle fov into a square, thus avoiding the
@@ -770,6 +790,7 @@ def registration_pipeline(
     pt_fixed = pt_fixed / binning_fixed
     pt_moved = pt_moved / binning_moved
 
+    # Vector from [0, 0, 0] voxel in fixed image to [0, 0, 0] voxel in moving image
     trans_point = pt_fixed - pt_moved * (pixel_size_moved / pixel_size_fixed)
 
     print("---------------------------------------------------")
@@ -794,6 +815,8 @@ def registration_pipeline(
     print(moving_image.GetPixelIDTypeAsString())
     print(moving_image.GetSpacing())
 
+    # Get values to crop the fixed dataset
+    # TODO: check this maths
     zmin = int(
         pt_fixed[2] - 1.2 * ((pt_moved[2]) * pixel_size_moved / pixel_size_fixed)
     )
@@ -851,15 +874,15 @@ def registration_pipeline(
     logging.info("\n---\nRotation registration started\n---")
     zrot = 0
 
+    # Try a full 360 deg first at a coarse step
     angle_range = 360
-    angle_step: float = 2
+    angle_step = 2.0
     transform_rotation = registration_rot(
         fixed_image, moving_image, trans_point, pt_fixed, zrot, angle_range, angle_step
     )
     zrot = np.rad2deg(np.array(transform_rotation.GetParameters()[0:3]))[2]
 
-    # zrot = np.rad2deg(-18.2)
-
+    # Now try a smaller angular step
     angle_range = 5
     angle_step = 0.1
     transform_rotation = registration_rot(
