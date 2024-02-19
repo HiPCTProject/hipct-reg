@@ -108,4 +108,5 @@ def test_registration_rot(full_organ_scan: sitk.Image, roi_scan: sitk.Image) -> 
     assert isinstance(transform, sitk.Euler3DTransform)
     assert transform.GetAngleX() == 0
     assert transform.GetAngleY() == 0
-    assert transform.GetAngleZ() == pytest.approx(-0.0349066)
+    # This value should be close to zero
+    assert np.rad2deg(transform.GetAngleZ()) == pytest.approx(-2)
