@@ -48,6 +48,7 @@ def registration_rot(
         The images being registered.
     trans_point :
         Vector from [0, 0, 0] voxel in fixed image to [0, 0, 0] voxel in moving image.
+        In units of fixed image pixels.
     rotation_center :
         Point in the fixed image about which the moving image will be rotated.
         In units of pixels.
@@ -82,22 +83,25 @@ def registration_rot(
 
     R.SetOptimizerScalesFromPhysicalShift()
 
-    offset = pixel_size_fixed * trans_point
     # Convert from pixels to physical size
+    offset = trans_point * pixel_size_fixed
     rotation_center = rotation_center_pix * pixel_size_fixed
 
+    # Initial transform angles in radians
     theta_x = 0.0
     theta_y = 0.0
     theta_z = np.deg2rad(zrot)
+
+    # Vector from [0, 0, 0] voxel of moving image to [0, 0, 0] voxel of fixed image
     translation = -offset
 
     print(
         "OFFSET IS ",
         np.append(np.rad2deg(np.array([theta_x, theta_y, theta_z])), translation),
     )
-    print("TRANSLATION X: ", -translation[0] / pixel_size_fixed)
-    print("TRANSLATION Y: ", -translation[1] / pixel_size_fixed)
-    print("TRANSLATION Z: ", -translation[2] / pixel_size_fixed)
+    print("TRANSLATION X: ", offset[0] / pixel_size_fixed)
+    print("TRANSLATION Y: ", offset[1] / pixel_size_fixed)
+    print("TRANSLATION Z: ", offset[2] / pixel_size_fixed)
 
     print("ROTATION CENTER: ", rotation_center / pixel_size_fixed)
 
@@ -122,10 +126,9 @@ def registration_rot(
         )
         sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "before rot")
 
-    global metric
-    metric = []  # type: ignore[name-defined]
-
     if verbose:
+        # Add a command to print the result of each iteration
+        metric = []
 
         def command_iteration(
             method,
@@ -137,7 +140,6 @@ def registration_rot(
             fixed_image,
             rotation_center_pix,
         ):
-            global metric
             metric.append(method.GetMetricValue())
             print(
                 f"{method.GetOptimizerIteration()} "
@@ -196,14 +198,6 @@ def registration_rot(
     logging.info(
         f"nResult Angle: {np.rad2deg(np.array(transform_rotation.GetParameters()[2]))}"
     )
-
-    rigid_euler = sitk.Euler3DTransform(
-        rotation_center, theta_x, theta_y, theta_z, translation
-    )
-    basic_transform = sitk.Similarity3DTransform()
-    basic_transform.SetMatrix(rigid_euler.GetMatrix())
-    basic_transform.SetTranslation(rigid_euler.GetTranslation())
-    basic_transform.SetCenter(rigid_euler.GetCenter())
 
     return transform_rotation
 
