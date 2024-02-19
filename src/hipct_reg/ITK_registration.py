@@ -40,7 +40,7 @@ def registration_rot(
     angle_step: float,
     fiji: bool = False,
     verbose: bool = False,
-):
+) -> sitk.Euler3DTransform:
     """
     Parameters
     ----------
@@ -74,7 +74,12 @@ def registration_rot(
     R.SetInterpolator(sitk.sitkLinear)
 
     # Optimizer settings.
-    logging.info(f"\nStep= {angle_step} deg")
+    logging.info("Starting rotational registration")
+    logging.info(f"Initial rotation = {zrot} deg")
+    logging.info(f"Range = {angle_range} deg")
+    logging.info(f"Step = {angle_step} deg")
+    logging.info(f"Translation = {trans_point} pix")
+    logging.info(f"Rotation center = {rotation_center_pix} pix")
 
     R.SetOptimizerAsExhaustive(
         numberOfSteps=[0, 0, int((angle_range / 2) / angle_step), 0, 0, 0],
@@ -94,20 +99,6 @@ def registration_rot(
 
     # Vector from [0, 0, 0] voxel of moving image to [0, 0, 0] voxel of fixed image
     translation = -offset
-
-    print(
-        "OFFSET IS ",
-        np.append(np.rad2deg(np.array([theta_x, theta_y, theta_z])), translation),
-    )
-    print("TRANSLATION X: ", offset[0] / pixel_size_fixed)
-    print("TRANSLATION Y: ", offset[1] / pixel_size_fixed)
-    print("TRANSLATION Z: ", offset[2] / pixel_size_fixed)
-
-    print("ROTATION CENTER: ", rotation_center / pixel_size_fixed)
-
-    print("CPU usage: ", psutil.cpu_percent())
-    print("RAM usage: ", psutil.virtual_memory().percent)
-
     initial_transform = sitk.Euler3DTransform(
         rotation_center, theta_x, theta_y, theta_z, translation
     )
@@ -141,7 +132,7 @@ def registration_rot(
             rotation_center_pix,
         ):
             metric.append(method.GetMetricValue())
-            print(
+            logging.debug(
                 f"{method.GetOptimizerIteration()} "
                 + f"= {method.GetMetricValue()} "
                 + f"\nTRANSLATION: {np.array(method.GetOptimizerPosition())[3:]/pixel_size_fixed}"
@@ -165,7 +156,9 @@ def registration_rot(
             ),
         )
 
-    transform_rotation = R.Execute(fixed_image, moving_image)
+    logging.info("Starting registration...")
+    transform_rotation: sitk.Euler3DTransform = R.Execute(fixed_image, moving_image)
+    logging.info("Registration finished!")
 
     if fiji:
         moving_resampled = sitk.Resample(
@@ -178,26 +171,11 @@ def registration_rot(
         )
         sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "after rot")
 
+    new_zrot = np.rad2deg(transform_rotation.GetAngleZ())
     # Always check the reason optimization terminated.
-    print("OFFSET IS ", trans_point, "\n")
-    print(
-        f"nTRANSLATION: {np.array(transform_rotation.GetParameters()[3:])/fixed_image.GetSpacing()[0]}",
-        "\n",
-    )
-    print(
-        f"nROTATION: {np.rad2deg(np.array(transform_rotation.GetParameters()[0:3]))}",
-        "\n",
-    )
-
-    print(f"Final metric value: {R.GetMetricValue()}")
-    print(f"Optimizer's stopping condition, {R.GetOptimizerStopConditionDescription()}")
-
-    print(transform_rotation)
-
-    logging.info(f"Final metric value: {R.GetMetricValue()}")
-    logging.info(
-        f"nResult Angle: {np.rad2deg(np.array(transform_rotation.GetParameters()[2]))}"
-    )
+    logging.info(f"Final metric value = {R.GetMetricValue()}")
+    logging.info(f"Stopping condition = {R.GetOptimizerStopConditionDescription()}")
+    logging.info(f"Registered rotation angele = {new_zrot} deg")
 
     return transform_rotation
 

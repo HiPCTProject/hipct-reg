@@ -76,6 +76,7 @@ addopts = """
 testpaths = [
     "src/hipct_reg/tests",
 ]
+log_format = "%(levelname)s %(message)s"
 
 [tool.ruff]
 fix = true
