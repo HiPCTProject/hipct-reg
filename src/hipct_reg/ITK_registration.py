@@ -708,10 +708,11 @@ def registration_pipeline(
     path_moved :
         Path to the dataset that is being registered.
     pt_fixed :
-        Common point in the fixed dataset. In units of pixels.
+        Point that the moving dataset will be rotated around, in the coordinate
+        frame of the fixed image.
     pt_moved :
-        Common point in the dataset being moved. In units of pixels.
-
+        Point that the moving dataset will be rotated around, in the coordinate
+        frame of the moving image.
     """
     # Crop the zoom scan to transform the circle fov into a square, thus avoiding the
     # NaN part in the image
