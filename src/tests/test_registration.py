@@ -6,14 +6,21 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 import pytest
+import SimpleITK as sitk
 import tifffile
 from skimage.data import binary_blobs
 from skimage.measure import block_reduce
 
-from hipct_reg.ITK_registration import registration_pipeline
+from hipct_reg.helpers import import_im
+from hipct_reg.ITK_registration import registration_rot
+
+PIXEL_SIZE_UM = 5
+BIN_FACTOR = 4
+ROI_OFFSET = 128
+ROI_SIZE = 64
 
 
-@pytest.fixture()
+@pytest.fixture
 def rng() -> np.random.Generator:
     """
     Setup the default random number generator.
@@ -30,37 +37,75 @@ def write_array_to_stack(array: npt.NDArray[Any], folder: Path) -> None:
         tifffile.imwrite(folder / f"{i}.tif", plane, photometric="minisblack")
 
 
-def test_simple_registration(tmp_path: Path, rng: np.random.Generator) -> None:
+@pytest.fixture
+def ground_truth(rng: np.random.Generator) -> npt.NDArray[np.float32]:
     """
-    Test a really simple registration where the common point given is exactly the
-    correct point, and there is no rotation between the two datasets.
+    Ground truth, high resolution data.
     """
-    ground_truth_data = binary_blobs(
+    return binary_blobs(
         length=512, n_dim=3, blob_size_fraction=0.01, volume_fraction=0.5, rng=rng
     ).astype(np.float32)
 
-    # Downsample to mimic a full organ scan
-    bin_factor = 4
+
+@pytest.fixture
+def full_organ_scan(
+    tmp_path: Path, ground_truth: npt.NDArray[np.float32]
+) -> sitk.Image:
+    """
+    Downsampled ground truth data, to mimic a full organ scan.
+    """
     full_organ_scan = block_reduce(
-        ground_truth_data, (bin_factor, bin_factor, bin_factor), np.mean
+        ground_truth, (BIN_FACTOR, BIN_FACTOR, BIN_FACTOR), np.mean
     )
     full_organ_folder = tmp_path / "20.0um_full_organ"
     full_organ_folder.mkdir()
     write_array_to_stack(full_organ_scan, full_organ_folder)
 
-    # Take a sub-volume to mimic a high resolution region of interest
-    offset = 128
-    size = 64
-    roi_scan = ground_truth_data[
-        offset : offset + size, offset : offset + size, offset : offset + size
+    return import_im(
+        str(full_organ_folder), pixel_size=PIXEL_SIZE_UM * BIN_FACTOR * 1000
+    )
+
+
+@pytest.fixture
+def roi_scan(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> sitk.Image:
+    """
+    Sub-volume of ground truth data, to mimic ROI data.
+    """
+    roi_scan = ground_truth[
+        ROI_OFFSET : ROI_OFFSET + ROI_SIZE,
+        ROI_OFFSET : ROI_OFFSET + ROI_SIZE,
+        ROI_OFFSET : ROI_OFFSET + ROI_SIZE,
     ]
     roi_folder = tmp_path / "5.0um_roi"
     roi_folder.mkdir()
     write_array_to_stack(roi_scan, roi_folder)
 
-    full_organ_point = np.array([offset, offset, offset]) / bin_factor
-    roi_point = np.array([0, 0, 0])
+    return import_im(str(roi_folder), pixel_size=PIXEL_SIZE_UM * 1000)
 
-    registration_pipeline(
-        str(full_organ_folder), str(roi_folder), full_organ_point, roi_point
+
+def test_registration_rot(full_organ_scan: sitk.Image, roi_scan: sitk.Image) -> None:
+    """
+    Test a really simple registration where the common point given is exactly the
+    correct point, and there is no rotation between the two datasets.
+    """
+    zrot = 0
+
+    trans_point = np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET]) / BIN_FACTOR
+    rotation_center = (
+        trans_point + np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2 / BIN_FACTOR
     )
+
+    transform = registration_rot(
+        full_organ_scan,
+        roi_scan,
+        trans_point=trans_point,
+        rotation_center_pix=rotation_center,
+        zrot=zrot,
+        angle_range=360,
+        angle_step=2,
+    )
+
+    assert isinstance(transform, sitk.Euler3DTransform)
+    assert transform.GetAngleX() == 0
+    assert transform.GetAngleY() == 0
+    assert transform.GetAngleZ() == pytest.approx(-0.0349066)
