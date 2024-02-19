@@ -30,6 +30,7 @@ MAX_THREADS = 0  # 0 if all
 
 
 def registration_rot(
+    *,
     fixed_image: sitk.Image,
     moving_image: sitk.Image,
     trans_point: npt.NDArray,
@@ -546,7 +547,13 @@ def registration_pipeline(
     angle_range = 360
     angle_step = 2.0
     transform_rotation = registration_rot(
-        fixed_image, moving_image, trans_point, pt_fixed, zrot, angle_range, angle_step
+        fixed_image=fixed_image,
+        moving_image=moving_image,
+        trans_point=trans_point,
+        rotation_center_pix=pt_fixed,
+        zrot=zrot,
+        angle_range=angle_range,
+        angle_step=angle_step,
     )
     zrot = np.rad2deg(np.array(transform_rotation.GetParameters()[0:3]))[2]
 
@@ -554,7 +561,13 @@ def registration_pipeline(
     angle_range = 5
     angle_step = 0.1
     transform_rotation = registration_rot(
-        fixed_image, moving_image, trans_point, pt_fixed, zrot, angle_range, angle_step
+        fixed_image=fixed_image,
+        moving_image=moving_image,
+        trans_point=trans_point,
+        rotation_center_pix=pt_fixed,
+        zrot=zrot,
+        angle_range=angle_range,
+        angle_step=angle_step,
     )
     zrot = np.rad2deg(np.array(transform_rotation.GetParameters()[0:3]))[2]
 
