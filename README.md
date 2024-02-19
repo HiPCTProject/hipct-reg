@@ -1,9 +1,10 @@
 # hipct-reg
 
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![Tests status][tests-badge]][tests-link]
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/HiPCTProject/hipct-reg/main.svg)](https://results.pre-commit.ci/latest/github/HiPCTProject/hipct-reg/main)
 [![License][license-badge]](./LICENSE.md)
+
+[![Tests status][tests-badge]][tests-link]
+[![codecov](https://codecov.io/gh/HiPCTProject/hipct-reg/graph/badge.svg?token=KCHTIG4HH5)](https://codecov.io/gh/HiPCTProject/hipct-reg)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/HiPCTProject/hipct-reg/main.svg)](https://results.pre-commit.ci/latest/github/HiPCTProject/hipct-reg/main)
 
 <!--
 [![PyPI version][pypi-version]][pypi-link]
