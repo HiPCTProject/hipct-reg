@@ -65,7 +65,13 @@ paths.source = [
 
 [tool.mypy]
 explicit_package_bases = true
-ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "hipct_reg.tests"
+]
+strict = true
+warn_return_any = false
 
 [tool.pytest.ini_options]
 addopts = """
