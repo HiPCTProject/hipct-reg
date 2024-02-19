@@ -17,6 +17,12 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
+    "dask-image~=2023.08",
+    "itk~=5.3",
+    "numpy~=1.26",
+    "psutil~=5.9",
+    "scikit-image~=0.22",
+    "simpleitk~=2.3",
 ]
 description = "Code to register regions of interest with full organ datasets."
 dynamic = [
@@ -35,6 +41,7 @@ urls.homepage = "https://github.com/HiPCTProject/hipct-reg"
 test = [
     "pytest",
     "pytest-cov",
+    "tifffile==2024.1.30",
 ]
 dev = [
     "hipct-reg[test]",
@@ -58,6 +65,14 @@ paths.source = [
 
 [tool.mypy]
 explicit_package_bases = true
+disallow_untyped_calls = false
+
+[[tool.mypy.overrides]]
+module = [
+    "hipct_reg.tests"
+]
+strict = true
+warn_return_any = false
 
 [tool.pytest.ini_options]
 addopts = """
@@ -68,7 +83,7 @@ addopts = """
     --cov-report=xml
 """
 testpaths = [
-    "tests",
+    "src/hipct_reg/tests",
 ]
 
 [tool.ruff]
