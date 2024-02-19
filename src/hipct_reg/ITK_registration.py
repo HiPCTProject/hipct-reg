@@ -38,6 +38,7 @@ def registration_rot(
     angle_range: float,
     angle_step: float,
     fiji: bool = False,
+    verbose: bool = False,
 ):
     """
     Parameters
@@ -55,6 +56,8 @@ def registration_rot(
         Range of angles to scan. In units of degrees.
     angle_step :
         Step to take when scanning range of angles. In units of degrees.
+    verbose :
+        If True, print every step of the optimisation.
 
     """
     pixel_size_fixed = fixed_image.GetSpacing()[0]
@@ -121,32 +124,10 @@ def registration_rot(
     global metric
     metric = []  # type: ignore[name-defined]
 
-    def command_iteration(
-        method,
-        pixel_size_fixed,
-        trans_point,
-        translation,
-        rotation_center,
-        moving_image,
-        fixed_image,
-        rotation_center_pix,
-    ):
-        global metric
-        metric.append(method.GetMetricValue())
-        print(
-            f"{method.GetOptimizerIteration()} "
-            + f"= {method.GetMetricValue()} "
-            + f"\nTRANSLATION: {np.array(method.GetOptimizerPosition())[3:]/pixel_size_fixed}"
-            + f"\nROTATION: {np.rad2deg(np.array(method.GetOptimizerPosition()))[0:3]}"
-            + f"\nCPU usage: {psutil.cpu_percent()}"
-            + f"\nRAM usage: {psutil.virtual_memory().percent}"
-            + f"\nCPU COUNT: {multiprocessing.cpu_count()}"
-        )
+    if verbose:
 
-    R.AddCommand(
-        sitk.sitkIterationEvent,
-        lambda: command_iteration(
-            R,
+        def command_iteration(
+            method,
             pixel_size_fixed,
             trans_point,
             translation,
@@ -154,8 +135,32 @@ def registration_rot(
             moving_image,
             fixed_image,
             rotation_center_pix,
-        ),
-    )
+        ):
+            global metric
+            metric.append(method.GetMetricValue())
+            print(
+                f"{method.GetOptimizerIteration()} "
+                + f"= {method.GetMetricValue()} "
+                + f"\nTRANSLATION: {np.array(method.GetOptimizerPosition())[3:]/pixel_size_fixed}"
+                + f"\nROTATION: {np.rad2deg(np.array(method.GetOptimizerPosition()))[0:3]}"
+                + f"\nCPU usage: {psutil.cpu_percent()}"
+                + f"\nRAM usage: {psutil.virtual_memory().percent}"
+                + f"\nCPU COUNT: {multiprocessing.cpu_count()}"
+            )
+
+        R.AddCommand(
+            sitk.sitkIterationEvent,
+            lambda: command_iteration(
+                R,
+                pixel_size_fixed,
+                trans_point,
+                translation,
+                rotation_center,
+                moving_image,
+                fixed_image,
+                rotation_center_pix,
+            ),
+        )
 
     transform_rotation = R.Execute(fixed_image, moving_image)
 
