@@ -60,20 +60,10 @@ run = {branch = true, parallel = true, source = [
 ]}
 paths.source = [
     "src",
-    ".tox*/*/lib/python*/site-packages",
 ]
 
 [tool.mypy]
-explicit_package_bases = true
-disallow_untyped_calls = false
 ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = [
-    "hipct_reg.tests"
-]
-strict = true
-warn_return_any = false
 
 [tool.pytest.ini_options]
 addopts = """
