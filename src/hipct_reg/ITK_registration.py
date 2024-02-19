@@ -119,7 +119,7 @@ def registration_rot(
         sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "before rot")
 
     global metric
-    metric = []
+    metric = []  # type: ignore[name-defined]
 
     def command_iteration(
         method,
