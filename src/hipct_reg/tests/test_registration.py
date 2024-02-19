@@ -13,6 +13,7 @@ from skimage.measure import block_reduce
 from hipct_reg.helpers import arr_to_index_tuple, import_im
 from hipct_reg.ITK_registration import (
     RegistrationInput,
+    registration_pipeline,
     registration_rot,
     registration_sitk,
 )
@@ -53,27 +54,30 @@ def ground_truth(rng: np.random.Generator) -> npt.NDArray[np.float32]:
 
 
 @pytest.fixture
-def full_organ_scan(
+def full_organ_scan_folder(
     tmp_path: Path, ground_truth: npt.NDArray[np.float32]
-) -> sitk.Image:
-    """
-    Downsampled ground truth data, to mimic a full organ scan.
-    """
+) -> Path:
     full_organ_scan = block_reduce(
         ground_truth, (BIN_FACTOR, BIN_FACTOR, BIN_FACTOR), np.mean
     )
     full_organ_folder = tmp_path / "20.0um_full_organ"
     full_organ_folder.mkdir()
     write_array_to_stack(full_organ_scan, full_organ_folder)
-
-    return import_im(str(full_organ_folder), pixel_size=PIXEL_SIZE_UM * BIN_FACTOR)
+    return full_organ_folder
 
 
 @pytest.fixture
-def roi_scan(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> sitk.Image:
+def full_organ_scan(
+    full_organ_scan_folder: Path,
+) -> sitk.Image:
     """
-    Sub-volume of ground truth data, to mimic ROI data.
+    Downsampled ground truth data, to mimic a full organ scan.
     """
+    return import_im(str(full_organ_scan_folder), pixel_size=PIXEL_SIZE_UM * BIN_FACTOR)
+
+
+@pytest.fixture
+def roi_scan_folder(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> Path:
     roi_scan = ground_truth[
         ROI_OFFSET : ROI_OFFSET + ROI_SIZE,
         ROI_OFFSET : ROI_OFFSET + ROI_SIZE,
@@ -82,8 +86,15 @@ def roi_scan(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> sitk.Imag
     roi_folder = tmp_path / "5.0um_roi"
     roi_folder.mkdir()
     write_array_to_stack(roi_scan, roi_folder)
+    return roi_folder
 
-    return import_im(str(roi_folder), pixel_size=PIXEL_SIZE_UM)
+
+@pytest.fixture
+def roi_scan(roi_scan_folder: Path) -> sitk.Image:
+    """
+    Sub-volume of ground truth data, to mimic ROI data.
+    """
+    return import_im(str(roi_scan_folder), pixel_size=PIXEL_SIZE_UM)
 
 
 @pytest.fixture
@@ -182,4 +193,23 @@ INFO Registration finished!
         np.array(final_registration.GetMatrix()).reshape((3, 3)),
         np.identity(3),
         decimal=2,
+    )
+
+
+def test_registration_pipeline(
+    full_organ_scan_folder: Path, roi_scan_folder: Path
+) -> None:
+    """
+    Test a really simple registration where the common point given is exactly the
+    correct point, and there is no rotation between the two datasets.
+    """
+    trans_point = np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET]) / BIN_FACTOR
+    rotation_center_moving = np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2
+    rotation_center_fixed = trans_point + rotation_center_moving / BIN_FACTOR
+
+    registration_pipeline(
+        str(full_organ_scan_folder),
+        str(roi_scan_folder),
+        rotation_center_fixed,
+        rotation_center_moving,
     )
