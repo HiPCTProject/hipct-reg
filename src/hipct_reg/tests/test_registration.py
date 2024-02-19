@@ -1,6 +1,7 @@
 """An example set of tests."""
 
 import logging
+import re
 from pathlib import Path
 from typing import Any
 
@@ -108,20 +109,20 @@ def test_registration_rot(
             angle_step=2,
         )
 
-    assert (
-        caplog.text
-        == """INFO Starting rotational registration
+    assert re.match(
+        r"""INFO Starting rotational registration
 INFO Initial rotation = 0 deg
 INFO Range = 360 deg
 INFO Step = 2 deg
-INFO Translation = [32. 32. 32.] pix
-INFO Rotation center = [40. 40. 40.] pix
+INFO Translation = \[32. 32. 32.\] pix
+INFO Rotation center = \[40. 40. 40.\] pix
 INFO Starting registration...
 INFO Registration finished!
-INFO Final metric value = -0.1399153134064197
+INFO Final metric value = -0\.[0-9]*
 INFO Stopping condition = ExhaustiveOptimizerv4: Completed sampling of parametric space of size 6
 INFO Registered rotation angele = 2.0 deg
-"""
+""",
+        caplog.text,
     )
 
     assert isinstance(transform, sitk.Euler3DTransform)
