@@ -49,7 +49,7 @@ dev = [
 [tool.coverage]
 report = {skip_covered = true, sort = "cover"}
 run = {branch = true, parallel = true, source = [
-    "hipct-reg",
+    "hipct_reg",
 ]}
 paths.source = [
     "src",
@@ -64,6 +64,8 @@ addopts = """
     --color=yes
     --import-mode=importlib
     --verbose
+    --cov
+    --cov-report=xml
 """
 testpaths = [
     "tests",
