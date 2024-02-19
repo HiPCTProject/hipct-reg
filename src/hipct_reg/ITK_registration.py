@@ -23,7 +23,6 @@ import psutil
 import SimpleITK as sitk
 import skimage.io
 import skimage.measure
-from itkwidgets import checkerboard
 from scipy.spatial.transform import Rotation as ROT
 
 from .helpers import import_im, test_file_type
@@ -301,6 +300,9 @@ def registration_ITKelastix(fixed_image, moving_image, trans_point, zrot, pt_fix
     print("TESTTTTTT")
 
     print(initial_transform)
+
+    from itkwidgets import checkerboard
+
     checkerboard(moving_image, initial_transform, pattern=5)
 
     sys.exit()
