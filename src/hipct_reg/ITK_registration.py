@@ -344,6 +344,7 @@ def registration_sitk(
 
     offset = pixel_size_fixed * trans_point
 
+    # Get coordinate of centre of rotation of the moving image
     rotation_center = offset.copy()
     rotation_center[0] = rotation_center[0] + int(
         pixel_size_moved * moving_image.GetSize()[0] / 2
@@ -706,9 +707,9 @@ def registration_pipeline(
     path_moved :
         Path to the dataset that is being registered.
     pt_fixed :
-        Common point in the fixed dataset.
+        Common point in the fixed dataset. In units of pixels.
     pt_moved :
-        Common point in the dataset being moved.
+        Common point in the dataset being moved. In units of pixels.
 
     """
     # Crop the zoom scan to transform the circle fov into a square, thus avoiding the
@@ -789,6 +790,7 @@ def registration_pipeline(
     pt_fixed = pt_fixed / binning_fixed
     pt_moved = pt_moved / binning_moved
 
+    # Vector from [0, 0, 0] voxel in fixed image to [0, 0, 0] voxel in moving image
     trans_point = pt_fixed - pt_moved * (pixel_size_moved / pixel_size_fixed)
 
     print("---------------------------------------------------")
@@ -813,6 +815,8 @@ def registration_pipeline(
     print(moving_image.GetPixelIDTypeAsString())
     print(moving_image.GetSpacing())
 
+    # Get values to crop the fixed dataset
+    # TODO: check this maths
     zmin = int(
         pt_fixed[2] - 1.2 * ((pt_moved[2]) * pixel_size_moved / pixel_size_fixed)
     )
@@ -870,15 +874,15 @@ def registration_pipeline(
     logging.info("\n---\nRotation registration started\n---")
     zrot = 0
 
+    # Try a full 360 deg first at a coarse step
     angle_range = 360
-    angle_step: float = 2
+    angle_step = 2.0
     transform_rotation = registration_rot(
         fixed_image, moving_image, trans_point, pt_fixed, zrot, angle_range, angle_step
     )
     zrot = np.rad2deg(np.array(transform_rotation.GetParameters()[0:3]))[2]
 
-    # zrot = np.rad2deg(-18.2)
-
+    # Now try a smaller angular step
     angle_range = 5
     angle_step = 0.1
     transform_rotation = registration_rot(
