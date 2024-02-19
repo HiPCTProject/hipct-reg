@@ -1,5 +1,6 @@
 """An example set of tests."""
 
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -83,7 +84,9 @@ def roi_scan(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> sitk.Imag
     return import_im(str(roi_folder), pixel_size=PIXEL_SIZE_UM * 1000)
 
 
-def test_registration_rot(full_organ_scan: sitk.Image, roi_scan: sitk.Image) -> None:
+def test_registration_rot(
+    full_organ_scan: sitk.Image, roi_scan: sitk.Image, caplog
+) -> None:
     """
     Test a really simple registration where the common point given is exactly the
     correct point, and there is no rotation between the two datasets.
@@ -94,14 +97,31 @@ def test_registration_rot(full_organ_scan: sitk.Image, roi_scan: sitk.Image) -> 
     )
 
     zrot = 0
-    transform = registration_rot(
-        fixed_image=full_organ_scan,
-        moving_image=roi_scan,
-        trans_point=trans_point,
-        rotation_center_pix=rotation_center,
-        zrot=zrot,
-        angle_range=360,
-        angle_step=2,
+    with caplog.at_level(logging.INFO):
+        transform = registration_rot(
+            fixed_image=full_organ_scan,
+            moving_image=roi_scan,
+            trans_point=trans_point,
+            rotation_center_pix=rotation_center,
+            zrot=zrot,
+            angle_range=360,
+            angle_step=2,
+        )
+
+    assert (
+        caplog.text
+        == """INFO Starting rotational registration
+INFO Initial rotation = 0 deg
+INFO Range = 360 deg
+INFO Step = 2 deg
+INFO Translation = [32. 32. 32.] pix
+INFO Rotation center = [40. 40. 40.] pix
+INFO Starting registration...
+INFO Registration finished!
+INFO Final metric value = -0.1399153134064197
+INFO Stopping condition = ExhaustiveOptimizerv4: Completed sampling of parametric space of size 6
+INFO Registered rotation angele = 2.0 deg
+"""
     )
 
     assert isinstance(transform, sitk.Euler3DTransform)
