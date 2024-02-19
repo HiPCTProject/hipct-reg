@@ -95,8 +95,8 @@ def test_registration_rot(full_organ_scan: sitk.Image, roi_scan: sitk.Image) -> 
 
     zrot = 0
     transform = registration_rot(
-        full_organ_scan,
-        roi_scan,
+        fixed_image=full_organ_scan,
+        moving_image=roi_scan,
         trans_point=trans_point,
         rotation_center_pix=rotation_center,
         zrot=zrot,
@@ -113,8 +113,8 @@ def test_registration_rot(full_organ_scan: sitk.Image, roi_scan: sitk.Image) -> 
 
     # Try a smaller angular range at higher angular resolution
     transform = registration_rot(
-        full_organ_scan,
-        roi_scan,
+        fixed_image=full_organ_scan,
+        moving_image=roi_scan,
         trans_point=trans_point,
         rotation_center_pix=rotation_center,
         zrot=zrot,
