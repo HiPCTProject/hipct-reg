@@ -100,8 +100,8 @@ def test_registration_rot(
     zrot = 0
     with caplog.at_level(logging.INFO):
         transform = registration_rot(
-            fixed_image=full_organ_scan,
-            moving_image=roi_scan,
+            roi_image=full_organ_scan,
+            full_image=roi_scan,
             trans_point=trans_point,
             rotation_center_pix=rotation_center,
             zrot=zrot,
@@ -135,8 +135,8 @@ INFO Registered rotation angele = 2.0 deg
 
     # Try a smaller angular range at higher angular resolution
     transform = registration_rot(
-        fixed_image=full_organ_scan,
-        moving_image=roi_scan,
+        roi_image=full_organ_scan,
+        full_image=roi_scan,
         trans_point=trans_point,
         rotation_center_pix=rotation_center,
         zrot=zrot,

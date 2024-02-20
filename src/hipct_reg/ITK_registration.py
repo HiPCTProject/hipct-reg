@@ -31,8 +31,8 @@ MAX_THREADS = 0  # 0 if all
 
 def registration_rot(
     *,
-    fixed_image: sitk.Image,
-    moving_image: sitk.Image,
+    roi_image: sitk.Image,
+    full_image: sitk.Image,
     trans_point: npt.NDArray,
     rotation_center_pix: npt.NDArray,
     zrot: float,
@@ -42,9 +42,13 @@ def registration_rot(
     verbose: bool = False,
 ) -> sitk.Euler3DTransform:
     """
+    Run a registration using a rotational transform about the z-axis.
+    The angles of the transform which are sampled are set by manually by function
+    arguments.
+
     Parameters
     ----------
-    fixed_image, moving_image :
+    roi_image, moving_image :
         The images being registered.
     trans_point :
         Vector from [0, 0, 0] voxel in fixed image to [0, 0, 0] voxel in moving image.
@@ -62,7 +66,7 @@ def registration_rot(
         If True, print every step of the optimisation.
 
     """
-    pixel_size_fixed = fixed_image.GetSpacing()[0]
+    pixel_size_fixed = roi_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
 
@@ -108,14 +112,14 @@ def registration_rot(
 
     if fiji:
         moving_resampled = sitk.Resample(
-            moving_image,
-            fixed_image,
+            full_image,
+            roi_image,
             initial_transform,
             sitk.sitkLinear,
             0,
-            fixed_image.GetPixelID(),
+            roi_image.GetPixelID(),
         )
-        sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "before rot")
+        sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "before rot")
 
     if verbose:
         # Add a command to print the result of each iteration
@@ -128,7 +132,7 @@ def registration_rot(
             translation,
             rotation_center,
             moving_image,
-            fixed_image,
+            roi_image,
             rotation_center_pix,
         ):
             metric.append(method.GetMetricValue())
@@ -150,26 +154,26 @@ def registration_rot(
                 trans_point,
                 translation,
                 rotation_center,
-                moving_image,
-                fixed_image,
+                full_image,
+                roi_image,
                 rotation_center_pix,
             ),
         )
 
     logging.info("Starting registration...")
-    transform_rotation: sitk.Euler3DTransform = R.Execute(fixed_image, moving_image)
+    transform_rotation: sitk.Euler3DTransform = R.Execute(roi_image, full_image)
     logging.info("Registration finished!")
 
     if fiji:
         moving_resampled = sitk.Resample(
-            moving_image,
-            fixed_image,
+            full_image,
+            roi_image,
             transform_rotation,
             sitk.sitkLinear,
             0,
-            fixed_image.GetPixelID(),
+            roi_image.GetPixelID(),
         )
-        sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "after rot")
+        sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "after rot")
 
     new_zrot = np.rad2deg(transform_rotation.GetAngleZ())
     # Always check the reason optimization terminated.
@@ -519,8 +523,8 @@ def registration_pipeline(
     angle_range = 360
     angle_step = 2.0
     transform_rotation = registration_rot(
-        fixed_image=fixed_image,
-        moving_image=moving_image,
+        roi_image=fixed_image,
+        full_image=moving_image,
         trans_point=trans_point,
         rotation_center_pix=pt_fixed,
         zrot=zrot,
@@ -533,8 +537,8 @@ def registration_pipeline(
     angle_range = 5
     angle_step = 0.1
     transform_rotation = registration_rot(
-        fixed_image=fixed_image,
-        moving_image=moving_image,
+        roi_image=fixed_image,
+        full_image=moving_image,
         trans_point=trans_point,
         rotation_center_pix=pt_fixed,
         zrot=zrot,
