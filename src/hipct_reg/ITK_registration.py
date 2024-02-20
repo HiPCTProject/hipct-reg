@@ -191,14 +191,15 @@ def registration_sitk(
 
     R = sitk.ImageRegistrationMethod()
 
-    # Similarity metric settings.
+    # Set registration metric settings
     R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
     R.SetMetricSamplingStrategy(R.RANDOM)
+    R.SetMetricSamplingPercentage(0.1)
 
-    R.SetMetricSamplingPercentage(0.01)
-
+    # Set registration interpolator
     R.SetInterpolator(sitk.sitkLinear)
 
+    # Set registartion optimiser settings
     R.SetOptimizerAsLBFGSB(
         gradientConvergenceTolerance=1e-7,
         numberOfIterations=2000,
@@ -206,16 +207,14 @@ def registration_sitk(
         maximumNumberOfFunctionEvaluations=2000,
         costFunctionConvergenceFactor=1e9,
     )
-
     R.SetOptimizerScalesFromPhysicalShift()
+    w = 10
+    R.SetOptimizerWeights([w, w, w, w, w, w, w / 1000])
 
     # Setup for the multi-resolution framework.
     R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 2, 1, 1, 1])
     R.SetSmoothingSigmasPerLevel(smoothingSigmas=[2, 1, 1, 1, 1, 0])
     R.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
-
-    w = 10
-    R.SetOptimizerWeights([w, w, w, w, w, w, w / 1000])
 
     offset = pixel_size_fixed * trans_point
 
