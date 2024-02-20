@@ -108,9 +108,7 @@ def test_registration_rot(
             angle_range=360,
             angle_step=2,
         )
-
-    assert re.match(
-        r"""INFO Starting rotational registration
+        expected = r"""INFO Starting rotational registration
 INFO Initial rotation = 0 deg
 INFO Range = 360 deg
 INFO Step = 2 deg
@@ -121,9 +119,14 @@ INFO Registration finished!
 INFO Final metric value = -0\.[0-9]*
 INFO Stopping condition = ExhaustiveOptimizerv4: Completed sampling of parametric space of size 6
 INFO Registered rotation angele = 2.0 deg
-""",
-        caplog.text,
-    )
+""".split(
+            "\n"
+        )
+    actual = caplog.text.split("\n")
+    assert len(actual) == len(expected), caplog.text
+
+    for line, pattern in zip(actual, expected):
+        assert re.match(pattern, line)
 
     assert isinstance(transform, sitk.Euler3DTransform)
     assert transform.GetAngleX() == 0

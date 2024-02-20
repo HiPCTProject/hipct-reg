@@ -65,18 +65,6 @@ paths.source = [
 [tool.mypy]
 ignore_missing_imports = true
 
-[tool.pytest.ini_options]
-addopts = """
-    --color=yes
-    --import-mode=importlib
-    --verbose
-    --cov
-    --cov-report=xml
-"""
-testpaths = [
-    "src/hipct_reg/tests",
-]
-log_format = "%(levelname)s %(message)s"
 
 [tool.ruff]
 fix = true
