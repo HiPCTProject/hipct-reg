@@ -119,9 +119,7 @@ INFO Registration finished!
 INFO Final metric value = -0\.[0-9]*
 INFO Stopping condition = ExhaustiveOptimizerv4: Completed sampling of parametric space of size 6
 INFO Registered rotation angele = 2.0 deg
-""".split(
-            "\n"
-        )
+""".split("\n")
     actual = caplog.text.split("\n")
     assert len(actual) == len(expected), caplog.text
 
