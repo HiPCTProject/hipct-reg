@@ -69,6 +69,9 @@ ignore_missing_imports = true
 [tool.ruff]
 fix = true
 force-exclude = true
+target-version = "py311"
+
+[tool.ruff.lint]
 ignore = [
     "E501" # Line length
 ]
@@ -84,7 +87,6 @@ select = [
     "UP",
     "NPY",
 ]
-target-version = "py311"
 isort.known-first-party = [
     "hipct_reg",
 ]
