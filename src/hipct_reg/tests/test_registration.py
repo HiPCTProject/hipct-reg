@@ -86,7 +86,7 @@ def roi_scan(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> sitk.Imag
 
 
 def test_registration_rot(
-    full_organ_scan: sitk.Image, roi_scan: sitk.Image, caplog
+    full_organ_scan: sitk.Image, roi_scan: sitk.Image, caplog: pytest.LogCaptureFixture
 ) -> None:
     """
     Test a really simple registration where the common point given is exactly the
@@ -149,8 +149,7 @@ INFO Registered rotation angele = 0.0 deg
 
 
 def test_registration_sitk(
-    full_organ_scan: sitk.Image,
-    roi_scan: sitk.Image,
+    full_organ_scan: sitk.Image, roi_scan: sitk.Image, caplog: pytest.LogCaptureFixture
 ):
     common_point_roi = arr_to_index_tuple(np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2)
     common_point_full = arr_to_index_tuple(
@@ -159,13 +158,26 @@ def test_registration_sitk(
 
     # Rotate the ROI slightly initially to give the registration something to do
     zrot = np.deg2rad(1)
-    final_registration = registration_sitk(
-        roi_image=roi_scan,
-        full_image=full_organ_scan,
-        common_point_roi=common_point_roi,
-        common_point_full=common_point_full,
-        zrot=zrot,
-    )
+    with caplog.at_level(logging.INFO):
+        final_registration = registration_sitk(
+            roi_image=roi_scan,
+            full_image=full_organ_scan,
+            common_point_roi=common_point_roi,
+            common_point_full=common_point_full,
+            zrot=zrot,
+        )
+
+    # Don't test output lines, as the final values are subject to floating point
+    # differences on each run
+    expected = r"""INFO Starting full registration...
+INFO Common point ROI = (32, 32, 32)
+INFO Common point full = (40, 40, 40)
+INFO Initial rotation = 0.017453292519943295
+INFO Starting registration...
+INFO Registration finished!
+"""
+    print(caplog.text)
+    assert caplog.text.startswith(expected)
 
     assert isinstance(final_registration, sitk.Similarity3DTransform)
     # Final matrix should be close to the identity matrix

@@ -201,6 +201,10 @@ def registration_sitk(
         Initial rotation for the registration. In units of degrees.
 
     """
+    logging.info("Starting full registration...")
+    logging.info(f"Common point ROI = {common_point_roi}")
+    logging.info(f"Common point full = {common_point_full}")
+    logging.info(f"Initial rotation = {zrot}")
     pixel_size_fixed = roi_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
@@ -292,7 +296,9 @@ def registration_sitk(
         lambda: command_iteration(R, pixel_size_fixed),
     )
 
+    logging.info("Starting registration...")
     final_transform: sitk.Similarity3DTransform = R.Execute(roi_image, full_image)
+    logging.info("Registration finished!")
 
     if fiji:
         moving_resampled = sitk.Resample(
@@ -310,12 +316,12 @@ def registration_sitk(
         f"Optimizer's stopping condition, {R.GetOptimizerStopConditionDescription()}"
     )
 
-    logging.info(
-        f"translation = {np.array(final_transform.GetParameters()[3:])/roi_image.GetSpacing()[0]}\n"
+    translation_pix = roi_image.TransformPhysicalPointToContinuousIndex(
+        final_transform.GetParameters()[3:6]
     )
-    logging.info(
-        f"rotation = {np.rad2deg(np.array(final_transform.GetParameters()[0:3]))}\n"
-    )
+    rotation = np.rad2deg(np.array(final_transform.GetParameters()[0:3]))
+    logging.info(f"translation = {translation_pix} pix")
+    logging.info(f"rotation = {rotation} deg")
 
     return final_transform
 
