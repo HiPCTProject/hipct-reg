@@ -54,8 +54,7 @@ dev = [
 ]
 
 [tool.coverage]
-report = {skip_covered = true, sort = "cover"}
-run = {branch = true, parallel = true, source = [
+run = {source = [
     "hipct_reg",
 ]}
 paths.source = [

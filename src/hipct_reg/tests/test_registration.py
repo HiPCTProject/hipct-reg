@@ -1,5 +1,3 @@
-"""An example set of tests."""
-
 import logging
 from pathlib import Path
 from typing import Any

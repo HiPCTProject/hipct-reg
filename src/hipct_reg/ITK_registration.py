@@ -70,7 +70,7 @@ def registration_rot(
     # Similarity metric settings.
     R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
     R.SetMetricSamplingStrategy(R.NONE)
-    R.SetMetricSamplingPercentage(0.01)
+    R.SetMetricSamplingPercentage(0.01, seed=1)
 
     R.SetInterpolator(sitk.sitkLinear)
 
@@ -208,7 +208,7 @@ def registration_sitk(
     # Set registration metric settings
     R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
     R.SetMetricSamplingStrategy(R.RANDOM)
-    R.SetMetricSamplingPercentage(0.1)
+    R.SetMetricSamplingPercentage(0.1, seed=1)
 
     # Set registration interpolator
     R.SetInterpolator(sitk.sitkLinear)
