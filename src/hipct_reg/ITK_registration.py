@@ -178,7 +178,7 @@ def registration_rot(
 
 
 def registration_sitk(
-    fixed_image, moving_image, trans_point, zrot, pt_fixed, fiji=False
+    *, fixed_image, moving_image, trans_point, zrot, pt_fixed, fiji=False
 ):
     pixel_size_fixed = fixed_image.GetSpacing()[0]
     pixel_size_moved = moving_image.GetSpacing()[0]
@@ -549,7 +549,11 @@ def registration_pipeline(
 
     logging.info("\n---\nSimilarity registration started\n---")
     initial_transform, final_transform = registration_sitk(
-        fixed_image, moving_image, trans_point, zrot, pt_fixed
+        fixed_image=fixed_image,
+        moving_image=moving_image,
+        trans_point=trans_point,
+        zrot=zrot,
+        pt_fixed=pt_fixed,
     )
 
     print("\n\n\nRESULTS\n")
