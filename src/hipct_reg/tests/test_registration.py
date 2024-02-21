@@ -13,7 +13,10 @@ from skimage.data import binary_blobs
 from skimage.measure import block_reduce
 
 from hipct_reg.helpers import arr_to_index_tuple, import_im
-from hipct_reg.ITK_registration import registration_rot
+from hipct_reg.ITK_registration import (
+    registration_rot,
+    registration_sitk,
+)
 
 # Pixel size of full resolution (ROI) pixels
 PIXEL_SIZE_UM = 5
@@ -145,3 +148,31 @@ INFO Registered rotation angele = 0.0 deg
     # This value should be close to zero
     zrot = np.rad2deg(transform.GetAngleZ())
     assert zrot == pytest.approx(0.3)
+
+
+def test_registration_sitk(
+    full_organ_scan: sitk.Image,
+    roi_scan: sitk.Image,
+):
+    common_point_roi = arr_to_index_tuple(np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2)
+    common_point_full = arr_to_index_tuple(
+        (np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET]) + common_point_roi) / BIN_FACTOR
+    )
+
+    # Rotate the ROI slightly initially to give the registration something to do
+    zrot = np.deg2rad(1)
+    final_registration = registration_sitk(
+        roi_image=roi_scan,
+        full_image=full_organ_scan,
+        common_point_roi=common_point_roi,
+        common_point_full=common_point_full,
+        zrot=zrot,
+    )
+
+    assert isinstance(final_registration, sitk.Similarity3DTransform)
+    # Final matrix should be close to the identity matrix
+    np.testing.assert_almost_equal(
+        np.array(final_registration.GetMatrix()).reshape((3, 3)),
+        np.identity(3),
+        decimal=2,
+    )

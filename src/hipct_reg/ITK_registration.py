@@ -178,21 +178,42 @@ def registration_rot(
 
 
 def registration_sitk(
-    fixed_image, moving_image, trans_point, zrot, pt_fixed, fiji=False
-):
-    pixel_size_fixed = fixed_image.GetSpacing()[0]
-    pixel_size_moved = moving_image.GetSpacing()[0]
+    *,
+    roi_image: sitk.Image,
+    full_image: sitk.Image,
+    common_point_roi: tuple[int, int, int],
+    common_point_full: tuple[int, int, int],
+    zrot: float,
+    fiji: bool = False,
+) -> sitk.Similarity3DTransform:
+    """
+    Run a registration using a full rigid transform.
+
+    Parameters
+    ----------
+    roi_image, moving_image :
+        The images being registered.
+    common_point_roi :
+        Pixel indices of a common point between two images, in the ROI image.
+    common_point_full :
+        Pixel indices of a common point between two images, in the full-organ image.
+    zrot :
+        Initial rotation for the registration. In units of degrees.
+
+    """
+    pixel_size_fixed = roi_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
 
-    # Similarity metric settings.
+    # Set registration metric settings
     R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
     R.SetMetricSamplingStrategy(R.RANDOM)
+    R.SetMetricSamplingPercentage(0.1)
 
-    R.SetMetricSamplingPercentage(0.01)
-
+    # Set registration interpolator
     R.SetInterpolator(sitk.sitkLinear)
 
+    # Set registartion optimiser settings
     R.SetOptimizerAsLBFGSB(
         gradientConvergenceTolerance=1e-7,
         numberOfIterations=2000,
@@ -200,41 +221,28 @@ def registration_sitk(
         maximumNumberOfFunctionEvaluations=2000,
         costFunctionConvergenceFactor=1e9,
     )
-
     R.SetOptimizerScalesFromPhysicalShift()
+    w = 10
+    R.SetOptimizerWeights([w, w, w, w, w, w, w / 1000])
 
     # Setup for the multi-resolution framework.
     R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 2, 1, 1, 1])
     R.SetSmoothingSigmasPerLevel(smoothingSigmas=[2, 1, 1, 1, 1, 0])
     R.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
 
-    w = 10
-    R.SetOptimizerWeights([w, w, w, w, w, w, w / 1000])
-
-    offset = pixel_size_fixed * trans_point
-
-    # Get coordinate of centre of rotation of the moving image
-    rotation_center = offset.copy()
-    rotation_center[0] = rotation_center[0] + int(
-        pixel_size_moved * moving_image.GetSize()[0] / 2
+    # These variables are in physical coordinates
+    # Rotation centre of transform in ROI image
+    rotation_center = roi_image.TransformIndexToPhysicalPoint(common_point_roi)
+    # Translation from ROI image to full image
+    translation = -np.array(rotation_center) + np.array(
+        full_image.TransformIndexToPhysicalPoint(common_point_full)
     )
-    rotation_center[1] = rotation_center[1] + int(
-        pixel_size_moved * moving_image.GetSize()[1] / 2
-    )
-
-    rotation_center = pt_fixed * pixel_size_fixed
+    logging.debug(f"rotation center = {rotation_center}")
+    logging.debug(f"translation from ROI to full organ = {translation}")
 
     theta_x = 0.0
     theta_y = 0.0
     theta_z = np.deg2rad(zrot)
-    translation = -offset
-
-    print("OFFSET IS ", np.append([theta_x, theta_y, theta_z], translation))
-    print("TRANSLATION X: ", -translation[0] / pixel_size_fixed)
-    print("TRANSLATION Y: ", -translation[1] / pixel_size_fixed)
-    print("TRANSLATION Z: ", -translation[2] / pixel_size_fixed)
-
-    print("ROTATION CENTER: ", rotation_center)
 
     rigid_euler = sitk.Euler3DTransform(
         rotation_center, theta_x, theta_y, theta_z, translation
@@ -250,27 +258,25 @@ def registration_sitk(
 
     if fiji:
         moving_resampled = sitk.Resample(
-            moving_image,
-            fixed_image,
+            full_image,
+            roi_image,
             initial_transform,
             sitk.sitkLinear,
             0,
-            fixed_image.GetPixelID(),
+            roi_image.GetPixelID(),
         )
-        sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "ini")
+        sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "ini")
 
-    global metric
     metric = []
 
-    def command_iteration(method, pixel_size, trans_point):
-        global metric
+    def command_iteration(method, pixel_size):
         metric.append(method.GetMetricValue())
 
         q0, q1, q2, q3 = method.GetOptimizerPosition()[0:4]
         r = ROT.from_quat([q0, q1, q2, q3])
         theta_x, theta_y, theta_z = np.rad2deg(r.as_rotvec())
 
-        print(
+        logging.debug(
             f"{method.GetOptimizerIteration()} "
             + f" = {method.GetMetricValue()} "
             + f"\nGetOptimizerPosition: {method.GetOptimizerPosition()}"
@@ -283,45 +289,35 @@ def registration_sitk(
 
     R.AddCommand(
         sitk.sitkIterationEvent,
-        lambda: command_iteration(R, pixel_size_fixed, trans_point),
+        lambda: command_iteration(R, pixel_size_fixed),
     )
 
-    final_transform = R.Execute(fixed_image, moving_image)
+    final_transform: sitk.Similarity3DTransform = R.Execute(roi_image, full_image)
 
     if fiji:
         moving_resampled = sitk.Resample(
-            moving_image,
-            fixed_image,
+            full_image,
+            roi_image,
             final_transform,
             sitk.sitkLinear,
             0,
-            fixed_image.GetPixelID(),
+            roi_image.GetPixelID(),
         )
-        sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "Final")
+        sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "Final")
 
-    # Always check the reason optimization terminated.
-    print("OFFSET IS ", trans_point, "\n")
-    print(
-        f"TRANSLATION: {np.array(final_transform.GetParameters()[3:])/fixed_image.GetSpacing()[0]}",
-        "\n",
+    logging.debug(f"Final metric value: {R.GetMetricValue()}")
+    logging.debug(
+        f"Optimizer's stopping condition, {R.GetOptimizerStopConditionDescription()}"
     )
-    print(
-        f"ROTATION: {np.rad2deg(np.array(final_transform.GetParameters()[0:3]))}", "\n"
-    )
-
-    print(f"Final metric value: {R.GetMetricValue()}")
-    print(f"Optimizer's stopping condition, {R.GetOptimizerStopConditionDescription()}")
 
     logging.info(
-        f"TRANSLATION: {np.array(final_transform.GetParameters()[3:])/fixed_image.GetSpacing()[0]}\n"
+        f"translation = {np.array(final_transform.GetParameters()[3:])/roi_image.GetSpacing()[0]}\n"
     )
     logging.info(
-        f"ROTATION: {np.rad2deg(np.array(final_transform.GetParameters()[0:3]))}\n"
+        f"rotation = {np.rad2deg(np.array(final_transform.GetParameters()[0:3]))}\n"
     )
-    logging.info(f"Final metric value: {R.GetMetricValue()}")
 
-    print(final_transform)
-    return initial_transform, final_transform
+    return final_transform
 
 
 def get_pixel_size(path: str) -> float:
@@ -548,8 +544,12 @@ def registration_pipeline(
     print("\nSTART SIMILARITY REGISTRATION")
 
     logging.info("\n---\nSimilarity registration started\n---")
-    initial_transform, final_transform = registration_sitk(
-        fixed_image, moving_image, trans_point, zrot, pt_fixed
+    final_transform = registration_sitk(
+        roi_image=fixed_image,
+        full_image=moving_image,
+        common_point_roi=pt_fixed,
+        common_point_full=pt_moved,
+        zrot=zrot,
     )
 
     print("\n\n\nRESULTS\n")
