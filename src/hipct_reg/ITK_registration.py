@@ -9,7 +9,6 @@ import ast
 import glob
 import logging
 import math
-import multiprocessing
 import os
 import sys
 import time
@@ -125,7 +124,7 @@ def registration_rot(
         metric = []
 
         def command_iteration(
-            method,
+            method: sitk.ImageRegistrationMethod,
             pixel_size_fixed,
             translation,
             rotation_center,
@@ -133,15 +132,15 @@ def registration_rot(
             roi_image,
         ):
             metric.append(method.GetMetricValue())
-            logging.debug(
-                f"{method.GetOptimizerIteration()} "
-                + f"= {method.GetMetricValue()} "
-                + f"\nTRANSLATION: {np.array(method.GetOptimizerPosition())[3:]/pixel_size_fixed}"
-                + f"\nROTATION: {np.rad2deg(np.array(method.GetOptimizerPosition()))[0:3]}"
-                + f"\nCPU usage: {psutil.cpu_percent()}"
-                + f"\nRAM usage: {psutil.virtual_memory().percent}"
-                + f"\nCPU COUNT: {multiprocessing.cpu_count()}"
-            )
+            rotation = np.rad2deg(method.GetOptimizerPosition()[0:3])
+            translation = method.GetOptimizerPosition()[3:6]
+            logging.debug(f"iteration = {method.GetOptimizerIteration()}")
+            logging.debug(f"metric = {method.GetMetricValue()}")
+            logging.debug(f"translation = {translation}")
+            logging.debug(f"rotation = {rotation} deg")
+            logging.debug(f"CPU usage: {psutil.cpu_percent()}")
+            logging.debug(f"RAM usage: {psutil.virtual_memory().percent}")
+            logging.debug("")
 
         R.AddCommand(
             sitk.sitkIterationEvent,

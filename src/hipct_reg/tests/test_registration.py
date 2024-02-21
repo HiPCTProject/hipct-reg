@@ -127,6 +127,7 @@ INFO Registered rotation angele = 0.0 deg
     assert zrot == pytest.approx(0)
 
     # Try a smaller angular range at higher angular resolution
+    # Also smoke test verbose option for logging at DEBUG level
     transform = registration_rot(
         roi_image=roi_scan,
         full_image=full_organ_scan,
@@ -135,6 +136,7 @@ INFO Registered rotation angele = 0.0 deg
         zrot=zrot,
         angle_range=5,
         angle_step=0.1,
+        verbose=True,
     )
 
     assert isinstance(transform, sitk.Euler3DTransform)
