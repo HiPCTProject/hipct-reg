@@ -178,7 +178,13 @@ def registration_rot(
 
 
 def registration_sitk(
-    *, fixed_image, moving_image, trans_point, zrot, pt_fixed, fiji=False
+    *,
+    fixed_image: sitk.Image,
+    moving_image: sitk.Image,
+    trans_point: npt.NDArray,
+    zrot: float,
+    pt_fixed: npt.NDArray,
+    fiji: bool = False,
 ):
     pixel_size_fixed = fixed_image.GetSpacing()[0]
     pixel_size_moved = moving_image.GetSpacing()[0]
