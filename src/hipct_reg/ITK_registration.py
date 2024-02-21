@@ -256,7 +256,7 @@ def registration_sitk(
 
     del rigid_euler
 
-    R.SetInitialTransform(initial_transform, inPlace=True)
+    R.SetInitialTransform(initial_transform, inPlace=False)
 
     if fiji:
         moving_resampled = sitk.Resample(
@@ -278,7 +278,7 @@ def registration_sitk(
         r = ROT.from_quat([q0, q1, q2, q3])
         theta_x, theta_y, theta_z = np.rad2deg(r.as_rotvec())
 
-        print(
+        logging.debug(
             f"{method.GetOptimizerIteration()} "
             + f" = {method.GetMetricValue()} "
             + f"\nGetOptimizerPosition: {method.GetOptimizerPosition()}"
@@ -294,7 +294,7 @@ def registration_sitk(
         lambda: command_iteration(R, pixel_size_fixed),
     )
 
-    final_transform = R.Execute(roi_image, full_image)
+    final_transform: sitk.Similarity3DTransform = R.Execute(roi_image, full_image)
 
     if fiji:
         moving_resampled = sitk.Resample(
@@ -307,27 +307,18 @@ def registration_sitk(
         )
         sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "Final")
 
-    # Always check the reason optimization terminated.
-    print(
-        f"TRANSLATION: {np.array(final_transform.GetParameters()[3:])/roi_image.GetSpacing()[0]}",
-        "\n",
+    logging.debug(f"Final metric value: {R.GetMetricValue()}")
+    logging.debug(
+        f"Optimizer's stopping condition, {R.GetOptimizerStopConditionDescription()}"
     )
-    print(
-        f"ROTATION: {np.rad2deg(np.array(final_transform.GetParameters()[0:3]))}", "\n"
-    )
-
-    print(f"Final metric value: {R.GetMetricValue()}")
-    print(f"Optimizer's stopping condition, {R.GetOptimizerStopConditionDescription()}")
 
     logging.info(
-        f"TRANSLATION: {np.array(final_transform.GetParameters()[3:])/roi_image.GetSpacing()[0]}\n"
+        f"translation = {np.array(final_transform.GetParameters()[3:])/roi_image.GetSpacing()[0]}\n"
     )
     logging.info(
-        f"ROTATION: {np.rad2deg(np.array(final_transform.GetParameters()[0:3]))}\n"
+        f"rotation = {np.rad2deg(np.array(final_transform.GetParameters()[0:3]))}\n"
     )
-    logging.info(f"Final metric value: {R.GetMetricValue()}")
 
-    print(final_transform)
     return initial_transform, final_transform
 
 
