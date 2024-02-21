@@ -12,7 +12,8 @@ import math
 import os
 import sys
 import time
-from tkinter import Tk  # from tkinter import Tk for Python 3.x
+from dataclasses import dataclass
+from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 
 import numpy as np
@@ -28,12 +29,24 @@ from .helpers import import_im, test_file_type
 MAX_THREADS = 0  # 0 if all
 
 
+@dataclass
+class RegistrationInput:
+    """
+    A container for all the data needed to register a ROI to a full-organ scan.
+
+    Contains both images, and pixel indices of a common point in both images.
+    """
+
+    roi_image: sitk.Image
+    full_image: sitk.Image
+    # Common points are in units of pixels
+    common_point_roi: tuple[int, int, int]
+    common_point_full: tuple[int, int, int]
+
+
 def registration_rot(
+    reg_input: RegistrationInput,
     *,
-    roi_image: sitk.Image,
-    full_image: sitk.Image,
-    common_point_roi: tuple[int, int, int],
-    common_point_full: tuple[int, int, int],
     zrot: float,
     angle_range: float,
     angle_step: float,
@@ -63,7 +76,7 @@ def registration_rot(
         If True, print every step of the optimisation.
 
     """
-    pixel_size_fixed = roi_image.GetSpacing()[0]
+    pixel_size_fixed = reg_input.roi_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
 
@@ -79,8 +92,8 @@ def registration_rot(
     logging.info(f"Initial rotation = {zrot} deg")
     logging.info(f"Range = {angle_range} deg")
     logging.info(f"Step = {angle_step} deg")
-    logging.info(f"Common point ROI = {common_point_roi} pix")
-    logging.info(f"Common point full = {common_point_full} pix")
+    logging.info(f"Common point ROI = {reg_input.common_point_roi} pix")
+    logging.info(f"Common point full = {reg_input.common_point_full} pix")
 
     R.SetOptimizerAsExhaustive(
         numberOfSteps=[0, 0, int((angle_range / 2) / angle_step), 0, 0, 0],
@@ -90,10 +103,12 @@ def registration_rot(
     R.SetOptimizerScalesFromPhysicalShift()
     # These variables are in physical coordinates
     # Rotation centre of transform in ROI image
-    rotation_center = roi_image.TransformIndexToPhysicalPoint(common_point_roi)
+    rotation_center = reg_input.roi_image.TransformIndexToPhysicalPoint(
+        reg_input.common_point_roi
+    )
     # Translation from ROI image to full image
     translation = -np.array(rotation_center) + np.array(
-        full_image.TransformIndexToPhysicalPoint(common_point_full)
+        reg_input.full_image.TransformIndexToPhysicalPoint(reg_input.common_point_full)
     )
     logging.debug(f"rotation center = {rotation_center}")
     logging.debug(f"translation from ROI to full organ = {translation}")
@@ -110,14 +125,14 @@ def registration_rot(
 
     if fiji:
         moving_resampled = sitk.Resample(
-            full_image,
-            roi_image,
+            reg_input.full_image,
+            reg_input.roi_image,
             initial_transform,
             sitk.sitkLinear,
             0,
-            roi_image.GetPixelID(),
+            reg_input.roi_image.GetPixelID(),
         )
-        sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "before rot")
+        sitk.Show(0.6 * moving_resampled + 0.4 * reg_input.roi_image, "before rot")
 
     if verbose:
         # Add a command to print the result of each iteration
@@ -149,25 +164,27 @@ def registration_rot(
                 pixel_size_fixed,
                 translation,
                 rotation_center,
-                full_image,
-                roi_image,
+                reg_input.full_image,
+                reg_input.roi_image,
             ),
         )
 
     logging.info("Starting registration...")
-    transform_rotation: sitk.Euler3DTransform = R.Execute(roi_image, full_image)
+    transform_rotation: sitk.Euler3DTransform = R.Execute(
+        reg_input.roi_image, reg_input.full_image
+    )
     logging.info("Registration finished!")
 
     if fiji:
         moving_resampled = sitk.Resample(
-            full_image,
-            roi_image,
+            reg_input.full_image,
+            reg_input.roi_image,
             transform_rotation,
             sitk.sitkLinear,
             0,
-            roi_image.GetPixelID(),
+            reg_input.roi_image.GetPixelID(),
         )
-        sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "after rot")
+        sitk.Show(0.6 * moving_resampled + 0.4 * reg_input.roi_image, "after rot")
 
     new_zrot = np.rad2deg(transform_rotation.GetAngleZ())
     logging.debug(f"Final metric value = {R.GetMetricValue()}")
@@ -178,11 +195,8 @@ def registration_rot(
 
 
 def registration_sitk(
+    reg_input: RegistrationInput,
     *,
-    roi_image: sitk.Image,
-    full_image: sitk.Image,
-    common_point_roi: tuple[int, int, int],
-    common_point_full: tuple[int, int, int],
     zrot: float,
     fiji: bool = False,
 ) -> sitk.Similarity3DTransform:
@@ -202,10 +216,10 @@ def registration_sitk(
 
     """
     logging.info("Starting full registration...")
-    logging.info(f"Common point ROI = {common_point_roi}")
-    logging.info(f"Common point full = {common_point_full}")
+    logging.info(f"Common point ROI = {reg_input.common_point_roi}")
+    logging.info(f"Common point full = {reg_input.common_point_full}")
     logging.info(f"Initial rotation = {zrot}")
-    pixel_size_fixed = roi_image.GetSpacing()[0]
+    pixel_size_fixed = reg_input.roi_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
 
@@ -236,10 +250,12 @@ def registration_sitk(
 
     # These variables are in physical coordinates
     # Rotation centre of transform in ROI image
-    rotation_center = roi_image.TransformIndexToPhysicalPoint(common_point_roi)
+    rotation_center = reg_input.roi_image.TransformIndexToPhysicalPoint(
+        reg_input.common_point_roi
+    )
     # Translation from ROI image to full image
     translation = -np.array(rotation_center) + np.array(
-        full_image.TransformIndexToPhysicalPoint(common_point_full)
+        reg_input.full_image.TransformIndexToPhysicalPoint(reg_input.common_point_full)
     )
     logging.debug(f"rotation center = {rotation_center}")
     logging.debug(f"translation from ROI to full organ = {translation}")
@@ -262,14 +278,14 @@ def registration_sitk(
 
     if fiji:
         moving_resampled = sitk.Resample(
-            full_image,
-            roi_image,
+            reg_input.full_image,
+            reg_input.roi_image,
             initial_transform,
             sitk.sitkLinear,
             0,
-            roi_image.GetPixelID(),
+            reg_input.roi_image.GetPixelID(),
         )
-        sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "ini")
+        sitk.Show(0.6 * moving_resampled + 0.4 * reg_input.roi_image, "ini")
 
     metric = []
 
@@ -297,26 +313,28 @@ def registration_sitk(
     )
 
     logging.info("Starting registration...")
-    final_transform: sitk.Similarity3DTransform = R.Execute(roi_image, full_image)
+    final_transform: sitk.Similarity3DTransform = R.Execute(
+        reg_input.roi_image, reg_input.full_image
+    )
     logging.info("Registration finished!")
 
     if fiji:
         moving_resampled = sitk.Resample(
-            full_image,
-            roi_image,
+            reg_input.full_image,
+            reg_input.roi_image,
             final_transform,
             sitk.sitkLinear,
             0,
-            roi_image.GetPixelID(),
+            reg_input.roi_image.GetPixelID(),
         )
-        sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "Final")
+        sitk.Show(0.6 * moving_resampled + 0.4 * reg_input.roi_image, "Final")
 
     logging.debug(f"Final metric value: {R.GetMetricValue()}")
     logging.debug(
         f"Optimizer's stopping condition, {R.GetOptimizerStopConditionDescription()}"
     )
 
-    translation_pix = roi_image.TransformPhysicalPointToContinuousIndex(
+    translation_pix = reg_input.roi_image.TransformPhysicalPointToContinuousIndex(
         final_transform.GetParameters()[3:6]
     )
     rotation = np.rad2deg(np.array(final_transform.GetParameters()[0:3]))
@@ -514,14 +532,18 @@ def registration_pipeline(
     logging.info("\n---\nRotation registration started\n---")
     zrot = 0
 
-    # Try a full 360 deg first at a coarse step
-    angle_range = 360
-    angle_step = 2.0
-    transform_rotation = registration_rot(
+    reg_input = RegistrationInput(
         roi_image=fixed_image,
         full_image=moving_image,
         common_point_roi=pt_fixed,
         common_point_full=pt_moved,
+    )
+
+    # Try a full 360 deg first at a coarse step
+    angle_range = 360
+    angle_step = 2.0
+    transform_rotation = registration_rot(
+        reg_input,
         zrot=zrot,
         angle_range=angle_range,
         angle_step=angle_step,
@@ -532,10 +554,7 @@ def registration_pipeline(
     angle_range = 5
     angle_step = 0.1
     transform_rotation = registration_rot(
-        roi_image=fixed_image,
-        full_image=moving_image,
-        common_point_roi=pt_fixed,
-        common_point_full=pt_moved,
+        reg_input,
         zrot=zrot,
         angle_range=angle_range,
         angle_step=angle_step,
@@ -551,10 +570,7 @@ def registration_pipeline(
 
     logging.info("\n---\nSimilarity registration started\n---")
     final_transform = registration_sitk(
-        roi_image=fixed_image,
-        full_image=moving_image,
-        common_point_roi=pt_fixed,
-        common_point_full=pt_moved,
+        reg_input,
         zrot=zrot,
     )
 

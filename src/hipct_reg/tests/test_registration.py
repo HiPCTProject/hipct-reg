@@ -12,6 +12,7 @@ from skimage.measure import block_reduce
 
 from hipct_reg.helpers import arr_to_index_tuple, import_im
 from hipct_reg.ITK_registration import (
+    RegistrationInput,
     registration_rot,
     registration_sitk,
 )
@@ -85,25 +86,32 @@ def roi_scan(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> sitk.Imag
     return import_im(str(roi_folder), pixel_size=PIXEL_SIZE_UM)
 
 
+@pytest.fixture
+def reg_input(roi_scan, full_organ_scan) -> RegistrationInput:
+    common_point_roi = arr_to_index_tuple(np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2)
+    common_point_full = arr_to_index_tuple(
+        (np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET]) + common_point_roi) / BIN_FACTOR
+    )
+    return RegistrationInput(
+        roi_image=roi_scan,
+        full_image=full_organ_scan,
+        common_point_roi=common_point_roi,
+        common_point_full=common_point_full,
+    )
+
+
 def test_registration_rot(
-    full_organ_scan: sitk.Image, roi_scan: sitk.Image, caplog: pytest.LogCaptureFixture
+    reg_input: RegistrationInput, caplog: pytest.LogCaptureFixture
 ) -> None:
     """
     Test a really simple registration where the common point given is exactly the
     correct point, and there is no rotation between the two datasets.
     """
-    common_point_roi = arr_to_index_tuple(np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2)
-    common_point_full = arr_to_index_tuple(
-        (np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET]) + common_point_roi) / BIN_FACTOR
-    )
 
     zrot = 0
     with caplog.at_level(logging.INFO):
         transform = registration_rot(
-            roi_image=roi_scan,
-            full_image=full_organ_scan,
-            common_point_roi=common_point_roi,
-            common_point_full=common_point_full,
+            reg_input,
             zrot=zrot,
             angle_range=360,
             angle_step=2,
@@ -130,10 +138,7 @@ INFO Registered rotation angele = 0.0 deg
     # Try a smaller angular range at higher angular resolution
     # Also smoke test verbose option for logging at DEBUG level
     transform = registration_rot(
-        roi_image=roi_scan,
-        full_image=full_organ_scan,
-        common_point_roi=common_point_roi,
-        common_point_full=common_point_full,
+        reg_input,
         zrot=zrot,
         angle_range=5,
         angle_step=0.1,
@@ -149,21 +154,13 @@ INFO Registered rotation angele = 0.0 deg
 
 
 def test_registration_sitk(
-    full_organ_scan: sitk.Image, roi_scan: sitk.Image, caplog: pytest.LogCaptureFixture
+    reg_input: RegistrationInput, caplog: pytest.LogCaptureFixture
 ):
-    common_point_roi = arr_to_index_tuple(np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2)
-    common_point_full = arr_to_index_tuple(
-        (np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET]) + common_point_roi) / BIN_FACTOR
-    )
-
     # Rotate the ROI slightly initially to give the registration something to do
     zrot = np.deg2rad(1)
     with caplog.at_level(logging.INFO):
         final_registration = registration_sitk(
-            roi_image=roi_scan,
-            full_image=full_organ_scan,
-            common_point_roi=common_point_roi,
-            common_point_full=common_point_full,
+            reg_input,
             zrot=zrot,
         )
 
