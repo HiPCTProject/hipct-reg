@@ -1,7 +1,6 @@
 """An example set of tests."""
 
 import logging
-import re
 from pathlib import Path
 from typing import Any
 
@@ -13,11 +12,13 @@ import tifffile
 from skimage.data import binary_blobs
 from skimage.measure import block_reduce
 
-from hipct_reg.helpers import import_im
+from hipct_reg.helpers import arr_to_index_tuple, import_im
 from hipct_reg.ITK_registration import registration_rot
 
+# Pixel size of full resolution (ROI) pixels
 PIXEL_SIZE_UM = 5
 BIN_FACTOR = 4
+# Offset in units of full-resolution (ROI) pixels
 ROI_OFFSET = 128
 ROI_SIZE = 64
 
@@ -63,9 +64,7 @@ def full_organ_scan(
     full_organ_folder.mkdir()
     write_array_to_stack(full_organ_scan, full_organ_folder)
 
-    return import_im(
-        str(full_organ_folder), pixel_size=PIXEL_SIZE_UM * BIN_FACTOR * 1000
-    )
+    return import_im(str(full_organ_folder), pixel_size=PIXEL_SIZE_UM * BIN_FACTOR)
 
 
 @pytest.fixture
@@ -82,7 +81,7 @@ def roi_scan(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> sitk.Imag
     roi_folder.mkdir()
     write_array_to_stack(roi_scan, roi_folder)
 
-    return import_im(str(roi_folder), pixel_size=PIXEL_SIZE_UM * 1000)
+    return import_im(str(roi_folder), pixel_size=PIXEL_SIZE_UM)
 
 
 def test_registration_rot(
@@ -92,18 +91,18 @@ def test_registration_rot(
     Test a really simple registration where the common point given is exactly the
     correct point, and there is no rotation between the two datasets.
     """
-    trans_point = np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET]) / BIN_FACTOR
-    rotation_center = (
-        trans_point + np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2 / BIN_FACTOR
+    common_point_roi = arr_to_index_tuple(np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2)
+    common_point_full = arr_to_index_tuple(
+        (np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET]) + common_point_roi) / BIN_FACTOR
     )
 
     zrot = 0
     with caplog.at_level(logging.INFO):
         transform = registration_rot(
-            roi_image=full_organ_scan,
-            full_image=roi_scan,
-            trans_point=trans_point,
-            rotation_center_pix=rotation_center,
+            roi_image=roi_scan,
+            full_image=full_organ_scan,
+            common_point_roi=common_point_roi,
+            common_point_full=common_point_full,
             zrot=zrot,
             angle_range=360,
             angle_step=2,
@@ -112,33 +111,27 @@ def test_registration_rot(
 INFO Initial rotation = 0 deg
 INFO Range = 360 deg
 INFO Step = 2 deg
-INFO Translation = \[32. 32. 32.\] pix
-INFO Rotation center = \[40. 40. 40.\] pix
+INFO Common point ROI = (32, 32, 32) pix
+INFO Common point full = (40, 40, 40) pix
 INFO Starting registration...
 INFO Registration finished!
-INFO Final metric value = -0\.[0-9]*
-INFO Stopping condition = ExhaustiveOptimizerv4: Completed sampling of parametric space of size 6
-INFO Registered rotation angele = 2.0 deg
-""".split("\n")
-    actual = caplog.text.split("\n")
-    assert len(actual) == len(expected), caplog.text
-
-    for line, pattern in zip(actual, expected):
-        assert re.match(pattern, line)
+INFO Registered rotation angele = 0.0 deg
+"""
+    assert caplog.text == expected
 
     assert isinstance(transform, sitk.Euler3DTransform)
     assert transform.GetAngleX() == 0
     assert transform.GetAngleY() == 0
     # This value should be close to zero
     zrot = np.rad2deg(transform.GetAngleZ())
-    assert zrot == pytest.approx(2)
+    assert zrot == pytest.approx(0)
 
     # Try a smaller angular range at higher angular resolution
     transform = registration_rot(
-        roi_image=full_organ_scan,
-        full_image=roi_scan,
-        trans_point=trans_point,
-        rotation_center_pix=rotation_center,
+        roi_image=roi_scan,
+        full_image=full_organ_scan,
+        common_point_roi=common_point_roi,
+        common_point_full=common_point_full,
         zrot=zrot,
         angle_range=5,
         angle_step=0.1,
@@ -149,4 +142,4 @@ INFO Registered rotation angele = 2.0 deg
     assert transform.GetAngleY() == 0
     # This value should be close to zero
     zrot = np.rad2deg(transform.GetAngleZ())
-    assert zrot == pytest.approx(1.5)
+    assert zrot == pytest.approx(0.3)

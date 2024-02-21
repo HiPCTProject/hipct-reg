@@ -4,6 +4,7 @@ from typing import Literal
 import dask_image
 import dask_image.imread
 import numpy as np
+import numpy.typing as npt
 import SimpleITK as sitk
 import skimage.io
 import skimage.measure
@@ -70,3 +71,11 @@ def test_file_type(path: str) -> Literal["tif", "jp2"]:
         return "tif"
     else:
         return "jp2"
+
+
+def arr_to_index_tuple(arr: npt.NDArray) -> tuple[int, int, int]:
+    """
+    Convert a (3, ) shaped numpy array to an index tuple that simpleitk can use.
+    """
+    assert arr.shape == (3,)
+    return (int(arr[0]), int(arr[1]), int(arr[2]))
