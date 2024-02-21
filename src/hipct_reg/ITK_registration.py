@@ -179,15 +179,15 @@ def registration_rot(
 
 def registration_sitk(
     *,
-    fixed_image: sitk.Image,
-    moving_image: sitk.Image,
+    roi_image: sitk.Image,
+    full_image: sitk.Image,
     trans_point: npt.NDArray,
     zrot: float,
     pt_fixed: npt.NDArray,
     fiji: bool = False,
 ):
-    pixel_size_fixed = fixed_image.GetSpacing()[0]
-    pixel_size_moved = moving_image.GetSpacing()[0]
+    pixel_size_fixed = roi_image.GetSpacing()[0]
+    pixel_size_moved = full_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
 
@@ -221,10 +221,10 @@ def registration_sitk(
     # Get coordinate of centre of rotation of the moving image
     rotation_center = offset.copy()
     rotation_center[0] = rotation_center[0] + int(
-        pixel_size_moved * moving_image.GetSize()[0] / 2
+        pixel_size_moved * full_image.GetSize()[0] / 2
     )
     rotation_center[1] = rotation_center[1] + int(
-        pixel_size_moved * moving_image.GetSize()[1] / 2
+        pixel_size_moved * full_image.GetSize()[1] / 2
     )
 
     rotation_center = pt_fixed * pixel_size_fixed
@@ -255,14 +255,14 @@ def registration_sitk(
 
     if fiji:
         moving_resampled = sitk.Resample(
-            moving_image,
-            fixed_image,
+            full_image,
+            roi_image,
             initial_transform,
             sitk.sitkLinear,
             0,
-            fixed_image.GetPixelID(),
+            roi_image.GetPixelID(),
         )
-        sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "ini")
+        sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "ini")
 
     metric = []
 
@@ -289,23 +289,23 @@ def registration_sitk(
         lambda: command_iteration(R, pixel_size_fixed, trans_point),
     )
 
-    final_transform = R.Execute(fixed_image, moving_image)
+    final_transform = R.Execute(roi_image, full_image)
 
     if fiji:
         moving_resampled = sitk.Resample(
-            moving_image,
-            fixed_image,
+            full_image,
+            roi_image,
             final_transform,
             sitk.sitkLinear,
             0,
-            fixed_image.GetPixelID(),
+            roi_image.GetPixelID(),
         )
-        sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "Final")
+        sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "Final")
 
     # Always check the reason optimization terminated.
     print("OFFSET IS ", trans_point, "\n")
     print(
-        f"TRANSLATION: {np.array(final_transform.GetParameters()[3:])/fixed_image.GetSpacing()[0]}",
+        f"TRANSLATION: {np.array(final_transform.GetParameters()[3:])/roi_image.GetSpacing()[0]}",
         "\n",
     )
     print(
@@ -316,7 +316,7 @@ def registration_sitk(
     print(f"Optimizer's stopping condition, {R.GetOptimizerStopConditionDescription()}")
 
     logging.info(
-        f"TRANSLATION: {np.array(final_transform.GetParameters()[3:])/fixed_image.GetSpacing()[0]}\n"
+        f"TRANSLATION: {np.array(final_transform.GetParameters()[3:])/roi_image.GetSpacing()[0]}\n"
     )
     logging.info(
         f"ROTATION: {np.rad2deg(np.array(final_transform.GetParameters()[0:3]))}\n"
@@ -552,8 +552,8 @@ def registration_pipeline(
 
     logging.info("\n---\nSimilarity registration started\n---")
     initial_transform, final_transform = registration_sitk(
-        fixed_image=fixed_image,
-        moving_image=moving_image,
+        roi_image=fixed_image,
+        full_image=moving_image,
         trans_point=trans_point,
         zrot=zrot,
         pt_fixed=pt_fixed,
