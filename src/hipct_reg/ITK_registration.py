@@ -9,7 +9,6 @@ import ast
 import glob
 import logging
 import math
-import multiprocessing
 import os
 import sys
 import time
@@ -31,10 +30,10 @@ MAX_THREADS = 0  # 0 if all
 
 def registration_rot(
     *,
-    fixed_image: sitk.Image,
-    moving_image: sitk.Image,
-    trans_point: npt.NDArray,
-    rotation_center_pix: npt.NDArray,
+    roi_image: sitk.Image,
+    full_image: sitk.Image,
+    common_point_roi: tuple[int, int, int],
+    common_point_full: tuple[int, int, int],
     zrot: float,
     angle_range: float,
     angle_step: float,
@@ -42,16 +41,18 @@ def registration_rot(
     verbose: bool = False,
 ) -> sitk.Euler3DTransform:
     """
+    Run a registration using a rotational transform about the z-axis.
+    The angles of the transform which are sampled are set by manually by function
+    arguments.
+
     Parameters
     ----------
-    fixed_image, moving_image :
+    roi_image, moving_image :
         The images being registered.
-    trans_point :
-        Vector from [0, 0, 0] voxel in fixed image to [0, 0, 0] voxel in moving image.
-        In units of fixed image pixels.
-    rotation_center :
-        Point in the fixed image about which the moving image will be rotated.
-        In units of pixels.
+    common_point_roi :
+        Pixel indices of a common point between two images, in the ROI image.
+    common_point_full :
+        Pixel indices of a common point between two images, in the full-organ image.
     zrot :
         Initial rotation for the registration. In units of degrees.
     angle_range :
@@ -62,7 +63,7 @@ def registration_rot(
         If True, print every step of the optimisation.
 
     """
-    pixel_size_fixed = fixed_image.GetSpacing()[0]
+    pixel_size_fixed = roi_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
 
@@ -78,8 +79,8 @@ def registration_rot(
     logging.info(f"Initial rotation = {zrot} deg")
     logging.info(f"Range = {angle_range} deg")
     logging.info(f"Step = {angle_step} deg")
-    logging.info(f"Translation = {trans_point} pix")
-    logging.info(f"Rotation center = {rotation_center_pix} pix")
+    logging.info(f"Common point ROI = {common_point_roi} pix")
+    logging.info(f"Common point full = {common_point_full} pix")
 
     R.SetOptimizerAsExhaustive(
         numberOfSteps=[0, 0, int((angle_range / 2) / angle_step), 0, 0, 0],
@@ -87,94 +88,90 @@ def registration_rot(
     )
 
     R.SetOptimizerScalesFromPhysicalShift()
-
-    # Convert from pixels to physical size
-    offset = trans_point * pixel_size_fixed
-    rotation_center = rotation_center_pix * pixel_size_fixed
+    # These variables are in physical coordinates
+    # Rotation centre of transform in ROI image
+    rotation_center = roi_image.TransformIndexToPhysicalPoint(common_point_roi)
+    # Translation from ROI image to full image
+    translation = -np.array(rotation_center) + np.array(
+        full_image.TransformIndexToPhysicalPoint(common_point_full)
+    )
+    logging.debug(f"rotation center = {rotation_center}")
+    logging.debug(f"translation from ROI to full organ = {translation}")
 
     # Initial transform angles in radians
     theta_x = 0.0
     theta_y = 0.0
     theta_z = np.deg2rad(zrot)
 
-    # Vector from [0, 0, 0] voxel of moving image to [0, 0, 0] voxel of fixed image
-    translation = -offset
     initial_transform = sitk.Euler3DTransform(
         rotation_center, theta_x, theta_y, theta_z, translation
     )
-
-    # Don't optimize in-place, we would possibly like to run this cell multiple times.
     R.SetInitialTransform(initial_transform, inPlace=True)
 
     if fiji:
         moving_resampled = sitk.Resample(
-            moving_image,
-            fixed_image,
+            full_image,
+            roi_image,
             initial_transform,
             sitk.sitkLinear,
             0,
-            fixed_image.GetPixelID(),
+            roi_image.GetPixelID(),
         )
-        sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "before rot")
+        sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "before rot")
 
     if verbose:
         # Add a command to print the result of each iteration
         metric = []
 
         def command_iteration(
-            method,
+            method: sitk.ImageRegistrationMethod,
             pixel_size_fixed,
-            trans_point,
             translation,
             rotation_center,
             moving_image,
-            fixed_image,
-            rotation_center_pix,
+            roi_image,
         ):
             metric.append(method.GetMetricValue())
-            logging.debug(
-                f"{method.GetOptimizerIteration()} "
-                + f"= {method.GetMetricValue()} "
-                + f"\nTRANSLATION: {np.array(method.GetOptimizerPosition())[3:]/pixel_size_fixed}"
-                + f"\nROTATION: {np.rad2deg(np.array(method.GetOptimizerPosition()))[0:3]}"
-                + f"\nCPU usage: {psutil.cpu_percent()}"
-                + f"\nRAM usage: {psutil.virtual_memory().percent}"
-                + f"\nCPU COUNT: {multiprocessing.cpu_count()}"
-            )
+            rotation = np.rad2deg(method.GetOptimizerPosition()[0:3])
+            translation = method.GetOptimizerPosition()[3:6]
+            logging.debug(f"iteration = {method.GetOptimizerIteration()}")
+            logging.debug(f"metric = {method.GetMetricValue()}")
+            logging.debug(f"translation = {translation}")
+            logging.debug(f"rotation = {rotation} deg")
+            logging.debug(f"CPU usage: {psutil.cpu_percent()}")
+            logging.debug(f"RAM usage: {psutil.virtual_memory().percent}")
+            logging.debug("")
 
         R.AddCommand(
             sitk.sitkIterationEvent,
             lambda: command_iteration(
                 R,
                 pixel_size_fixed,
-                trans_point,
                 translation,
                 rotation_center,
-                moving_image,
-                fixed_image,
-                rotation_center_pix,
+                full_image,
+                roi_image,
             ),
         )
 
     logging.info("Starting registration...")
-    transform_rotation: sitk.Euler3DTransform = R.Execute(fixed_image, moving_image)
+    transform_rotation: sitk.Euler3DTransform = R.Execute(roi_image, full_image)
     logging.info("Registration finished!")
 
     if fiji:
         moving_resampled = sitk.Resample(
-            moving_image,
-            fixed_image,
+            full_image,
+            roi_image,
             transform_rotation,
             sitk.sitkLinear,
             0,
-            fixed_image.GetPixelID(),
+            roi_image.GetPixelID(),
         )
-        sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "after rot")
+        sitk.Show(0.6 * moving_resampled + 0.4 * roi_image, "after rot")
 
     new_zrot = np.rad2deg(transform_rotation.GetAngleZ())
-    # Always check the reason optimization terminated.
-    logging.info(f"Final metric value = {R.GetMetricValue()}")
-    logging.info(f"Stopping condition = {R.GetOptimizerStopConditionDescription()}")
+    logging.debug(f"Final metric value = {R.GetMetricValue()}")
+    logging.debug(f"Stopping condition = {R.GetOptimizerStopConditionDescription()}")
     logging.info(f"Registered rotation angele = {new_zrot} deg")
 
     return transform_rotation
@@ -519,10 +516,10 @@ def registration_pipeline(
     angle_range = 360
     angle_step = 2.0
     transform_rotation = registration_rot(
-        fixed_image=fixed_image,
-        moving_image=moving_image,
-        trans_point=trans_point,
-        rotation_center_pix=pt_fixed,
+        roi_image=fixed_image,
+        full_image=moving_image,
+        common_point_roi=pt_fixed,
+        common_point_full=pt_moved,
         zrot=zrot,
         angle_range=angle_range,
         angle_step=angle_step,
@@ -533,10 +530,10 @@ def registration_pipeline(
     angle_range = 5
     angle_step = 0.1
     transform_rotation = registration_rot(
-        fixed_image=fixed_image,
-        moving_image=moving_image,
-        trans_point=trans_point,
-        rotation_center_pix=pt_fixed,
+        roi_image=fixed_image,
+        full_image=moving_image,
+        common_point_roi=pt_fixed,
+        common_point_full=pt_moved,
         zrot=zrot,
         angle_range=angle_range,
         angle_step=angle_step,
