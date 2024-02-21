@@ -265,11 +265,9 @@ def registration_sitk(
         )
         sitk.Show(0.6 * moving_resampled + 0.4 * fixed_image, "ini")
 
-    global metric
     metric = []
 
     def command_iteration(method, pixel_size, trans_point):
-        global metric
         metric.append(method.GetMetricValue())
 
         q0, q1, q2, q3 = method.GetOptimizerPosition()[0:4]
