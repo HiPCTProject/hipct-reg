@@ -185,7 +185,7 @@ def registration_sitk(
     common_point_full: tuple[int, int, int],
     zrot: float,
     fiji: bool = False,
-):
+) -> sitk.Similarity3DTransform:
     """
     Run a registration using a full rigid transform about.
 
@@ -256,7 +256,7 @@ def registration_sitk(
 
     del rigid_euler
 
-    R.SetInitialTransform(initial_transform, inPlace=False)
+    R.SetInitialTransform(initial_transform, inPlace=True)
 
     if fiji:
         moving_resampled = sitk.Resample(
@@ -319,7 +319,7 @@ def registration_sitk(
         f"rotation = {np.rad2deg(np.array(final_transform.GetParameters()[0:3]))}\n"
     )
 
-    return initial_transform, final_transform
+    return final_transform
 
 
 def get_pixel_size(path: str) -> float:
@@ -546,7 +546,7 @@ def registration_pipeline(
     print("\nSTART SIMILARITY REGISTRATION")
 
     logging.info("\n---\nSimilarity registration started\n---")
-    initial_transform, final_transform = registration_sitk(
+    final_transform = registration_sitk(
         roi_image=fixed_image,
         full_image=moving_image,
         common_point_roi=pt_fixed,
