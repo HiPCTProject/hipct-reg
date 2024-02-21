@@ -27,6 +27,14 @@
 
 Code to register regions of interest with full organ datasets.
 
+## High level overview
+
+The goal of this package is to provide reproducible and tested code to register (align) high-resolution region of interest (ROI) scans with low-resolution full organ scans.
+It does this using the registration framework of `simpleitk`.
+Within the `simpleitk` framework registration maps points from one image to another image (or in our case one volume to another volume - to keep it simple we'll just use image from now on).
+In `simplevtk` language, we are looking for a transformation from a **fixed image** coordinate system to a **moving image** coordinate system.
+Because we are looking for a transform to map the ROI to full organ, we will set the fixed image to be the ROI and moving image to be the full organ.
+
 ## Getting Started
 
 ### Prerequisites
