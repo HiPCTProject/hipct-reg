@@ -187,7 +187,7 @@ def registration_sitk(
     fiji: bool = False,
 ) -> sitk.Similarity3DTransform:
     """
-    Run a registration using a full rigid transform about.
+    Run a registration using a full rigid transform.
 
     Parameters
     ----------
@@ -199,8 +199,6 @@ def registration_sitk(
         Pixel indices of a common point between two images, in the full-organ image.
     zrot :
         Initial rotation for the registration. In units of degrees.
-    verbose :
-        If True, print every step of the optimisation.
 
     """
     pixel_size_fixed = roi_image.GetSpacing()[0]
