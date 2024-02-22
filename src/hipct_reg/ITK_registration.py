@@ -419,11 +419,11 @@ def registration_pipeline(
     logging.info(f"Moving image will be binned by {binning_moved}")
     logging.info("")
 
-    pixel_size_fixed = pixel_size_fixed * binning_fixed
-    pixel_size_moved = pixel_size_moved * binning_moved
+    # pixel_size_fixed = pixel_size_fixed * binning_fixed
+    # pixel_size_moved = pixel_size_moved * binning_moved
 
-    pt_roi = pt_roi / binning_fixed
-    pt_full = pt_full / binning_moved
+    # pt_roi = pt_roi / binning_fixed
+    # pt_full = pt_full / binning_moved
 
     logging.info("Importing moving image...")
     logging.info(f"folder = {path_full}")
