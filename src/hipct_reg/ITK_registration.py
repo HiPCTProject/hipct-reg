@@ -24,7 +24,7 @@ import skimage.io
 import skimage.measure
 from scipy.spatial.transform import Rotation as ROT
 
-from .helpers import import_im, test_file_type
+from .helpers import arr_to_index_tuple, import_im, test_file_type
 
 MAX_THREADS = 0  # 0 if all
 
@@ -425,10 +425,6 @@ def registration_pipeline(
     pt_fixed = pt_fixed / binning_fixed
     pt_moved = pt_moved / binning_moved
 
-    # Vector from [0, 0, 0] voxel in fixed image to [0, 0, 0] voxel in moving image
-    trans_point = pt_fixed - pt_moved * (pixel_size_moved / pixel_size_fixed)
-    logging.info(f"{trans_point=}")
-
     logging.info("Importing moving image...")
     logging.info(f"folder = {path_moved}")
     moving_image = import_im(
@@ -462,7 +458,6 @@ def registration_pipeline(
     zmax = min(zmax, int(N_fixed))
 
     fixed_z = (zmin, zmax)
-    trans_point[2] = trans_point[2] - fixed_z[0]
     pt_fixed[2] = pt_fixed[2] - fixed_z[0]
 
     logging.info("Importing fixed image...")
@@ -496,8 +491,8 @@ def registration_pipeline(
     reg_input = RegistrationInput(
         roi_image=fixed_image,
         full_image=moving_image,
-        common_point_roi=pt_fixed,
-        common_point_full=pt_moved,
+        common_point_roi=arr_to_index_tuple(pt_fixed),
+        common_point_full=arr_to_index_tuple(pt_moved),
     )
 
     # Try a full 360 deg first at a coarse step
