@@ -24,7 +24,7 @@ import skimage.io
 import skimage.measure
 from scipy.spatial.transform import Rotation as ROT
 
-from .helpers import arr_to_index_tuple, import_im, test_file_type
+from .helpers import import_im, test_file_type
 
 MAX_THREADS = 0  # 0 if all
 
@@ -352,7 +352,11 @@ def get_pixel_size(path: str) -> float:
 
 
 def registration_pipeline(
-    *, path_roi: str, path_full: str, pt_roi: npt.NDArray, pt_full: npt.NDArray
+    *,
+    path_roi: str,
+    path_full: str,
+    pt_roi: tuple[int, int, int],
+    pt_full: tuple[int, int, int],
 ) -> None:
     """
     Parameters
@@ -491,8 +495,8 @@ def registration_pipeline(
     reg_input = RegistrationInput(
         roi_image=fixed_image,
         full_image=moving_image,
-        common_point_roi=arr_to_index_tuple(pt_roi),
-        common_point_full=arr_to_index_tuple(pt_full),
+        common_point_roi=pt_roi,
+        common_point_full=pt_full,
     )
 
     # Try a full 360 deg first at a coarse step
