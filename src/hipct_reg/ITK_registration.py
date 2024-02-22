@@ -439,6 +439,7 @@ def registration_pipeline(
     logging.info(f"spacing = {moving_image.GetSpacing()}")
     logging.info("")
 
+    """
     # Get values to crop the fixed dataset
     # TODO: check this maths
     moved_z = (0, N_moved)
@@ -457,14 +458,15 @@ def registration_pipeline(
 
     fixed_z = (zmin, zmax)
     pt_roi[2] = pt_roi[2] - fixed_z[0]
+    """
 
     logging.info("Importing fixed image...")
     logging.info(f"folder = {path_roi}")
-    logging.info(f"Fixed scan crop z = {fixed_z}")
+    # logging.info(f"Fixed scan crop z = {fixed_z}")
     fixed_image = import_im(
         path_roi,
         pixel_size_fixed,
-        crop_z=fixed_z,
+        # crop_z=fixed_z,
         bin_factor=binning_fixed,
     )
     logging.info("Finished importing fixed image!")
@@ -548,7 +550,7 @@ def registration_pipeline(
 
     Tx = transformed_point[0]
     Ty = transformed_point[1]
-    Tz = transformed_point[2] + fixed_z[0] * pixel_size_fixed
+    Tz = transformed_point[2]  # + fixed_z[0] * pixel_size_fixed
 
     print("Tx=", Tx)
     print("Ty=", Ty)
