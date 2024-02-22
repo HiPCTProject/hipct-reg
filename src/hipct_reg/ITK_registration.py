@@ -352,43 +352,43 @@ def get_pixel_size(path: str) -> float:
 
 
 def registration_pipeline(
-    path_fixed: str, path_moved: str, pt_fixed: npt.NDArray, pt_moved: npt.NDArray
+    *, path_roi: str, path_full: str, pt_roi: npt.NDArray, pt_full: npt.NDArray
 ) -> None:
     """
     Parameters
     ----------
     path_fixed :
-        Path to the fixed dataset.
+        Path to the ROI image.
     path_moved :
-        Path to the dataset that is being registered.
-    pt_fixed :
+        Path to the full organ scan image.
+    pt_roi :
         Point that the moving dataset will be rotated around, in the coordinate
-        frame of the fixed image.
-    pt_moved :
+        frame of the ROI image.
+    pt_full :
         Point that the moving dataset will be rotated around, in the coordinate
-        frame of the moving image.
+        frame of the full organ scan image.
     """
     # Crop the zoom scan to transform the circle fov into a square, thus avoiding the
     # NaN part in the image
     crop_circle_moved = False
     logging.info("Starting registration pipeline...")
     logging.info(f"Crop the zoom volume to avoid external circle = {crop_circle_moved}")
-    logging.info(f"Center of rotation (in frame of fixed image) = {pt_fixed}")
-    logging.info(f"Center of rotation (in frame of moving image) = {pt_moved}")
-    pixel_size_fixed = get_pixel_size(path_fixed)
-    pixel_size_moved = get_pixel_size(path_moved)
+    logging.info(f"Center of rotation (in frame of fixed image) = {pt_roi}")
+    logging.info(f"Center of rotation (in frame of moving image) = {pt_full}")
+    pixel_size_fixed = get_pixel_size(path_roi)
+    pixel_size_moved = get_pixel_size(path_full)
 
     # Gather info on images
-    file_type_fixed = test_file_type(path_fixed)
-    file_type_moved = test_file_type(path_moved)
+    file_type_fixed = test_file_type(path_roi)
+    file_type_moved = test_file_type(path_full)
 
-    N_fixed = len(glob.glob(f"{path_fixed}/*.{file_type_fixed}"))
-    N_moved = len(glob.glob(f"{path_moved}/*.{file_type_moved}"))
+    N_fixed = len(glob.glob(f"{path_roi}/*.{file_type_fixed}"))
+    N_moved = len(glob.glob(f"{path_full}/*.{file_type_moved}"))
 
-    img = skimage.io.imread(glob.glob(path_fixed + "/*.tif")[0])
+    img = skimage.io.imread(glob.glob(path_roi + "/*.tif")[0])
     logging.info(f"{N_fixed} images of shape {img.shape} in the fixed volume folder")
 
-    img = skimage.io.imread(glob.glob(path_moved + "/*.tif")[0])
+    img = skimage.io.imread(glob.glob(path_full + "/*.tif")[0])
     x_dim = img.shape[1]
     y_dim = img.shape[0]
     logging.info(f"{N_moved} images of shape {img.shape} in the moved volume folder")
@@ -422,13 +422,13 @@ def registration_pipeline(
     pixel_size_fixed = pixel_size_fixed * binning_fixed
     pixel_size_moved = pixel_size_moved * binning_moved
 
-    pt_fixed = pt_fixed / binning_fixed
-    pt_moved = pt_moved / binning_moved
+    pt_roi = pt_roi / binning_fixed
+    pt_full = pt_full / binning_moved
 
     logging.info("Importing moving image...")
-    logging.info(f"folder = {path_moved}")
+    logging.info(f"folder = {path_full}")
     moving_image = import_im(
-        path_moved,
+        path_full,
         pixel_size_moved,
         bin_factor=binning_moved,
     )
@@ -442,14 +442,12 @@ def registration_pipeline(
     # Get values to crop the fixed dataset
     # TODO: check this maths
     moved_z = (0, N_moved)
-    zmin = int(
-        pt_fixed[2] - 1.2 * ((pt_moved[2]) * pixel_size_moved / pixel_size_fixed)
-    )
+    zmin = int(pt_roi[2] - 1.2 * ((pt_full[2]) * pixel_size_moved / pixel_size_fixed))
     zmax = int(
-        pt_fixed[2]
+        pt_roi[2]
         + 1.2
         * (
-            ((moved_z[1] - moved_z[0]) - pt_moved[2])
+            ((moved_z[1] - moved_z[0]) - pt_full[2])
             * pixel_size_moved
             / pixel_size_fixed
         )
@@ -458,13 +456,13 @@ def registration_pipeline(
     zmax = min(zmax, int(N_fixed))
 
     fixed_z = (zmin, zmax)
-    pt_fixed[2] = pt_fixed[2] - fixed_z[0]
+    pt_roi[2] = pt_roi[2] - fixed_z[0]
 
     logging.info("Importing fixed image...")
-    logging.info(f"folder = {path_fixed}")
+    logging.info(f"folder = {path_roi}")
     logging.info(f"Fixed scan crop z = {fixed_z}")
     fixed_image = import_im(
-        path_fixed,
+        path_roi,
         pixel_size_fixed,
         crop_z=fixed_z,
         bin_factor=binning_fixed,
@@ -491,8 +489,8 @@ def registration_pipeline(
     reg_input = RegistrationInput(
         roi_image=fixed_image,
         full_image=moving_image,
-        common_point_roi=arr_to_index_tuple(pt_fixed),
-        common_point_full=arr_to_index_tuple(pt_moved),
+        common_point_roi=arr_to_index_tuple(pt_roi),
+        common_point_full=arr_to_index_tuple(pt_full),
     )
 
     # Try a full 360 deg first at a coarse step
@@ -685,7 +683,9 @@ if __name__ == "__main__":
         logging.info(f"Point moved = {pt_moved}")
 
         # Run registration
-        registration_pipeline(path_fixed, path_moved, pt_fixed, pt_moved)
+        registration_pipeline(
+            path_roi=path_fixed, path_full=path_moved, pt_roi=pt_fixed, pt_full=pt_moved
+        )
 
         print("--- %s seconds ---" % (time.time() - start_time))
         logging.info(f"\nTotal time = {time.time() - start_time}")

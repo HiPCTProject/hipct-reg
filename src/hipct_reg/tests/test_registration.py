@@ -197,20 +197,20 @@ INFO Registration finished!
 
 
 def test_registration_pipeline(
-    full_organ_scan_folder: Path, roi_scan_folder: Path, caplog
+    full_organ_scan_folder: Path,
+    roi_scan_folder: Path,
+    reg_input: RegistrationInput,
+    caplog,
 ) -> None:
     """
     Test a really simple registration where the common point given is exactly the
     correct point, and there is no rotation between the two datasets.
     """
     caplog.set_level(logging.INFO)
-    trans_point = np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET]) / BIN_FACTOR
-    rotation_center_moving = np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2
-    rotation_center_fixed = trans_point + rotation_center_moving / BIN_FACTOR
 
     registration_pipeline(
-        str(full_organ_scan_folder),
-        str(roi_scan_folder),
-        rotation_center_fixed,
-        rotation_center_moving,
+        path_full=str(full_organ_scan_folder),
+        path_roi=str(roi_scan_folder),
+        pt_roi=reg_input.common_point_roi,
+        pt_full=reg_input.common_point_full,
     )
