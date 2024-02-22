@@ -482,15 +482,17 @@ def registration_pipeline(
     logging.info(f"spacing = {fixed_image.GetSpacing()}")
     logging.info("")
 
+    """
     logging.info("Normalising images...")
     fixed_image = sitk.Normalize(fixed_image)
     moving_image = sitk.Normalize(moving_image)
     logging.info("Images normalised!")
     logging.info("")
+    """
 
-    pixelType = sitk.sitkFloat32
-    fixed_image = sitk.Cast(fixed_image, pixelType)
-    moving_image = sitk.Cast(moving_image, pixelType)
+    # pixelType = sitk.sitkFloat32
+    # fixed_image = sitk.Cast(fixed_image, pixelType)
+    # moving_image = sitk.Cast(moving_image, pixelType)
 
     zrot = 0
 
