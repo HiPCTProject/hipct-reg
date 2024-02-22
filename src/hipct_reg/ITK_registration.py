@@ -346,11 +346,11 @@ def registration_sitk(
 
 def get_pixel_size(path: str) -> float:
     """
-    Get pixel size in nm from a path.
+    Get pixel size in um from a path.
     """
     if path[-1] == "/":
         path = path[:-1]
-    return float(path.split("/")[-1].split("um")[0]) / 1000
+    return float(path.split("/")[-1].split("um")[0])
 
 
 def registration_pipeline(
