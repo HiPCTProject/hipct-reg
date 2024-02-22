@@ -218,7 +218,7 @@ def registration_sitk(
     logging.info("Starting full registration...")
     logging.info(f"Common point ROI = {reg_input.common_point_roi}")
     logging.info(f"Common point full = {reg_input.common_point_full}")
-    logging.info(f"Initial rotation = {zrot}")
+    logging.info(f"Initial rotation = {zrot:.02f} deg")
     pixel_size_fixed = reg_input.roi_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
@@ -287,27 +287,29 @@ def registration_sitk(
 
     metric = []
 
-    def command_iteration(method, pixel_size):
+    def command_iteration(
+        method: sitk.ImageRegistrationMethod,
+        transform: sitk.Similarity3DTransform,
+        pixel_size,
+    ):
         metric.append(method.GetMetricValue())
 
-        q0, q1, q2, q3 = method.GetOptimizerPosition()[0:4]
+        q0, q1, q2, q3 = transform.GetVersor()
         r = ROT.from_quat([q0, q1, q2, q3])
         theta_x, theta_y, theta_z = np.rad2deg(r.as_rotvec())
+        translation = np.array(transform.GetTranslation()) / pixel_size
+        scale = transform.GetScale()
 
-        logging.debug(
-            f"{method.GetOptimizerIteration()} "
-            + f" = {method.GetMetricValue()} "
-            + f"\nGetOptimizerPosition: {method.GetOptimizerPosition()}"
-            + f"\nTRANSLATION: {np.array(method.GetOptimizerPosition())[3:6]/pixel_size}"
-            + f"\nROTATION: {theta_x}  {theta_y}  {theta_z}"
-            + f"\nSCALE: {np.array(method.GetOptimizerPosition())[-1]}"
-            + f"\nCPU usage: {psutil.cpu_percent()}"
-            + f"\nRAM usage: {psutil.virtual_memory().percent}"
-        )
+        logging.debug(f"Iteration {method.GetOptimizerIteration()}")
+        logging.debug(f"metric = {method.GetMetricValue()}")
+        logging.debug(f"translation = {translation}")
+        logging.debug(f"rotation = {theta_x}, {theta_y}, {theta_z} deg")
+        logging.debug(f"scale = {scale}")
+        logging.debug("")
 
     R.AddCommand(
         sitk.sitkIterationEvent,
-        lambda: command_iteration(R, pixel_size_fixed),
+        lambda: command_iteration(R, initial_transform, pixel_size_fixed),
     )
 
     logging.info("Starting registration...")

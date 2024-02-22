@@ -180,7 +180,7 @@ def test_registration_sitk(
     expected = r"""INFO Starting full registration...
 INFO Common point ROI = (32, 32, 32)
 INFO Common point full = (40, 40, 40)
-INFO Initial rotation = 0.017453292519943295
+INFO Initial rotation = 0.02 deg
 INFO Starting registration...
 INFO Registration finished!
 """
