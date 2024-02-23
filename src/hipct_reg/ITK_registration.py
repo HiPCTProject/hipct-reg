@@ -218,7 +218,7 @@ def registration_sitk(
     logging.info("Starting full registration...")
     logging.info(f"Common point ROI = {reg_input.common_point_roi}")
     logging.info(f"Common point full = {reg_input.common_point_full}")
-    logging.info(f"Initial rotation = {zrot}")
+    logging.info(f"Initial rotation = {zrot:.02f} deg")
     pixel_size_fixed = reg_input.roi_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
@@ -272,8 +272,6 @@ def registration_sitk(
     initial_transform.SetTranslation(rigid_euler.GetTranslation())
     initial_transform.SetCenter(rigid_euler.GetCenter())
 
-    del rigid_euler
-
     R.SetInitialTransform(initial_transform, inPlace=True)
 
     if fiji:
@@ -289,27 +287,29 @@ def registration_sitk(
 
     metric = []
 
-    def command_iteration(method, pixel_size):
+    def command_iteration(
+        method: sitk.ImageRegistrationMethod,
+        transform: sitk.Similarity3DTransform,
+        pixel_size,
+    ):
         metric.append(method.GetMetricValue())
 
-        q0, q1, q2, q3 = method.GetOptimizerPosition()[0:4]
+        q0, q1, q2, q3 = transform.GetVersor()
         r = ROT.from_quat([q0, q1, q2, q3])
         theta_x, theta_y, theta_z = np.rad2deg(r.as_rotvec())
+        translation = np.array(transform.GetTranslation()) / pixel_size
+        scale = transform.GetScale()
 
-        logging.debug(
-            f"{method.GetOptimizerIteration()} "
-            + f" = {method.GetMetricValue()} "
-            + f"\nGetOptimizerPosition: {method.GetOptimizerPosition()}"
-            + f"\nTRANSLATION: {np.array(method.GetOptimizerPosition())[3:6]/pixel_size}"
-            + f"\nROTATION: {theta_x}  {theta_y}  {theta_z}"
-            + f"\nSCALE: {np.array(method.GetOptimizerPosition())[-1]}"
-            + f"\nCPU usage: {psutil.cpu_percent()}"
-            + f"\nRAM usage: {psutil.virtual_memory().percent}"
-        )
+        logging.debug(f"Iteration {method.GetOptimizerIteration()}")
+        logging.debug(f"metric = {method.GetMetricValue()}")
+        logging.debug(f"translation = {translation}")
+        logging.debug(f"rotation = {theta_x}, {theta_y}, {theta_z} deg")
+        logging.debug(f"scale = {scale}")
+        logging.debug("")
 
     R.AddCommand(
         sitk.sitkIterationEvent,
-        lambda: command_iteration(R, pixel_size_fixed),
+        lambda: command_iteration(R, initial_transform, pixel_size_fixed),
     )
 
     logging.info("Starting registration...")
@@ -346,143 +346,115 @@ def registration_sitk(
 
 def get_pixel_size(path: str) -> float:
     """
-    Get pixel size in nm from a path.
+    Get pixel size in um from a path.
     """
     if path[-1] == "/":
         path = path[:-1]
-    return float(path.split("/")[-1].split("um")[0]) / 1000
+    return float(path.split("/")[-1].split("um")[0])
 
 
 def registration_pipeline(
-    path_fixed: str, path_moved: str, pt_fixed: npt.NDArray, pt_moved: npt.NDArray
-) -> None:
+    *,
+    path_roi: str,
+    path_full: str,
+    pt_roi: tuple[int, int, int],
+    pt_full: tuple[int, int, int],
+) -> sitk.Similarity3DTransform:
     """
     Parameters
     ----------
     path_fixed :
-        Path to the fixed dataset.
+        Path to the ROI image.
     path_moved :
-        Path to the dataset that is being registered.
-    pt_fixed :
+        Path to the full organ scan image.
+    pt_roi :
         Point that the moving dataset will be rotated around, in the coordinate
-        frame of the fixed image.
-    pt_moved :
+        frame of the ROI image.
+    pt_full :
         Point that the moving dataset will be rotated around, in the coordinate
-        frame of the moving image.
+        frame of the full organ scan image.
     """
     # Crop the zoom scan to transform the circle fov into a square, thus avoiding the
     # NaN part in the image
     crop_circle_moved = False
-
-    pixel_size_fixed = get_pixel_size(path_fixed)
-    pixel_size_moved = get_pixel_size(path_moved)
-
-    print(f"Path fixed = {path_fixed}")
-    print(f"Path zoom = {path_moved}")
-
-    print(
-        f"""The pixel sizes I found are:\n\n
-          - {pixel_size_fixed} mm for the low-resolution volume\n\n
-          - {pixel_size_moved} mm for the high-resolution volume\n\n"""
-    )
-
-    logging.info(f"\nPixel size Fixed scan = {round(pixel_size_fixed,5)} mm")
-    logging.info(f"Pixel size Moving scan = {round(pixel_size_moved,5)} mm")
-
-    logging.info(
-        f"\nCrop the zoom volume to avoid external circle = {crop_circle_moved}"
-    )
+    logging.info("Starting registration pipeline...")
+    logging.info(f"Crop the zoom volume to avoid external circle = {crop_circle_moved}")
+    logging.info(f"Center of rotation (in frame of fixed image) = {pt_roi}")
+    logging.info(f"Center of rotation (in frame of moving image) = {pt_full}")
+    pixel_size_fixed = get_pixel_size(path_roi)
+    pixel_size_moved = get_pixel_size(path_full)
 
     # Gather info on images
-    file_type_fixed = test_file_type(path_fixed)
-    file_type_moved = test_file_type(path_moved)
+    file_type_fixed = test_file_type(path_roi)
+    file_type_moved = test_file_type(path_full)
 
-    N_fixed = len(glob.glob(f"{path_fixed}/*.{file_type_fixed}"))
-    N_moved = len(glob.glob(f"{path_moved}/*.{file_type_moved}"))
+    N_fixed = len(glob.glob(f"{path_roi}/*.{file_type_fixed}"))
+    N_moved = len(glob.glob(f"{path_full}/*.{file_type_moved}"))
 
-    img = skimage.io.imread(glob.glob(path_fixed + "/*.tif")[0])
-    print(f"\nI found {N_fixed} images of shape {img.shape} in the fixed volume folder")
-    logging.info(
-        f"\nI found {N_fixed} images of shape {img.shape} in the fixed volume folder"
-    )
+    img = skimage.io.imread(glob.glob(path_roi + "/*.tif")[0])
+    logging.info(f"{N_fixed} images of shape {img.shape} in the fixed volume folder")
 
-    img = skimage.io.imread(glob.glob(path_moved + "/*.tif")[0])
+    img = skimage.io.imread(glob.glob(path_full + "/*.tif")[0])
     x_dim = img.shape[1]
     y_dim = img.shape[0]
-    print(f"I found {N_moved} images of shape {img.shape} in the moved volume folder")
-    logging.info(
-        f"I found {N_moved} of shape {img.shape} images in the moved volume folder"
-    )
+    logging.info(f"{N_moved} images of shape {img.shape} in the moved volume folder")
 
     del img
 
     size_moved = N_moved * x_dim * y_dim * 2 / (1024 * 1024 * 1024)
-    print(f"Total size of zoom scan is is {size_moved} GB")
-    logging.info(f"Total size of zoom scan is is {size_moved} GB")
+    logging.info(f"Total size of moving image is {size_moved} GB")
 
-    binning_moved = 1 + size_moved // 50  # I put a limit of 50 GB
-    binning_moved = int((pixel_size_fixed // pixel_size_moved) / 2) * 2  # other way
-
-    # binning_moved = 4
+    # binning_moved = 1 + size_moved // 50  # I put a limit of 50 GB
+    # binning_moved = int((pixel_size_fixed // pixel_size_moved) / 2) * 2  # other way
+    binning_moved = 1
     binning_fixed = 1
 
     if binning_fixed != 1:
-        print(f"\nA binning of {binning_fixed} will be applied to the fixed volume\n")
         N_fixed = math.ceil(N_fixed / binning_fixed)
         logging.info(
-            f"\nAfter binning: I found {N_fixed} images in the fixed volume folder"
+            f"After binning: I found {N_fixed} images in the fixed volume folder"
         )
-    logging.info(f"\nFixed volume - Binning factor = {binning_fixed}")
+    logging.info(f"Fixed image will be binned by {binning_fixed}")
 
     if binning_moved != 1:
-        print(f"\nA binning of {binning_moved} will be applied to the zoom volume\n")
+        print(f"A binning of {binning_moved} will be applied to the zoom volume\n")
         N_moved = math.ceil(N_moved / binning_moved)
         logging.info(
             f"After binning: I found {N_moved} images in the moved volume folder"
         )
-    logging.info(f"\nZoom volume - Binning factor = {binning_moved}")
+    logging.info(f"Moving image will be binned by {binning_moved}")
+    logging.info("")
 
-    pixel_size_fixed = pixel_size_fixed * binning_fixed
-    pixel_size_moved = pixel_size_moved * binning_moved
+    # pixel_size_fixed = pixel_size_fixed * binning_fixed
+    # pixel_size_moved = pixel_size_moved * binning_moved
 
-    pt_fixed = pt_fixed / binning_fixed
-    pt_moved = pt_moved / binning_moved
+    # pt_roi = pt_roi / binning_fixed
+    # pt_full = pt_full / binning_moved
 
-    # Vector from [0, 0, 0] voxel in fixed image to [0, 0, 0] voxel in moving image
-    trans_point = pt_fixed - pt_moved * (pixel_size_moved / pixel_size_fixed)
-
-    print("---------------------------------------------------")
-    print("\nIMPORTATION OF SCAN TO REGISTER\n")
-    logging.info("\n---------------------------------------------------")
-    logging.info("IMPORTATION OF SCAN TO REGISTER\n")
-
-    moved_z = (0, N_moved)
-    logging.info(f"Moving scan crop z = {moved_z}")
-
-    logging.info("\n---Start importation of Moving image")
+    logging.info("Importing moving image...")
+    logging.info(f"folder = {path_full}")
     moving_image = import_im(
-        path_moved,
+        path_full,
         pixel_size_moved,
-        crop_z=moved_z,
         bin_factor=binning_moved,
     )
-    logging.info("---Moving image imported successfully")
+    logging.info("Imported moving image!")
+    logging.info("Moving image parameters:")
+    logging.info(f"size = {moving_image.GetSize()}")
+    logging.info(f"dtype = {moving_image.GetPixelIDTypeAsString()}")
+    logging.info(f"spacing = {moving_image.GetSpacing()}")
+    logging.info("")
 
-    print("moving_image")
-    print(moving_image.GetSize())
-    print(moving_image.GetPixelIDTypeAsString())
-    print(moving_image.GetSpacing())
-
+    """
     # Get values to crop the fixed dataset
     # TODO: check this maths
-    zmin = int(
-        pt_fixed[2] - 1.2 * ((pt_moved[2]) * pixel_size_moved / pixel_size_fixed)
-    )
+    moved_z = (0, N_moved)
+    zmin = int(pt_roi[2] - 1.2 * ((pt_full[2]) * pixel_size_moved / pixel_size_fixed))
     zmax = int(
-        pt_fixed[2]
+        pt_roi[2]
         + 1.2
         * (
-            ((moved_z[1] - moved_z[0]) - pt_moved[2])
+            ((moved_z[1] - moved_z[0]) - pt_full[2])
             * pixel_size_moved
             / pixel_size_fixed
         )
@@ -491,52 +463,44 @@ def registration_pipeline(
     zmax = min(zmax, int(N_fixed))
 
     fixed_z = (zmin, zmax)
-    trans_point[2] = trans_point[2] - fixed_z[0]
-    pt_fixed[2] = pt_fixed[2] - fixed_z[0]
-    logging.info(f"\nFixed scan crop z = {fixed_z}")
+    pt_roi[2] = pt_roi[2] - fixed_z[0]
+    """
 
-    print("---------------------------------------------------")
-    print("\nIMPORTATION OF REFERENCE SCAN\n")
-
-    logging.info("\n---Start importation of Fixed image")
+    logging.info("Importing fixed image...")
+    logging.info(f"folder = {path_roi}")
+    # logging.info(f"Fixed scan crop z = {fixed_z}")
     fixed_image = import_im(
-        path_fixed,
+        path_roi,
         pixel_size_fixed,
-        crop_z=fixed_z,
+        # crop_z=fixed_z,
         bin_factor=binning_fixed,
     )
-    logging.info("---Fixed image imported successfully")
+    logging.info("Finished importing fixed image!")
+    logging.info("Fixed image parameters:")
+    logging.info(f"size = {fixed_image.GetSize()}")
+    logging.info(f"dtype = {fixed_image.GetPixelIDTypeAsString()}")
+    logging.info(f"spacing = {fixed_image.GetSpacing()}")
+    logging.info("")
 
-    print("fixed_image")
-    print(fixed_image.GetSize())
-    print(fixed_image.GetPixelIDTypeAsString())
-    print(fixed_image.GetSpacing())
-
-    print("IMPORTATION DONE\n\n")
-    print("---------------------------------------------------")
-    print("REGISTRATION\n\n")
-    print("---------------------------------------------------")
-    logging.info(
-        "\n---------------------------------------------------\nREGISTRATION\n"
-    )
-
+    """
+    logging.info("Normalising images...")
     fixed_image = sitk.Normalize(fixed_image)
     moving_image = sitk.Normalize(moving_image)
-    logging.info("\nImages normalized")
+    logging.info("Images normalised!")
+    logging.info("")
+    """
 
-    pixelType = sitk.sitkFloat32
-    fixed_image = sitk.Cast(fixed_image, pixelType)
-    moving_image = sitk.Cast(moving_image, pixelType)
+    # pixelType = sitk.sitkFloat32
+    # fixed_image = sitk.Cast(fixed_image, pixelType)
+    # moving_image = sitk.Cast(moving_image, pixelType)
 
-    print("\nFIND Z ANGLE\n")
-    logging.info("\n---\nRotation registration started\n---")
     zrot = 0
 
     reg_input = RegistrationInput(
         roi_image=fixed_image,
         full_image=moving_image,
-        common_point_roi=pt_fixed,
-        common_point_full=pt_moved,
+        common_point_roi=pt_roi,
+        common_point_full=pt_full,
     )
 
     # Try a full 360 deg first at a coarse step
@@ -563,63 +527,24 @@ def registration_pipeline(
 
     if zrot < 0:
         zrot = zrot + 360
-    print("Zrot = ", zrot)
-    logging.info(f"\nRotation registration finished successfully (z rotation = {zrot})")
 
-    print("\nSTART SIMILARITY REGISTRATION")
-
-    logging.info("\n---\nSimilarity registration started\n---")
+    logging.info("Similarity registration started...")
     final_transform = registration_sitk(
         reg_input,
         zrot=zrot,
     )
+    logging.info("Similarity registration finished!")
+    logging.info("")
 
-    print("\n\n\nRESULTS\n")
-    logging.info("\n---------------------------------------------------\nRESULTS\n")
-
-    logging.info("RAW RESULTS FROM SIMILARITY TRANSFORM :\n")
+    logging.info("Results from similarity registration:")
     logging.info(f"Translation = {final_transform.GetTranslation()}")
     logging.info(f"Center of rot = {final_transform.GetCenter()}")
     logging.info(f"Matrix = {final_transform.GetMatrix()}")
     logging.info(f"Versor = {final_transform.GetVersor()}")
     logging.info(f"Scale = {final_transform.GetScale()}")
+    logging.info("")
 
-    print("-------------------------------------------")
-    logging.info(
-        "\n---------------------------------------------------\nFORMATED PARAMETERS FOR NEUROGLANCER\n"
-    )
-    logging.info("\nTRANSLATIONS")
-
-    final_transform_inverse = final_transform.GetInverse()
-
-    # set point to match dimension
-    point = [0, 0, 0]
-    transformed_point = final_transform_inverse.TransformPoint(point)
-
-    Tx = transformed_point[0]
-    Ty = transformed_point[1]
-    Tz = transformed_point[2] + fixed_z[0] * pixel_size_fixed
-
-    print("Tx=", Tx)
-    print("Ty=", Ty)
-    print("Tz= ", Tz)
-    logging.info(f"Translation (Tx,Ty,Tz) = {Tx},{Ty},{Tz}")
-
-    print("\n\n")
-    print("-------------------------------------------")
-    print("ROTATION :\n")
-    logging.info("\nROTATION")
-
-    logging.info(f"Inverse rotation matrix = {final_transform_inverse.GetMatrix()}")
-
-    print("\n\n")
-    logging.info("\nSCALE")
-
-    scale = final_transform_inverse.GetScale()
-    print("\nScale= pixel size * ", scale)
-    print("NEW PIXEL SIZE= ", pixel_size_moved * scale)
-    logging.info(f"Scale= pixel size * {scale}")
-    logging.info(f"New pixel size= {pixel_size_moved * scale}")
+    return final_transform
 
 
 def process_line(line: str) -> tuple[str, str, npt.NDArray, npt.NDArray]:
@@ -733,7 +658,9 @@ if __name__ == "__main__":
         logging.info(f"Point moved = {pt_moved}")
 
         # Run registration
-        registration_pipeline(path_fixed, path_moved, pt_fixed, pt_moved)
+        registration_pipeline(
+            path_roi=path_fixed, path_full=path_moved, pt_roi=pt_fixed, pt_full=pt_moved
+        )
 
         print("--- %s seconds ---" % (time.time() - start_time))
         logging.info(f"\nTotal time = {time.time() - start_time}")

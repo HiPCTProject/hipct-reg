@@ -1,4 +1,5 @@
 import logging
+import re
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +14,7 @@ from skimage.measure import block_reduce
 from hipct_reg.helpers import arr_to_index_tuple, import_im
 from hipct_reg.ITK_registration import (
     RegistrationInput,
+    registration_pipeline,
     registration_rot,
     registration_sitk,
 )
@@ -53,27 +55,30 @@ def ground_truth(rng: np.random.Generator) -> npt.NDArray[np.float32]:
 
 
 @pytest.fixture
-def full_organ_scan(
+def full_organ_scan_folder(
     tmp_path: Path, ground_truth: npt.NDArray[np.float32]
-) -> sitk.Image:
-    """
-    Downsampled ground truth data, to mimic a full organ scan.
-    """
+) -> Path:
     full_organ_scan = block_reduce(
         ground_truth, (BIN_FACTOR, BIN_FACTOR, BIN_FACTOR), np.mean
     )
     full_organ_folder = tmp_path / "20.0um_full_organ"
     full_organ_folder.mkdir()
     write_array_to_stack(full_organ_scan, full_organ_folder)
-
-    return import_im(str(full_organ_folder), pixel_size=PIXEL_SIZE_UM * BIN_FACTOR)
+    return full_organ_folder
 
 
 @pytest.fixture
-def roi_scan(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> sitk.Image:
+def full_organ_scan(
+    full_organ_scan_folder: Path,
+) -> sitk.Image:
     """
-    Sub-volume of ground truth data, to mimic ROI data.
+    Downsampled ground truth data, to mimic a full organ scan.
     """
+    return import_im(str(full_organ_scan_folder), pixel_size=PIXEL_SIZE_UM * BIN_FACTOR)
+
+
+@pytest.fixture
+def roi_scan_folder(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> Path:
     roi_scan = ground_truth[
         ROI_OFFSET : ROI_OFFSET + ROI_SIZE,
         ROI_OFFSET : ROI_OFFSET + ROI_SIZE,
@@ -82,8 +87,15 @@ def roi_scan(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> sitk.Imag
     roi_folder = tmp_path / "5.0um_roi"
     roi_folder.mkdir()
     write_array_to_stack(roi_scan, roi_folder)
+    return roi_folder
 
-    return import_im(str(roi_folder), pixel_size=PIXEL_SIZE_UM)
+
+@pytest.fixture
+def roi_scan(roi_scan_folder: Path) -> sitk.Image:
+    """
+    Sub-volume of ground truth data, to mimic ROI data.
+    """
+    return import_im(str(roi_scan_folder), pixel_size=PIXEL_SIZE_UM)
 
 
 @pytest.fixture
@@ -169,7 +181,7 @@ def test_registration_sitk(
     expected = r"""INFO Starting full registration...
 INFO Common point ROI = (32, 32, 32)
 INFO Common point full = (40, 40, 40)
-INFO Initial rotation = 0.017453292519943295
+INFO Initial rotation = 0.02 deg
 INFO Starting registration...
 INFO Registration finished!
 """
@@ -183,3 +195,41 @@ INFO Registration finished!
         np.identity(3),
         decimal=2,
     )
+
+
+def test_registration_pipeline(
+    full_organ_scan_folder: Path,
+    roi_scan_folder: Path,
+    reg_input: RegistrationInput,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """
+    Test a really simple registration where the common point given is exactly the
+    correct point, and there is no rotation between the two datasets.
+    """
+    with caplog.at_level(logging.INFO):
+        registration_pipeline(
+            path_full=str(full_organ_scan_folder),
+            path_roi=str(roi_scan_folder),
+            pt_roi=reg_input.common_point_roi,
+            pt_full=reg_input.common_point_full,
+        )
+
+    log_lines = caplog.text.split("\n")
+    with open(Path(__file__).parent / "expected_reg_log.txt") as f:
+        expected_lines = f.read().split("\n")
+
+    for i, (log_line, expected_line) in enumerate(
+        zip(log_lines, expected_lines, strict=True)
+    ):
+        log_line = log_line.strip()
+        expected_line = expected_line.strip()
+        # First check for equality so we don't have to escape a bunch of special regex c
+        # characters if lines exactly match. Then check regex match.
+        if not ((log_line == expected_line) or re.match(expected_line, log_line)):
+            # Raise our own error to get a nicer message
+            raise AssertionError(
+                f"""Expected line {i + 1} does not match log line:
+{expected_line}
+{log_line}"""
+            )
