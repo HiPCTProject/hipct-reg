@@ -359,7 +359,7 @@ def registration_pipeline(
     path_full: str,
     pt_roi: tuple[int, int, int],
     pt_full: tuple[int, int, int],
-) -> None:
+) -> sitk.Similarity3DTransform:
     """
     Parameters
     ----------
@@ -533,53 +533,18 @@ def registration_pipeline(
         reg_input,
         zrot=zrot,
     )
+    logging.info("Similarity registration finished!")
+    logging.info("")
 
-    print("\n\n\nRESULTS\n")
-    logging.info("\n---------------------------------------------------\nRESULTS\n")
-
-    logging.info("RAW RESULTS FROM SIMILARITY TRANSFORM :\n")
+    logging.info("Results from similarity registration:")
     logging.info(f"Translation = {final_transform.GetTranslation()}")
     logging.info(f"Center of rot = {final_transform.GetCenter()}")
     logging.info(f"Matrix = {final_transform.GetMatrix()}")
     logging.info(f"Versor = {final_transform.GetVersor()}")
     logging.info(f"Scale = {final_transform.GetScale()}")
+    logging.info("")
 
-    print("-------------------------------------------")
-    logging.info(
-        "\n---------------------------------------------------\nFORMATED PARAMETERS FOR NEUROGLANCER\n"
-    )
-    logging.info("\nTRANSLATIONS")
-
-    final_transform_inverse = final_transform.GetInverse()
-
-    # set point to match dimension
-    point = [0, 0, 0]
-    transformed_point = final_transform_inverse.TransformPoint(point)
-
-    Tx = transformed_point[0]
-    Ty = transformed_point[1]
-    Tz = transformed_point[2]  # + fixed_z[0] * pixel_size_fixed
-
-    print("Tx=", Tx)
-    print("Ty=", Ty)
-    print("Tz= ", Tz)
-    logging.info(f"Translation (Tx,Ty,Tz) = {Tx},{Ty},{Tz}")
-
-    print("\n\n")
-    print("-------------------------------------------")
-    print("ROTATION :\n")
-    logging.info("\nROTATION")
-
-    logging.info(f"Inverse rotation matrix = {final_transform_inverse.GetMatrix()}")
-
-    print("\n\n")
-    logging.info("\nSCALE")
-
-    scale = final_transform_inverse.GetScale()
-    print("\nScale= pixel size * ", scale)
-    print("NEW PIXEL SIZE= ", pixel_size_moved * scale)
-    logging.info(f"Scale= pixel size * {scale}")
-    logging.info(f"New pixel size= {pixel_size_moved * scale}")
+    return final_transform
 
 
 def process_line(line: str) -> tuple[str, str, npt.NDArray, npt.NDArray]:

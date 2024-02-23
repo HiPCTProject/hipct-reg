@@ -1,4 +1,5 @@
 import logging
+import re
 from pathlib import Path
 from typing import Any
 
@@ -200,17 +201,35 @@ def test_registration_pipeline(
     full_organ_scan_folder: Path,
     roi_scan_folder: Path,
     reg_input: RegistrationInput,
-    caplog,
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     """
     Test a really simple registration where the common point given is exactly the
     correct point, and there is no rotation between the two datasets.
     """
-    caplog.set_level(logging.INFO)
+    with caplog.at_level(logging.INFO):
+        registration_pipeline(
+            path_full=str(full_organ_scan_folder),
+            path_roi=str(roi_scan_folder),
+            pt_roi=reg_input.common_point_roi,
+            pt_full=reg_input.common_point_full,
+        )
 
-    registration_pipeline(
-        path_full=str(full_organ_scan_folder),
-        path_roi=str(roi_scan_folder),
-        pt_roi=reg_input.common_point_roi,
-        pt_full=reg_input.common_point_full,
-    )
+    log_lines = caplog.text.split("\n")
+    with open(Path(__file__).parent / "expected_reg_log.txt") as f:
+        expected_lines = f.read().split("\n")
+
+    for i, (log_line, expected_line) in enumerate(
+        zip(log_lines, expected_lines, strict=True)
+    ):
+        log_line = log_line.strip()
+        expected_line = expected_line.strip()
+        # First check for equality so we don't have to escape a bunch of special regex c
+        # characters if lines exactly match. Then check regex match.
+        if not ((log_line == expected_line) or re.match(expected_line, log_line)):
+            # Raise our own error to get a nicer message
+            raise AssertionError(
+                f"""Expected line {i + 1} does not match log line:
+{expected_line}
+{log_line}"""
+            )
