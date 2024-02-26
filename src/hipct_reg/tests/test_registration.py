@@ -75,7 +75,7 @@ def full_organ_scan(
     """
     Downsampled ground truth data, to mimic a full organ scan.
     """
-    return import_im(str(full_organ_scan_folder), pixel_size=PIXEL_SIZE_UM * BIN_FACTOR)
+    return import_im(full_organ_scan_folder, pixel_size=PIXEL_SIZE_UM * BIN_FACTOR)
 
 
 @pytest.fixture
@@ -96,7 +96,7 @@ def roi_scan(roi_scan_folder: Path) -> sitk.Image:
     """
     Sub-volume of ground truth data, to mimic ROI data.
     """
-    return import_im(str(roi_scan_folder), pixel_size=PIXEL_SIZE_UM)
+    return import_im(roi_scan_folder, pixel_size=PIXEL_SIZE_UM)
 
 
 @pytest.fixture
@@ -211,8 +211,8 @@ def test_registration_pipeline(
     """
     with caplog.at_level(logging.INFO):
         transform = registration_pipeline(
-            path_full=str(full_organ_scan_folder),
-            path_roi=str(roi_scan_folder),
+            path_full=full_organ_scan_folder,
+            path_roi=roi_scan_folder,
             pt_roi=reg_input.common_point_roi,
             pt_full=reg_input.common_point_full,
         )
