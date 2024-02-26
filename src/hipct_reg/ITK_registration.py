@@ -24,7 +24,7 @@ import skimage.io
 import skimage.measure
 from scipy.spatial.transform import Rotation as ROT
 
-from .helpers import import_im, test_file_type
+from .helpers import import_im
 
 MAX_THREADS = 0  # 0 if all
 
@@ -60,12 +60,6 @@ def registration_rot(
 
     Parameters
     ----------
-    roi_image, moving_image :
-        The images being registered.
-    common_point_roi :
-        Pixel indices of a common point between two images, in the ROI image.
-    common_point_full :
-        Pixel indices of a common point between two images, in the full-organ image.
     zrot :
         Initial rotation for the registration. In units of degrees.
     angle_range :
@@ -195,12 +189,6 @@ def registration_sitk(
 
     Parameters
     ----------
-    roi_image, moving_image :
-        The images being registered.
-    common_point_roi :
-        Pixel indices of a common point between two images, in the ROI image.
-    common_point_full :
-        Pixel indices of a common point between two images, in the full-organ image.
     zrot :
         Initial rotation for the registration. In units of degrees.
 
@@ -209,7 +197,7 @@ def registration_sitk(
     logging.info(f"Common point ROI = {reg_input.common_point_roi}")
     logging.info(f"Common point full = {reg_input.common_point_full}")
     logging.info(f"Initial rotation = {zrot:.02f} deg")
-    pixel_size_fixed: int = reg_input.roi_image.GetSpacing()[0]
+    pixel_size_roi: int = reg_input.roi_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
 
@@ -299,7 +287,7 @@ def registration_sitk(
 
     R.AddCommand(
         sitk.sitkIterationEvent,
-        lambda: command_iteration(R, initial_transform, pixel_size_fixed),
+        lambda: command_iteration(R, initial_transform, pixel_size_roi),
     )
 
     logging.info("Starting registration...")
@@ -353,66 +341,60 @@ def registration_pipeline(
     """
     Parameters
     ----------
-    path_fixed :
+    path_roi :
         Path to the ROI image.
-    path_moved :
+    path_full :
         Path to the full organ scan image.
     pt_roi :
-        Point that the moving dataset will be rotated around, in the coordinate
+        Point that the ROI image will be rotated around, in the coordinate
         frame of the ROI image.
     pt_full :
-        Point that the moving dataset will be rotated around, in the coordinate
+        Point that the ROI image will be rotated around, in the coordinate
         frame of the full organ scan image.
     """
     # Crop the zoom scan to transform the circle fov into a square, thus avoiding the
     # NaN part in the image
-    crop_circle_moved = False
+    crop_circle_roi = False
     logging.info("Starting registration pipeline...")
-    logging.info(f"Crop the zoom volume to avoid external circle = {crop_circle_moved}")
-    logging.info(f"Center of rotation (in frame of fixed image) = {pt_roi}")
-    logging.info(f"Center of rotation (in frame of moving image) = {pt_full}")
-    pixel_size_fixed = get_pixel_size(path_roi)
-    pixel_size_moved = get_pixel_size(path_full)
+    logging.info(f"Crop the ROI iamge to avoid external circle = {crop_circle_roi}")
+    logging.info(f"Center of rotation (in frame of ROI image) = {pt_roi}")
+    logging.info(f"Center of rotation (in frame of full organ image) = {pt_full}")
+    pixel_size_roi = get_pixel_size(path_roi)
+    pixel_size_full = get_pixel_size(path_full)
 
-    # Gather info on images
-    file_type_fixed = test_file_type(path_roi)
-    file_type_moved = test_file_type(path_full)
-
-    N_fixed = len(glob.glob(f"{path_roi}/*.{file_type_fixed}"))
-    N_moved = len(glob.glob(f"{path_full}/*.{file_type_moved}"))
+    n_roi = len(glob.glob(f"{path_roi}/*.tif"))
+    n_full = len(glob.glob(f"{path_full}/*.tif"))
 
     img = skimage.io.imread(glob.glob(path_roi + "/*.tif")[0])
-    logging.info(f"{N_fixed} images of shape {img.shape} in the fixed volume folder")
+    logging.info(f"{n_roi} images of shape {img.shape} in the ROI image folder")
 
     img = skimage.io.imread(glob.glob(path_full + "/*.tif")[0])
     x_dim = img.shape[1]
     y_dim = img.shape[0]
-    logging.info(f"{N_moved} images of shape {img.shape} in the moved volume folder")
+    logging.info(f"{n_full} images of shape {img.shape} in the full organ image folder")
 
     del img
 
-    size_moved = N_moved * x_dim * y_dim * 2 / (1024 * 1024 * 1024)
-    logging.info(f"Total size of moving image is {size_moved} GB")
+    size_full = n_full * x_dim * y_dim * 2 / (1024 * 1024 * 1024)
+    logging.info(f"Total size of full organ image is {size_full} GB")
 
     # binning_moved = 1 + size_moved // 50  # I put a limit of 50 GB
     # binning_moved = int((pixel_size_fixed // pixel_size_moved) / 2) * 2  # other way
-    binning_moved = 1
-    binning_fixed = 1
+    binning_roi = 1
+    binning_full = 1
 
-    if binning_fixed != 1:
-        N_fixed = math.ceil(N_fixed / binning_fixed)
-        logging.info(
-            f"After binning: I found {N_fixed} images in the fixed volume folder"
-        )
-    logging.info(f"Fixed image will be binned by {binning_fixed}")
+    if binning_roi != 1:
+        n_roi = math.ceil(n_roi / binning_roi)
+        logging.info(f"After binning: I found {n_roi} images in the ROI image folder")
+    logging.info(f"ROI image will be binned by {binning_roi}")
 
-    if binning_moved != 1:
-        print(f"A binning of {binning_moved} will be applied to the zoom volume\n")
-        N_moved = math.ceil(N_moved / binning_moved)
+    if binning_full != 1:
+        logging.info(f"A binning of {binning_full} will be applied to the ROI image")
+        n_full = math.ceil(n_full / binning_full)
         logging.info(
-            f"After binning: I found {N_moved} images in the moved volume folder"
+            f"After binning: I found {n_full} images in the full organ image folder"
         )
-    logging.info(f"Moving image will be binned by {binning_moved}")
+    logging.info(f"Full organ image will be binned by {binning_full}")
     logging.info("")
 
     # pixel_size_fixed = pixel_size_fixed * binning_fixed
@@ -421,18 +403,18 @@ def registration_pipeline(
     # pt_roi = pt_roi / binning_fixed
     # pt_full = pt_full / binning_moved
 
-    logging.info("Importing moving image...")
+    logging.info("Importing full organ image...")
     logging.info(f"folder = {path_full}")
-    moving_image = import_im(
+    image_full = import_im(
         path_full,
-        pixel_size_moved,
-        bin_factor=binning_moved,
+        pixel_size_full,
+        bin_factor=binning_full,
     )
-    logging.info("Imported moving image!")
-    logging.info("Moving image parameters:")
-    logging.info(f"size = {moving_image.GetSize()}")
-    logging.info(f"dtype = {moving_image.GetPixelIDTypeAsString()}")
-    logging.info(f"spacing = {moving_image.GetSpacing()}")
+    logging.info("Imported full organ image!")
+    logging.info("Full organ image parameters:")
+    logging.info(f"size = {image_full.GetSize()}")
+    logging.info(f"dtype = {image_full.GetPixelIDTypeAsString()}")
+    logging.info(f"spacing = {image_full.GetSpacing()}")
     logging.info("")
 
     """
@@ -456,20 +438,20 @@ def registration_pipeline(
     pt_roi[2] = pt_roi[2] - fixed_z[0]
     """
 
-    logging.info("Importing fixed image...")
+    logging.info("Importing ROI image...")
     logging.info(f"folder = {path_roi}")
     # logging.info(f"Fixed scan crop z = {fixed_z}")
-    fixed_image = import_im(
+    image_roi = import_im(
         path_roi,
-        pixel_size_fixed,
+        pixel_size_roi,
         # crop_z=fixed_z,
-        bin_factor=binning_fixed,
+        bin_factor=binning_roi,
     )
-    logging.info("Finished importing fixed image!")
-    logging.info("Fixed image parameters:")
-    logging.info(f"size = {fixed_image.GetSize()}")
-    logging.info(f"dtype = {fixed_image.GetPixelIDTypeAsString()}")
-    logging.info(f"spacing = {fixed_image.GetSpacing()}")
+    logging.info("Finished importing ROI image!")
+    logging.info("ROI image parameters:")
+    logging.info(f"size = {image_roi.GetSize()}")
+    logging.info(f"dtype = {image_roi.GetPixelIDTypeAsString()}")
+    logging.info(f"spacing = {image_roi.GetSpacing()}")
     logging.info("")
 
     """
@@ -480,15 +462,11 @@ def registration_pipeline(
     logging.info("")
     """
 
-    # pixelType = sitk.sitkFloat32
-    # fixed_image = sitk.Cast(fixed_image, pixelType)
-    # moving_image = sitk.Cast(moving_image, pixelType)
-
     zrot = 0
 
     reg_input = RegistrationInput(
-        roi_image=fixed_image,
-        full_image=moving_image,
+        roi_image=image_roi,
+        full_image=image_full,
         common_point_roi=pt_roi,
         common_point_full=pt_full,
     )
@@ -542,9 +520,9 @@ def process_line(line: str) -> tuple[str, str, npt.NDArray, npt.NDArray]:
     Process a single line in a registration list file.
     """
     ls = line.split()
-    pt_fixed = np.array(ast.literal_eval(ls[2]))
-    pt_moved = np.array(ast.literal_eval(ls[3]))
-    return ls[0], ls[1], pt_fixed, pt_moved
+    pt_full = np.array(ast.literal_eval(ls[2]))
+    pt_roi = np.array(ast.literal_eval(ls[3]))
+    return ls[0], ls[1], pt_full, pt_roi
 
 
 def get_registration_list() -> list[tuple[str, str, npt.NDArray, npt.NDArray]]:
@@ -594,11 +572,11 @@ def get_registration_list() -> list[tuple[str, str, npt.NDArray, npt.NDArray]]:
         )
 
     elif len(sys.argv) == 5:
-        path_fixed = sys.argv[1]
-        path_moved = sys.argv[2]
-        pt_fixed = np.array(ast.literal_eval(sys.argv[3]))
-        pt_moved = np.array(ast.literal_eval(sys.argv[4]))
-        registration_list.append((path_fixed, path_moved, pt_fixed, pt_moved))
+        path_full = sys.argv[1]
+        path_roi = sys.argv[2]
+        pt_full = np.array(ast.literal_eval(sys.argv[3]))
+        pt_roi = np.array(ast.literal_eval(sys.argv[4]))
+        registration_list.append((path_full, path_roi, pt_full, pt_roi))
 
     else:
         raise RuntimeError("Too many arguments")
@@ -611,9 +589,9 @@ if __name__ == "__main__":
 
     registration_list = get_registration_list()
 
-    for path_fixed, path_moved, pt_fixed, pt_moved in registration_list:
+    for path_full, path_roi, pt_full, pt_roi in registration_list:
         log_file = glob.glob(
-            f"{os.path.dirname(path_moved.rstrip('/'))}/registration_{os.path.basename(path_moved)}.log"
+            f"{os.path.dirname(path_roi.rstrip('/'))}/registration_{os.path.basename(path_roi)}.log"
         )
         if len(log_file) > 1:
             print("More than one log file found, skipping dataset")
@@ -631,7 +609,7 @@ if __name__ == "__main__":
         root_logger = logging.getLogger()
         root_logger.setLevel(logging.INFO)
         handler = logging.FileHandler(
-            f"{os.path.dirname(path_moved.rstrip('/'))}/registration_{os.path.basename(os.path.normpath(path_moved))}.log",
+            f"{os.path.dirname(path_roi.rstrip('/'))}/registration_{os.path.basename(os.path.normpath(path_roi))}.log",
             "w",
             "utf-8",
         )
@@ -639,20 +617,20 @@ if __name__ == "__main__":
         root_logger.addHandler(handler)
 
         logging.info(
-            f"Command: python3 ITK_registration.py {path_fixed} {path_moved} [{pt_fixed[0]},{pt_fixed[1]},{pt_fixed[2]}] [{pt_moved[0]},{pt_moved[1]},{pt_moved[2]}]\n"
+            f"Command: python3 ITK_registration.py {path_full} {path_roi} [{pt_full[0]},{pt_full[1]},{pt_full[2]}] [{pt_roi[0]},{pt_roi[1]},{pt_roi[2]}]\n"
         )
         logging.info("REGISTRATION:\n")
-        logging.info(f"Fixed image = {path_fixed}")
-        logging.info(f"Moving image = {path_moved}")
-        logging.info(f"\nPoint fixed = {pt_fixed}")
-        logging.info(f"Point moved = {pt_moved}")
+        logging.info(f"Full organ image = {path_full}")
+        logging.info(f"ROI image = {path_roi}")
+        logging.info(f"Full organ common point = {pt_full}")
+        logging.info(f"ROI common point = {pt_roi}")
 
         # Run registration
         registration_pipeline(
-            path_roi=path_fixed,
-            path_full=path_moved,
-            pt_roi=tuple(pt_fixed),
-            pt_full=tuple(pt_moved),
+            path_roi=path_roi,
+            path_full=path_full,
+            pt_roi=tuple(pt_roi),
+            pt_full=tuple(pt_full),
         )
 
         print("--- %s seconds ---" % (time.time() - start_time))
