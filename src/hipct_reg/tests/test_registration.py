@@ -113,23 +113,22 @@ def reg_input(roi_scan: sitk.Image, full_organ_scan: sitk.Image) -> Registration
     )
 
 
+@pytest.mark.parametrize("zrot", [0, 30])
 def test_registration_rot(
-    reg_input: RegistrationInput, caplog: pytest.LogCaptureFixture
+    reg_input: RegistrationInput, caplog: pytest.LogCaptureFixture, zrot: float
 ) -> None:
     """
     Test a really simple registration where the common point given is exactly the
     correct point, and there is no rotation between the two datasets.
     """
 
-    zrot = 0
     with caplog.at_level(logging.INFO):
         transform = registration_rot(
-            reg_input,
-            zrot=zrot,
-            angle_range=360,
-            angle_step=2,
+            reg_input, angle_range=360, angle_step=2, zrot=zrot
         )
-        expected = r"""INFO Starting rotational registration
+        if zrot == 0:
+            # Only test log for one zrot case
+            expected = r"""INFO Starting rotational registration
 INFO Initial rotation = 0 deg
 INFO Range = 360 deg
 INFO Step = 2 deg
@@ -139,8 +138,10 @@ INFO Starting registration...
 INFO Registration finished!
 INFO Registered rotation angele = 0.0 deg
 """
-    assert caplog.text == expected
+            assert caplog.text == expected
 
+    # Regardless of initial zrot, we should get the same results as a full
+    # 360 deg is sampled each time
     assert isinstance(transform, sitk.Euler3DTransform)
     assert transform.GetAngleX() == 0
     assert transform.GetAngleY() == 0
