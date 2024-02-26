@@ -96,3 +96,12 @@ def transform_to_dict(transform: sitk.Similarity3DTransform) -> TransformDict:
         "rotation_matrix": transform.GetMatrix(),
         "scale": transform.GetScale(),
     }
+
+
+def get_pixel_size(path: str) -> float:
+    """
+    Get pixel size in um from a path.
+    """
+    if path[-1] == "/":
+        path = path[:-1]
+    return float(path.split("/")[-1].split("um")[0])

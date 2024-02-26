@@ -24,7 +24,7 @@ import skimage.io
 import skimage.measure
 from scipy.spatial.transform import Rotation as ROT
 
-from .helpers import import_im
+from hipct_reg.helpers import get_pixel_size, import_im
 
 MAX_THREADS = 0  # 0 if all
 
@@ -320,15 +320,6 @@ def registration_sitk(
     logging.info(f"rotation = {rotation} deg")
 
     return final_transform
-
-
-def get_pixel_size(path: str) -> float:
-    """
-    Get pixel size in um from a path.
-    """
-    if path[-1] == "/":
-        path = path[:-1]
-    return float(path.split("/")[-1].split("um")[0])
 
 
 def registration_pipeline(
