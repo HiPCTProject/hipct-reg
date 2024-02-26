@@ -76,8 +76,6 @@ def registration_rot(
         If True, print every step of the optimisation.
 
     """
-    pixel_size_fixed = reg_input.roi_image.GetSpacing()[0]
-
     R = sitk.ImageRegistrationMethod()
 
     # Similarity metric settings.
@@ -140,12 +138,8 @@ def registration_rot(
 
         def command_iteration(
             method: sitk.ImageRegistrationMethod,
-            pixel_size_fixed,
-            translation,
-            rotation_center,
-            moving_image,
-            roi_image,
-        ):
+            translation: npt.NDArray,
+        ) -> None:
             metric.append(method.GetMetricValue())
             rotation = np.rad2deg(method.GetOptimizerPosition()[0:3])
             translation = method.GetOptimizerPosition()[3:6]
@@ -161,11 +155,7 @@ def registration_rot(
             sitk.sitkIterationEvent,
             lambda: command_iteration(
                 R,
-                pixel_size_fixed,
                 translation,
-                rotation_center,
-                reg_input.full_image,
-                reg_input.roi_image,
             ),
         )
 
@@ -219,7 +209,7 @@ def registration_sitk(
     logging.info(f"Common point ROI = {reg_input.common_point_roi}")
     logging.info(f"Common point full = {reg_input.common_point_full}")
     logging.info(f"Initial rotation = {zrot:.02f} deg")
-    pixel_size_fixed = reg_input.roi_image.GetSpacing()[0]
+    pixel_size_fixed: int = reg_input.roi_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
 
@@ -290,8 +280,8 @@ def registration_sitk(
     def command_iteration(
         method: sitk.ImageRegistrationMethod,
         transform: sitk.Similarity3DTransform,
-        pixel_size,
-    ):
+        pixel_size: int,
+    ) -> None:
         metric.append(method.GetMetricValue())
 
         q0, q1, q2, q3 = transform.GetVersor()
@@ -659,7 +649,10 @@ if __name__ == "__main__":
 
         # Run registration
         registration_pipeline(
-            path_roi=path_fixed, path_full=path_moved, pt_roi=pt_fixed, pt_full=pt_moved
+            path_roi=path_fixed,
+            path_full=path_moved,
+            pt_roi=tuple(pt_fixed),
+            pt_full=tuple(pt_moved),
         )
 
         print("--- %s seconds ---" % (time.time() - start_time))

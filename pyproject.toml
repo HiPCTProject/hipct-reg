@@ -63,7 +63,12 @@ paths.source = [
 
 [tool.mypy]
 ignore_missing_imports = true
-
+exclude = [
+    'build/.*',
+]
+strict = true
+disallow_any_generics = false
+disallow_untyped_calls = false
 
 [tool.ruff]
 fix = true

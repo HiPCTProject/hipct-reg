@@ -50,12 +50,10 @@ def import_im(
         )
 
     image = sitk.GetImageFromArray(img_array)
-    del img_array
-    image = sitk.Cast(image, sitk.sitkFloat32)
-
     image.SetOrigin([0, 0, 0])
     image.SetSpacing([pixel_size, pixel_size, pixel_size])
 
+    image = sitk.Cast(image, sitk.sitkFloat32)
     return image
 
 

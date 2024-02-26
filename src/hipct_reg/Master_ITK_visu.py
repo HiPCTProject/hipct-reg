@@ -7,14 +7,14 @@ import glob
 import os
 
 
-def send_slurm(registration_list):
+def send_slurm(registration_line: str) -> None:
     """Send a matlab script to the cluster"""
     print("Script to start")
 
     job_dir = "/data/projects/hop/data_repository/Various/neuroglancer_pipeline/registration/slurm/job/"
     output_dir = "/data/projects/hop/data_repository/Various/neuroglancer_pipeline/registration/slurm/output/"
 
-    job_name = os.path.basename(registration_list)
+    job_name = os.path.basename(registration_line)
     job_file = f"{os.path.dirname(job_dir)}/{job_name}.job"
 
     # -----------------------------------------------------------------
@@ -49,7 +49,7 @@ source /home/esrf/joseph08091994/python/pyEnv2/bin/activate
 echo Virtual environment started
 
 echo Starting registration script
-srun python ITK_visu.py {registration_list}
+srun python ITK_visu.py {registration_line}
 """
     # -----------------------------------------------------------------
 
