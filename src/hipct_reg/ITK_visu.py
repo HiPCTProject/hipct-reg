@@ -4,6 +4,8 @@
 ## This script allows to visialize the results from the registration performed with ITK_registration.py ##
 
 
+# mypy: ignore-errors
+
 import ast
 import glob
 import math
@@ -24,11 +26,11 @@ from .helpers import import_im, test_file_type
 MAX_THREADS = 0  # 0 if all
 
 
-def get_str(row, string):
+def get_str(row: str, string: str) -> str:
     return row[row.startswith(string) and len(string) :].strip("\n")
 
 
-def visu_from_file(log_file, res_factor):
+def visu_from_file(log_file: str, res_factor: float) -> None:
     with open(log_file) as f:
         lines = f.readlines()
 

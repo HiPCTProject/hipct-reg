@@ -45,13 +45,14 @@ def write_array_to_stack(array: npt.NDArray[Any], folder: Path) -> None:
 
 
 @pytest.fixture
-def ground_truth(rng: np.random.Generator) -> npt.NDArray[np.float32]:
+def ground_truth(rng: np.random.Generator) -> npt.NDArray[np.uint16]:
     """
     Ground truth, high resolution data.
     """
-    return binary_blobs(
+    data: npt.NDArray = binary_blobs(
         length=256, n_dim=3, blob_size_fraction=0.01, volume_fraction=0.5, rng=rng
     ).astype(np.uint16)
+    return data
 
 
 @pytest.fixture
@@ -99,7 +100,7 @@ def roi_scan(roi_scan_folder: Path) -> sitk.Image:
 
 
 @pytest.fixture
-def reg_input(roi_scan, full_organ_scan) -> RegistrationInput:
+def reg_input(roi_scan: sitk.Image, full_organ_scan: sitk.Image) -> RegistrationInput:
     common_point_roi = arr_to_index_tuple(np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2)
     common_point_full = arr_to_index_tuple(
         (np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET]) + common_point_roi) / BIN_FACTOR
@@ -167,7 +168,7 @@ INFO Registered rotation angele = 0.0 deg
 
 def test_registration_sitk(
     reg_input: RegistrationInput, caplog: pytest.LogCaptureFixture
-):
+) -> None:
     # Rotate the ROI slightly initially to give the registration something to do
     zrot = np.deg2rad(1)
     with caplog.at_level(logging.INFO):
