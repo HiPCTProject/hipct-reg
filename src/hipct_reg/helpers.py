@@ -1,5 +1,5 @@
 import glob
-from typing import Literal
+from typing import Literal, TypedDict
 
 import dask_image
 import dask_image.imread
@@ -77,3 +77,22 @@ def arr_to_index_tuple(arr: npt.NDArray) -> tuple[int, int, int]:
     """
     assert arr.shape == (3,)
     return (int(arr[0]), int(arr[1]), int(arr[2]))
+
+
+class TransformDict(TypedDict):
+    translation: tuple[float, float, float]
+    rotation_matrix: tuple[
+        float, float, float, float, float, float, float, float, float
+    ]
+    scale: float
+
+
+def transform_to_dict(transform: sitk.Similarity3DTransform) -> TransformDict:
+    """
+    Serialise the registered transform to a dict (that can be written to JSON).
+    """
+    return {
+        "translation": transform.TransformPoint([0, 0, 0]),
+        "rotation_matrix": transform.GetMatrix(),
+        "scale": transform.GetScale(),
+    }

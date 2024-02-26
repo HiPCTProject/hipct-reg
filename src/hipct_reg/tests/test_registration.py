@@ -11,7 +11,7 @@ import tifffile
 from skimage.data import binary_blobs
 from skimage.measure import block_reduce
 
-from hipct_reg.helpers import arr_to_index_tuple, import_im
+from hipct_reg.helpers import arr_to_index_tuple, import_im, transform_to_dict
 from hipct_reg.ITK_registration import (
     RegistrationInput,
     registration_pipeline,
@@ -209,7 +209,7 @@ def test_registration_pipeline(
     correct point, and there is no rotation between the two datasets.
     """
     with caplog.at_level(logging.INFO):
-        registration_pipeline(
+        transform = registration_pipeline(
             path_full=str(full_organ_scan_folder),
             path_roi=str(roi_scan_folder),
             pt_roi=reg_input.common_point_roi,
@@ -234,3 +234,26 @@ def test_registration_pipeline(
 {expected_line}
 {log_line}"""
             )
+
+    # Check transform serialisation
+    transform_dict = transform_to_dict(transform)
+    assert list(transform_dict.keys()) == ["translation", "rotation_matrix", "scale"]
+
+    np.testing.assert_almost_equal(
+        transform_dict["translation"], [638.7895034, 641.0739664, 642.6235975]
+    )
+    np.testing.assert_almost_equal(
+        transform_dict["rotation_matrix"],
+        [
+            0.9948236,
+            0.0056267,
+            0.0071129,
+            -0.0056561,
+            0.9948404,
+            0.0041005,
+            -0.0070896,
+            -0.0041408,
+            0.994831,
+        ],
+    )
+    np.testing.assert_almost_equal(transform_dict["scale"], 0.9948649223971283)
