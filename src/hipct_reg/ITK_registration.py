@@ -6,13 +6,12 @@ volumes.
 """
 
 import ast
-import glob
 import logging
 import math
-import os
 import sys
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 
@@ -324,8 +323,8 @@ def registration_sitk(
 
 def registration_pipeline(
     *,
-    path_roi: str,
-    path_full: str,
+    path_roi: Path,
+    path_full: Path,
     pt_roi: tuple[int, int, int],
     pt_full: tuple[int, int, int],
 ) -> sitk.Similarity3DTransform:
@@ -353,13 +352,13 @@ def registration_pipeline(
     pixel_size_roi = get_pixel_size(path_roi)
     pixel_size_full = get_pixel_size(path_full)
 
-    n_roi = len(glob.glob(f"{path_roi}/*.tif"))
-    n_full = len(glob.glob(f"{path_full}/*.tif"))
+    n_roi = len(list(path_roi.glob("*.tif")))
+    n_full = len(list(path_full.glob("*.tif")))
 
-    img = skimage.io.imread(glob.glob(path_roi + "/*.tif")[0])
+    img = skimage.io.imread(next(path_roi.glob("*.tif")))
     logging.info(f"{n_roi} images of shape {img.shape} in the ROI image folder")
 
-    img = skimage.io.imread(glob.glob(path_full + "/*.tif")[0])
+    img = skimage.io.imread(next(path_full.glob("*.tif")))
     x_dim = img.shape[1]
     y_dim = img.shape[0]
     logging.info(f"{n_full} images of shape {img.shape} in the full organ image folder")
@@ -506,17 +505,17 @@ def registration_pipeline(
     return final_transform
 
 
-def process_line(line: str) -> tuple[str, str, npt.NDArray, npt.NDArray]:
+def process_line(line: str) -> tuple[Path, Path, npt.NDArray, npt.NDArray]:
     """
     Process a single line in a registration list file.
     """
     ls = line.split()
     pt_full = np.array(ast.literal_eval(ls[2]))
     pt_roi = np.array(ast.literal_eval(ls[3]))
-    return ls[0], ls[1], pt_full, pt_roi
+    return Path(ls[0]), Path(ls[1]), pt_full, pt_roi
 
 
-def get_registration_list() -> list[tuple[str, str, npt.NDArray, npt.NDArray]]:
+def get_registration_list() -> list[tuple[Path, Path, npt.NDArray, npt.NDArray]]:
     """
     Get list of datasets to register.
 
@@ -530,7 +529,7 @@ def get_registration_list() -> list[tuple[str, str, npt.NDArray, npt.NDArray]]:
         - Common point in dataset being registered
 
     """
-    registration_list: list[tuple[str, str, npt.NDArray, npt.NDArray]] = []
+    registration_list: list[tuple[Path, Path, npt.NDArray, npt.NDArray]] = []
 
     if len(sys.argv) == 1:
         Tk().withdraw()
@@ -563,8 +562,8 @@ def get_registration_list() -> list[tuple[str, str, npt.NDArray, npt.NDArray]]:
         )
 
     elif len(sys.argv) == 5:
-        path_full = sys.argv[1]
-        path_roi = sys.argv[2]
+        path_full = Path(sys.argv[1])
+        path_roi = Path(sys.argv[2])
         pt_full = np.array(ast.literal_eval(sys.argv[3]))
         pt_roi = np.array(ast.literal_eval(sys.argv[4]))
         registration_list.append((path_full, path_roi, pt_full, pt_roi))
@@ -581,9 +580,8 @@ if __name__ == "__main__":
     registration_list = get_registration_list()
 
     for path_full, path_roi, pt_full, pt_roi in registration_list:
-        log_file = glob.glob(
-            f"{os.path.dirname(path_roi.rstrip('/'))}/registration_{os.path.basename(path_roi)}.log"
-        )
+        log_fname = f"registration_{path_roi.name}.log"
+        log_file = list(path_roi.parent.glob(log_fname))
         if len(log_file) > 1:
             print("More than one log file found, skipping dataset")
             continue
@@ -600,7 +598,7 @@ if __name__ == "__main__":
         root_logger = logging.getLogger()
         root_logger.setLevel(logging.INFO)
         handler = logging.FileHandler(
-            f"{os.path.dirname(path_roi.rstrip('/'))}/registration_{os.path.basename(os.path.normpath(path_roi))}.log",
+            str(path_roi.parent / log_fname),
             "w",
             "utf-8",
         )

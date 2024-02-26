@@ -1,4 +1,4 @@
-import glob
+from pathlib import Path
 from typing import Literal, TypedDict
 
 import dask_image
@@ -11,7 +11,7 @@ import skimage.measure
 
 
 def import_im(
-    path: str,
+    path: Path,
     pixel_size: float,
     crop_z: tuple[int, int] | None = None,
     bin_factor: int = 1,
@@ -57,15 +57,15 @@ def import_im(
     return image
 
 
-def test_file_type(path: str) -> Literal["tif", "jp2"]:
-    N_tif = glob.glob(path + "/*.tif")
-    N_jp2 = glob.glob(path + "/*.jp2")
+def test_file_type(path: Path) -> Literal["tif", "jp2"]:
+    N_tif = len(list(path.glob("*.tif")))
+    N_jp2 = len(list(path.glob("*.jp2")))
 
-    if len(N_tif) > 0 and len(N_jp2) > 0:
+    if (N_tif) > 0 and (N_jp2) > 0:
         raise RuntimeError("Error: tif and jp2 files in the folder")
-    elif len(N_tif) == 0 and len(N_jp2) == 0:
+    elif (N_tif) == 0 and (N_jp2) == 0:
         raise RuntimeError("Error: no tif or jp2 files in the folder")
-    elif len(N_tif) > 0 and len(N_jp2) == 0:
+    elif N_tif > 0 and (N_jp2) == 0:
         return "tif"
     else:
         return "jp2"
@@ -98,10 +98,8 @@ def transform_to_dict(transform: sitk.Similarity3DTransform) -> TransformDict:
     }
 
 
-def get_pixel_size(path: str) -> float:
+def get_pixel_size(path: Path) -> float:
     """
     Get pixel size in um from a path.
     """
-    if path[-1] == "/":
-        path = path[:-1]
-    return float(path.split("/")[-1].split("um")[0])
+    return float(path.name.split("um")[0])
