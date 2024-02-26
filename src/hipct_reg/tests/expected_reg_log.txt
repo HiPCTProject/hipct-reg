@@ -1,25 +1,25 @@
 INFO Starting registration pipeline...
-INFO Crop the zoom volume to avoid external circle = False
-INFO Center of rotation (in frame of fixed image) = (32, 32, 32)
-INFO Center of rotation (in frame of moving image) = (40, 40, 40)
-INFO 64 images of shape (64, 64) in the fixed volume folder
-INFO 64 images of shape (64, 64) in the moved volume folder
-INFO Total size of moving image is 0.00048828125 GB
-INFO Fixed image will be binned by 1
-INFO Moving image will be binned by 1
+INFO Crop the ROI iamge to avoid external circle = False
+INFO Center of rotation (in frame of ROI image) = (32, 32, 32)
+INFO Center of rotation (in frame of full organ image) = (40, 40, 40)
+INFO 64 images of shape (64, 64) in the ROI image folder
+INFO 64 images of shape (64, 64) in the full organ image folder
+INFO Total size of full organ image is 0.00048828125 GB
+INFO ROI image will be binned by 1
+INFO Full organ image will be binned by 1
 INFO
-INFO Importing moving image...
+INFO Importing full organ image...
 INFO folder = .*
-INFO Imported moving image!
-INFO Moving image parameters:
+INFO Imported full organ image!
+INFO Full organ image parameters:
 INFO size = (64, 64, 64)
 INFO dtype = 32-bit float
 INFO spacing = (20.0, 20.0, 20.0)
 INFO
-INFO Importing fixed image...
+INFO Importing ROI image...
 INFO folder = .*
-INFO Finished importing fixed image!
-INFO Fixed image parameters:
+INFO Finished importing ROI image!
+INFO ROI image parameters:
 INFO size = (64, 64, 64)
 INFO dtype = 32-bit float
 INFO spacing = (5.0, 5.0, 5.0)
