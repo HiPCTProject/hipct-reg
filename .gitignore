@@ -166,3 +166,6 @@ _version.py
 
 # Jupyter
 *.ipynb
+
+# Data
+scripts/data
