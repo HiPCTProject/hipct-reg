@@ -329,6 +329,8 @@ def registration_pipeline(
     pt_full: tuple[int, int, int],
 ) -> sitk.Similarity3DTransform:
     """
+    Run the full registration pipeline on two folders of images.
+
     Parameters
     ----------
     path_roi :
@@ -452,14 +454,20 @@ def registration_pipeline(
     logging.info("")
     """
 
-    zrot = 0
-
     reg_input = RegistrationInput(
         roi_image=image_roi,
         full_image=image_full,
         common_point_roi=pt_roi,
         common_point_full=pt_full,
     )
+    return run_registration(reg_input)
+
+
+def run_registration(reg_input: RegistrationInput) -> sitk.Similarity3DTransform:
+    """
+    Run registration pipeline on pre-loaded/pre-processed images.
+    """
+    zrot = 0
 
     # Try a full 360 deg first at a coarse step
     angle_range = 360
