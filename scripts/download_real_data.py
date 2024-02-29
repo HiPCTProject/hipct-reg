@@ -1,7 +1,10 @@
+"""
+Download some real HiP-CT data that can be used for testing.
+"""
+
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import tensorstore as ts
 import zarr
 
@@ -17,8 +20,6 @@ def get_dataset(scan: str) -> Any:
         }
     ).result()
 
-
-ratio = 1 / (1 - np.sqrt(3))
 
 SIZE_FULL = 64
 SIZE_ROI = int(SIZE_FULL * 19.85 / 6.36)
