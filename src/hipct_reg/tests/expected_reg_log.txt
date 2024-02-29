@@ -27,6 +27,12 @@ INFO
 INFO Normalising images...
 INFO Images normalised!
 INFO
+INFO Runinng registration...
+INFO Full array size: (64, 64, 64) pix
+INFO Full voxel size = (20.0, 20.0, 20.0) um
+INFO ROI array size: (64, 64, 64) pix
+INFO ROI voxel size = (5.0, 5.0, 5.0) um
+INFO
 INFO Starting rotational registration
 INFO Initial rotation = 0 deg
 INFO Range = 360 deg

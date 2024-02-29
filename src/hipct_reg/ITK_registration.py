@@ -482,6 +482,13 @@ def run_registration(reg_input: RegistrationInput) -> sitk.Similarity3DTransform
     """
     Run registration pipeline on pre-loaded/pre-processed images.
     """
+
+    logging.info("Runinng registration...")
+    logging.info(f"Full array size: {reg_input.full_image.GetSize()} pix")
+    logging.info(f"Full voxel size = {reg_input.full_image.GetSpacing()} um")
+    logging.info(f"ROI array size: {reg_input.roi_image.GetSize()} pix")
+    logging.info(f"ROI voxel size = {reg_input.roi_image.GetSpacing()} um")
+    logging.info("")
     zrot = 0
 
     # Try a full 360 deg first at a coarse step
