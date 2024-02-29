@@ -24,6 +24,9 @@ INFO size = (64, 64, 64)
 INFO dtype = 32-bit float
 INFO spacing = (5.0, 5.0, 5.0)
 INFO
+INFO Normalising images...
+INFO Images normalised!
+INFO
 INFO Starting rotational registration
 INFO Initial rotation = 0 deg
 INFO Range = 360 deg
@@ -51,14 +54,14 @@ INFO Common point full = (40, 40, 40)
 INFO Initial rotation = 0.30 deg
 INFO Starting registration...
 INFO Registration finished!
-INFO translation = (127.99992366667033, 127.99990586682651, 127.99994247378481) pix
-INFO rotation = [-0.11865842  0.20448803 -0.16245109] deg
+INFO translation = (127.99992384474724, 127.99990610103642, 127.99994261587392) pix
+INFO rotation = [-0.11792743  0.20342507 -0.1620166 ] deg
 INFO Similarity registration finished!
 INFO
 INFO Results from similarity registration:
-INFO Translation = (639.9996183333516, 639.9995293341325, 639.9997123689241)
+INFO Translation = (639.9996192237362, 639.9995305051821, 639.9997130793696)
 INFO Center of rot = (160.0, 160.0, 160.0)
 INFO Matrix = \(0\.[0-9]*, 0\.[0-9]*, 0\.[0-9]*, -0\.[0-9]*, 0.[0-9]*, 0\.[0-9]*, -0\.[0-9]*, -0\.[0-9]*, 0\.[0-9]*\)
 INFO Versor = \(-0\.[0-9]*, 0\.[0-9]*, -0\.[0-9]*, 0\.[0-9]*\)
-INFO Scale = 0\.[0-9]*
+INFO Scale = 0.99[0-9]*
 INFO

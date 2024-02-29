@@ -241,20 +241,20 @@ def test_registration_pipeline(
     assert list(transform_dict.keys()) == ["translation", "rotation_matrix", "scale"]
 
     np.testing.assert_almost_equal(
-        transform_dict["translation"], [638.7895034, 641.0739664, 642.6235975]
+        transform_dict["translation"], [638.7961303, 641.0739275, 642.6119734]
     )
     np.testing.assert_almost_equal(
         transform_dict["rotation_matrix"],
         [
-            0.9948236,
-            0.0056267,
-            0.0071129,
-            -0.0056561,
-            0.9948404,
-            0.0041005,
-            -0.0070896,
-            -0.0041408,
-            0.994831,
+            0.994834,
+            0.0056119,
+            0.007076,
+            -0.0056409,
+            0.9948506,
+            0.0040753,
+            -0.0070528,
+            -0.0041153,
+            0.9948415,
         ],
     )
-    np.testing.assert_almost_equal(transform_dict["scale"], 0.9948649223971283)
+    np.testing.assert_almost_equal(transform_dict["scale"], 0.9948749707255534)
