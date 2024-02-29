@@ -463,13 +463,11 @@ def registration_pipeline(
     logging.info(f"spacing = {image_roi.GetSpacing()}")
     logging.info("")
 
-    """
     logging.info("Normalising images...")
-    fixed_image = sitk.Normalize(fixed_image)
-    moving_image = sitk.Normalize(moving_image)
+    image_roi = sitk.Normalize(image_roi)
+    image_full = sitk.Normalize(image_full)
     logging.info("Images normalised!")
     logging.info("")
-    """
 
     reg_input = RegistrationInput(
         roi_image=image_roi,
