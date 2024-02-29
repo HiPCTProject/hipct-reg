@@ -103,7 +103,11 @@ def roi_scan(roi_scan_folder: Path) -> sitk.Image:
 def reg_input(roi_scan: sitk.Image, full_organ_scan: sitk.Image) -> RegistrationInput:
     common_point_roi = arr_to_index_tuple(np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2)
     common_point_full = arr_to_index_tuple(
-        (np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET]) + common_point_roi) / BIN_FACTOR
+        (
+            np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET])
+            + np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2
+        )
+        / BIN_FACTOR
     )
     return RegistrationInput(
         roi_image=roi_scan,
@@ -164,7 +168,7 @@ INFO Registered rotation angele = 0.0 deg
     assert transform.GetAngleY() == 0
     # This value should be close to zero
     zrot = np.rad2deg(transform.GetAngleZ())
-    assert zrot == pytest.approx(0.3)
+    assert zrot == pytest.approx(-0.1)
 
 
 def test_registration_sitk(
@@ -241,20 +245,10 @@ def test_registration_pipeline(
     assert list(transform_dict.keys()) == ["translation", "rotation_matrix", "scale"]
 
     np.testing.assert_almost_equal(
-        transform_dict["translation"], [638.7961303, 641.0739275, 642.6119734]
+        transform_dict["translation"], [639.7209912, 640.2794962, 640.0]
     )
     np.testing.assert_almost_equal(
         transform_dict["rotation_matrix"],
-        [
-            0.994834,
-            0.0056119,
-            0.007076,
-            -0.0056409,
-            0.9948506,
-            0.0040753,
-            -0.0070528,
-            -0.0041153,
-            0.9948415,
-        ],
+        [0.9999985, 0.0017453, 0.0, -0.0017453, 0.9999985, -0.0, -0.0, 0.0, 1.0],
     )
-    np.testing.assert_almost_equal(transform_dict["scale"], 0.9948749707255534)
+    np.testing.assert_almost_equal(transform_dict["scale"], 1)
