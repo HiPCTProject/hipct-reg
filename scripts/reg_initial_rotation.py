@@ -12,7 +12,11 @@ import SimpleITK as sitk
 import zarr
 
 from hipct_reg.helpers import arr_to_index_tuple
-from hipct_reg.ITK_registration import RegistrationInput, registration_rot
+from hipct_reg.ITK_registration import (
+    RegistrationInput,
+    registration_rot,
+    registration_sitk,
+)
 
 logging.basicConfig(level=logging.INFO)
 
@@ -47,7 +51,14 @@ reg_input = RegistrationInput(
     common_point_full=get_central_pixel(full),
 )
 
-transform, data = registration_rot(reg_input, zrot=0, angle_range=360, angle_step=2)
+transform, data_coarse = registration_rot(
+    reg_input, zrot=0, angle_range=360, angle_step=2
+)
+transform, data_fine = registration_rot(
+    reg_input, zrot=np.rad2deg(transform.GetAngleZ()), angle_range=5, angle_step=0.1
+)
+transform = registration_sitk(reg_input, zrot=np.rad2deg(transform.GetAngleZ()))
+
 print(transform)
 
 roi_resampled = sitk.Resample(
@@ -56,7 +67,8 @@ roi_resampled = sitk.Resample(
 
 # Plot metric against rotation angle
 fig, ax = plt.subplots(constrained_layout=True)
-ax.plot(data["rotation"], data["metric"])
+ax.plot(data_coarse["rotation"], data_coarse["metric"])
+ax.plot(data_fine["rotation"], data_fine["metric"])
 ax.set_xlabel("Rotation / deg")
 ax.set_ylabel("Registration metric")
 
