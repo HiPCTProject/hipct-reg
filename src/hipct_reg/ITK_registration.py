@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
+from typing import TypedDict
 
 import numpy as np
 import numpy.typing as npt
@@ -43,6 +44,11 @@ class RegistrationInput:
     common_point_full: tuple[int, int, int]
 
 
+class RotRegMetrics(TypedDict):
+    rotation: list[float]
+    metric: list[float]
+
+
 def registration_rot(
     reg_input: RegistrationInput,
     *,
@@ -51,7 +57,7 @@ def registration_rot(
     angle_step: float,
     fiji: bool = False,
     verbose: bool = False,
-) -> sitk.Euler3DTransform:
+) -> tuple[sitk.Euler3DTransform, RotRegMetrics]:
     """
     Run a registration using a rotational transform about the z-axis.
     The angles of the transform which are sampled are set by manually by function
@@ -66,7 +72,14 @@ def registration_rot(
     angle_step :
         Step to take when scanning range of angles. In units of degrees.
     verbose :
-        If True, print every step of the optimisation.
+        If True, log every step of the optimisation at debug level.
+
+    Returns
+    -------
+    transform :
+        Final registered transform.
+    metrics :
+        Dict containing the registration metric as a function of angle.
 
     """
     R = sitk.ImageRegistrationMethod()
@@ -125,34 +138,37 @@ def registration_rot(
         )
         sitk.Show(0.6 * moving_resampled + 0.4 * reg_input.roi_image, "before rot")
 
-    if verbose:
-        # Add a command to print the result of each iteration
-        metric = []
+    data: RotRegMetrics = {"rotation": [], "metric": []}
 
-        def command_iteration(
-            method: sitk.ImageRegistrationMethod,
-            translation: npt.NDArray,
-        ) -> None:
-            metric.append(method.GetMetricValue())
-            rotation = np.rad2deg(method.GetOptimizerPosition()[0:3])
-            translation = method.GetOptimizerPosition()[3:6]
+    def command_iteration(
+        method: sitk.ImageRegistrationMethod,
+        translation: npt.NDArray,
+    ) -> None:
+        rotation = np.rad2deg(method.GetOptimizerPosition()[0:3])
+        translation = method.GetOptimizerPosition()[3:6]
+        metric = method.GetMetricValue()
+
+        data["metric"].append(metric)
+        data["rotation"].append(rotation[2])
+
+        if verbose:
             logging.debug(f"iteration = {method.GetOptimizerIteration()}")
-            logging.debug(f"metric = {method.GetMetricValue()}")
+            logging.debug(f"metric = {metric}")
             logging.debug(f"translation = {translation}")
             logging.debug(f"rotation = {rotation} deg")
             logging.debug(f"CPU usage: {psutil.cpu_percent()}")
             logging.debug(f"RAM usage: {psutil.virtual_memory().percent}")
             logging.debug("")
 
-        R.AddCommand(
-            sitk.sitkIterationEvent,
-            lambda: command_iteration(
-                R,
-                translation,
-            ),
-        )
+    R.AddCommand(
+        sitk.sitkIterationEvent,
+        lambda: command_iteration(
+            R,
+            translation,
+        ),
+    )
 
-    logging.info("Starting registration...")
+    logging.info("Starting rotational registration...")
     transform_rotation: sitk.Euler3DTransform = R.Execute(
         reg_input.roi_image, reg_input.full_image
     )
@@ -173,8 +189,9 @@ def registration_rot(
     logging.debug(f"Final metric value = {R.GetMetricValue()}")
     logging.debug(f"Stopping condition = {R.GetOptimizerStopConditionDescription()}")
     logging.info(f"Registered rotation angele = {new_zrot} deg")
+    logging.info("")
 
-    return transform_rotation
+    return transform_rotation, data
 
 
 def registration_sitk(
@@ -472,7 +489,7 @@ def run_registration(reg_input: RegistrationInput) -> sitk.Similarity3DTransform
     # Try a full 360 deg first at a coarse step
     angle_range = 360
     angle_step = 2.0
-    transform_rotation = registration_rot(
+    transform_rotation, _ = registration_rot(
         reg_input,
         zrot=zrot,
         angle_range=angle_range,
@@ -483,7 +500,7 @@ def run_registration(reg_input: RegistrationInput) -> sitk.Similarity3DTransform
     # Now try a smaller angular step
     angle_range = 5
     angle_step = 0.1
-    transform_rotation = registration_rot(
+    transform_rotation, _ = registration_rot(
         reg_input,
         zrot=zrot,
         angle_range=angle_range,

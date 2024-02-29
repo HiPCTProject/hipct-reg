@@ -123,7 +123,7 @@ def test_registration_rot(
     """
 
     with caplog.at_level(logging.INFO):
-        transform = registration_rot(
+        transform, _ = registration_rot(
             reg_input, angle_range=360, angle_step=2, zrot=zrot
         )
         if zrot == 0:
@@ -134,11 +134,11 @@ INFO Range = 360 deg
 INFO Step = 2 deg
 INFO Common point ROI = (32, 32, 32) pix
 INFO Common point full = (40, 40, 40) pix
-INFO Starting registration...
+INFO Starting rotational registration...
 INFO Registration finished!
 INFO Registered rotation angele = 0.0 deg
 """
-            assert caplog.text == expected
+            assert caplog.text.replace("INFO \n", "") == expected
 
     # Regardless of initial zrot, we should get the same results as a full
     # 360 deg is sampled each time
@@ -151,7 +151,7 @@ INFO Registered rotation angele = 0.0 deg
 
     # Try a smaller angular range at higher angular resolution
     # Also smoke test verbose option for logging at DEBUG level
-    transform = registration_rot(
+    transform, _ = registration_rot(
         reg_input,
         zrot=zrot,
         angle_range=5,
