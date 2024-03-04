@@ -103,11 +103,14 @@ def get_reg_input(
     full_name: str,
     roi_point: tuple[int, int, int],
     full_point: tuple[int, int, int],
+    full_size: int = 64,
 ) -> RegistrationInput:
     """
     Given the dataset of a ROI scan, get:
     - a 128 x 128 x 128 cube of it's parent full-organ scan
     - the equivalent (larger) cube of the ROI itself
+
+    The size of the full-organ scan cube can be changed.
 
     Data is cahed on disk to ~/hipct/reg_data so it doesn't need to be re-downloaded.
     """
@@ -115,7 +118,6 @@ def get_reg_input(
     assert (
         full_dataset.is_complete_organ
     ), "Full dataset name given is not a full organ dataset"
-    full_size = 64
     full_cube = Cube(full_dataset, full_point, size=full_size)
 
     roi_dataset = datasets[roi_name]
