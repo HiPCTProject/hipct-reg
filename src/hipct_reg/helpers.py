@@ -103,3 +103,10 @@ def get_pixel_size(path: Path) -> float:
     Get pixel size in um from a path.
     """
     return float(path.name.split("um")[0])
+
+
+def get_central_pixel_index(image: sitk.Image) -> tuple[int, int, int]:
+    """
+    Get index of pixel in the centre of an image.
+    """
+    return arr_to_index_tuple(np.array(image.GetSize()) // 2)
