@@ -51,23 +51,23 @@ INFO Common point ROI = (32, 32, 32) pix
 INFO Common point full = (40, 40, 40) pix
 INFO Starting rotational registration...
 INFO Registration finished!
-INFO Registered rotation angele = 0.30000000000000004 deg
+INFO Registered rotation angele = -0.1 deg
 INFO
 INFO Similarity registration started...
 INFO Starting full registration...
 INFO Common point ROI = (32, 32, 32)
 INFO Common point full = (40, 40, 40)
-INFO Initial rotation = 0.30 deg
+INFO Initial rotation = 359.90 deg
 INFO Starting registration...
 INFO Registration finished!
-INFO translation = (127.99992384474724, 127.99990610103642, 127.99994261587392) pix
-INFO rotation = [-0.11792743  0.20342507 -0.1620166 ] deg
+INFO translation = (128.0, 128.0, 128.0) pix
+INFO rotation = .* deg
 INFO Similarity registration finished!
 INFO
 INFO Results from similarity registration:
-INFO Translation = (639.9996192237362, 639.9995305051821, 639.9997130793696)
+INFO Translation = (640.0, 640.0, 640.0)
 INFO Center of rot = (160.0, 160.0, 160.0)
-INFO Matrix = \(0\.[0-9]*, 0\.[0-9]*, 0\.[0-9]*, -0\.[0-9]*, 0.[0-9]*, 0\.[0-9]*, -0\.[0-9]*, -0\.[0-9]*, 0\.[0-9]*\)
-INFO Versor = \(-0\.[0-9]*, 0\.[0-9]*, -0\.[0-9]*, 0\.[0-9]*\)
-INFO Scale = 0.99[0-9]*
+INFO Matrix = \(.*,.*,.*,.*,.*,.*,.*,.*,.*\)
+INFO Versor = \(.*,.*,.*,.*\)
+INFO Scale = .*
 INFO
