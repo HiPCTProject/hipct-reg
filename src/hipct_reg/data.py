@@ -22,18 +22,37 @@ datasets = {d.name: d for d in load_datasets()}
 
 @dataclass
 class Cube:
+    """
+    Represents a small cube of data located within a full dataset.
+
+    Attributes
+    ----------
+    ds :
+        Dataset.
+    centre_point :
+        Index of the centre of the cube.
+    size :
+        Half the size of an edge of the cube.
+    """
+
     ds: HiPCTDataSet
     centre_point: tuple[int, int, int]
     size: int
 
     @property
     def local_zarr_path(self) -> Path:
+        """
+        Path to cube saved to a local zarr store.
+        """
         return (
             STORAGE_DIR
             / f"{self.ds.name}_{'_'.join([str(i) for i in self.centre_point])}_{self.size}.zarr"
         )
 
     def get_image(self) -> sitk.Image:
+        """
+        Get cube as a SimpleITK image.
+        """
         spacing = self.ds.resolution_um
 
         image = sitk.GetImageFromArray(self.get_array().T)
@@ -42,12 +61,18 @@ class Cube:
         return image
 
     def get_array(self) -> npt.NDArray:
+        """
+        Get cube as a numpy array.
+        """
         if not self.local_zarr_path.exists():
             self.download_cube()
 
         return zarr.load(self.local_zarr_path)[:]  # type: ignore[no-any-return]
 
     def download_cube(self) -> None:
+        """
+        Download the cube from GCS.
+        """
         gcs_store = self.get_gcs_store()
         data = (
             gcs_store[
@@ -61,6 +86,9 @@ class Cube:
         zarr.convenience.save(self.local_zarr_path, data)
 
     def get_gcs_store(self) -> Any:
+        """
+        Get remote GCS store for the cube.
+        """
         return ts.open(
             {
                 "driver": "n5",
