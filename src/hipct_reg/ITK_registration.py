@@ -10,7 +10,6 @@ import logging
 import math
 import sys
 import time
-from dataclasses import dataclass
 from pathlib import Path
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
@@ -25,23 +24,9 @@ import skimage.measure
 from scipy.spatial.transform import Rotation as ROT
 
 from hipct_reg.helpers import get_pixel_size, import_im
+from hipct_reg.types import RegistrationInput
 
 MAX_THREADS = 0  # 0 if all
-
-
-@dataclass
-class RegistrationInput:
-    """
-    A container for all the data needed to register a ROI to a full-organ scan.
-
-    Contains both images, and pixel indices of a common point in both images.
-    """
-
-    roi_image: sitk.Image
-    full_image: sitk.Image
-    # Common points are in units of pixels
-    common_point_roi: tuple[int, int, int]
-    common_point_full: tuple[int, int, int]
 
 
 class RotRegMetrics(TypedDict):
@@ -233,7 +218,11 @@ def registration_sitk(
         maximumNumberOfFunctionEvaluations=2000,
         costFunctionConvergenceFactor=1e9,
     )
-    R.SetOptimizerScalesFromPhysicalShift()
+    # Parameters are:
+    # - Three rotation angles
+    # - Three translation components
+    # - Scale factor
+    # R.SetOptimizerScalesFromPhysicalShift()
     w = 10
     R.SetOptimizerWeights([w, w, w, w, w, w, w / 1000])
 
