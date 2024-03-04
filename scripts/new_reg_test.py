@@ -10,12 +10,13 @@ from hipct_reg.ITK_registration import registration_rot, registration_sitk
 
 logging.basicConfig(level=logging.INFO)
 reg_input = get_reg_input(
-    roi_name="LADAF-2020-27_heart_ROI-02_6.5um_bm18",
-    roi_point=(3478, 2398, 4730),
-    full_name="LADAF-2020-27_heart_complete-organ_19.89um_bm18",
-    full_point=(6110, 5025, 4117),
+    roi_name="LADAF-2020-27_heart_LR-vent-muscles-ramus-interventricularis-anterior_6.05um_bm05",
+    roi_point=(2115, 2284, 5179),
+    full_name="LADAF-2020-27_heart_complete-organ_25.08um_bm05",
+    full_point=(3557, 2171, 4455),
 )
 
+transform: sitk.Transform
 transform, data_coarse = registration_rot(
     reg_input, zrot=0, angle_range=360, angle_step=2
 )
