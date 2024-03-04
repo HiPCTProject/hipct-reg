@@ -39,9 +39,11 @@ urls.homepage = "https://github.com/HiPCTProject/hipct-reg"
 
 [project.optional-dependencies]
 test = [
+    "pooch",
     "pytest",
     "pytest-cov",
     "tifffile==2024.1.30",
+    "zarr",
 ]
 dev = [
     "hipct-reg[test]",

@@ -11,11 +11,17 @@ import tifffile
 from skimage.data import binary_blobs
 from skimage.measure import block_reduce
 
-from hipct_reg.helpers import arr_to_index_tuple, import_im, transform_to_dict
+from hipct_reg.helpers import (
+    arr_to_index_tuple,
+    get_central_pixel_index,
+    import_im,
+    transform_to_dict,
+)
 from hipct_reg.ITK_registration import (
     registration_pipeline,
     registration_rot,
     registration_sitk,
+    run_registration,
 )
 from hipct_reg.types import RegistrationInput
 
@@ -252,3 +258,39 @@ def test_registration_pipeline(
         [0.9999985, 0.0017453, 0.0, -0.0017453, 0.9999985, -0.0, -0.0, 0.0, 1.0],
     )
     np.testing.assert_almost_equal(transform_dict["scale"], 1)
+
+
+def test_registration_real(full_organ_image: sitk.Image, roi_image: sitk.Image) -> None:
+    """
+    Test registration with some real data.
+    """
+
+    reg_input = RegistrationInput(
+        roi_image=roi_image,
+        full_image=full_organ_image,
+        common_point_full=get_central_pixel_index(full_organ_image),
+        common_point_roi=get_central_pixel_index(roi_image),
+    )
+
+    transform = run_registration(reg_input)
+    transform_dict = transform_to_dict(transform)
+    assert list(transform_dict.keys()) == ["translation", "rotation_matrix", "scale"]
+
+    np.testing.assert_almost_equal(
+        transform_dict["translation"], [227.5840913, -147.675739, 71.4920378]
+    )
+    np.testing.assert_almost_equal(
+        transform_dict["rotation_matrix"],
+        [
+            0.9355632,
+            -0.2208208,
+            0.0052375,
+            0.2205009,
+            0.9350224,
+            0.0343538,
+            -0.012986,
+            -0.0322332,
+            0.9606561,
+        ],
+    )
+    np.testing.assert_almost_equal(transform_dict["scale"], 0.961284424096297)
