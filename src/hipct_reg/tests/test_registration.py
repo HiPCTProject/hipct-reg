@@ -13,11 +13,11 @@ from skimage.measure import block_reduce
 
 from hipct_reg.helpers import arr_to_index_tuple, import_im, transform_to_dict
 from hipct_reg.ITK_registration import (
-    RegistrationInput,
     registration_pipeline,
     registration_rot,
     registration_sitk,
 )
+from hipct_reg.types import RegistrationInput
 
 # Pixel size of full resolution (ROI) pixels
 PIXEL_SIZE_UM = 5
