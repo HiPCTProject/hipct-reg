@@ -28,7 +28,6 @@ class Cube:
 
     @property
     def local_zarr_path(self) -> Path:
-
         return (
             STORAGE_DIR
             / f"{self.ds.name}_{'_'.join([str(i) for i in self.centre_point])}_{self.size}.zarr"
@@ -93,12 +92,8 @@ def get_reg_input(
 
     roi_dataset = datasets[roi_name]
     assert not roi_dataset.is_complete_organ, "ROI dataset name given is a ROI dataset"
-    roi_size = int(full_size* full_dataset.resolution_um / roi_dataset.resolution_um)
-    roi_cube = Cube(
-        roi_dataset,
-        roi_point,
-        size=roi_size
-    )
+    roi_size = int(full_size * full_dataset.resolution_um / roi_dataset.resolution_um)
+    roi_cube = Cube(roi_dataset, roi_point, size=roi_size)
 
     return RegistrationInput(
         roi_image=roi_cube.get_image(),
