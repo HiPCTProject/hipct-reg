@@ -169,3 +169,4 @@ _version.py
 
 # Data
 scripts/data
+scripts/*.json

@@ -1,16 +1,21 @@
+import json
 import logging
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import SimpleITK as sitk
 
 from hipct_reg.data import get_reg_input
-from hipct_reg.helpers import get_central_pixel_index
+from hipct_reg.helpers import get_central_pixel_index, transform_to_dict
 from hipct_reg.ITK_registration import registration_rot, registration_sitk
 
+roi_name = (
+    "LADAF-2020-27_heart_LR-vent-muscles-ramus-interventricularis-anterior_6.05um_bm05"
+)
 logging.basicConfig(level=logging.INFO)
 reg_input = get_reg_input(
-    roi_name="LADAF-2020-27_heart_LR-vent-muscles-ramus-interventricularis-anterior_6.05um_bm05",
+    roi_name=roi_name,
     roi_point=(2115, 2284, 5179),
     full_name="LADAF-2020-27_heart_complete-organ_25.08um_bm05",
     full_point=(3557, 2171, 4455),
@@ -26,6 +31,8 @@ transform, data_fine = registration_rot(
 )
 transform = registration_sitk(reg_input, zrot=np.rad2deg(transform.GetAngleZ()))
 print(transform)
+with open(Path(__file__).parent / f"transform_{roi_name}.json", "w") as f:
+    f.write(json.dumps(transform_to_dict(transform), indent=4))
 
 # Plot registration before/after
 fig, axs = plt.subplots(
