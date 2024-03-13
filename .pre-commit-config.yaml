@@ -12,7 +12,7 @@ repos:
     rev: v0.23.1
     hooks:
       - id: toml-sort-fix
-        args: [--no-sort-tables]
+        args: [--no-sort-tables, --in-place]
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.9.0
     hooks:

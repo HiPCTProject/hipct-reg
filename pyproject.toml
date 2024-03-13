@@ -36,23 +36,22 @@ requires-python = ">=3.11"
 license.file = "LICENSE.md"
 urls.homepage = "https://github.com/HiPCTProject/hipct-reg"
 
-
 [project.optional-dependencies]
+dev = [
+    "build",
+    "hipct-reg[test]",
+    "mypy",
+    "pre-commit",
+    "ruff",
+    "tox>=4",
+    "twine",
+]
 test = [
     "pooch",
     "pytest",
     "pytest-cov",
     "tifffile==2024.1.30",
     "zarr",
-]
-dev = [
-    "hipct-reg[test]",
-    "build",
-    "mypy",
-    "pre-commit",
-    "ruff",
-    "tox>=4",
-    "twine",
 ]
 
 [tool.coverage]
@@ -64,13 +63,13 @@ paths.source = [
 ]
 
 [tool.mypy]
-ignore_missing_imports = true
+disallow_any_generics = false
+disallow_untyped_calls = false
 exclude = [
     'build/.*',
 ]
+ignore_missing_imports = true
 strict = true
-disallow_any_generics = false
-disallow_untyped_calls = false
 
 [tool.ruff]
 fix = true
@@ -79,19 +78,19 @@ target-version = "py311"
 
 [tool.ruff.lint]
 ignore = [
-    "E501" # Line length
+    "E501", # Line length
 ]
 per-file-ignores = {"tests*" = [
     "INP001",
     "S101",
 ]}
 select = [
-    "F",
     "E",
-    "W",
+    "F",
     "I",
-    "UP",
     "NPY",
+    "UP",
+    "W",
 ]
 isort.known-first-party = [
     "hipct_reg",
