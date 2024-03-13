@@ -318,9 +318,9 @@ def registration_sitk(
     )
 
     translation_pix = reg_input.roi_image.TransformPhysicalPointToContinuousIndex(
-        final_transform.GetParameters()[3:6]
+        final_transform.GetTranslation()
     )
-    rotation = np.rad2deg(np.array(final_transform.GetParameters()[0:3]))
+    rotation = np.rad2deg(np.array(final_transform.GetVersor()))
     logging.info(f"translation = {translation_pix} pix")
     logging.info(f"rotation = {rotation} deg")
 
@@ -489,7 +489,7 @@ def run_registration(reg_input: RegistrationInput) -> sitk.Similarity3DTransform
         angle_range=angle_range,
         angle_step=angle_step,
     )
-    zrot = np.rad2deg(np.array(transform_rotation.GetParameters()[0:3]))[2]
+    zrot = np.rad2deg(np.array(transform_rotation.GetAngleZ()))
 
     # Now try a smaller angular step
     angle_range = 5
@@ -500,7 +500,7 @@ def run_registration(reg_input: RegistrationInput) -> sitk.Similarity3DTransform
         angle_range=angle_range,
         angle_step=angle_step,
     )
-    zrot = np.rad2deg(np.array(transform_rotation.GetParameters()[0:3]))[2]
+    zrot = np.rad2deg(np.array(transform_rotation.GetAngleZ()))
 
     if zrot < 0:
         zrot = zrot + 360
