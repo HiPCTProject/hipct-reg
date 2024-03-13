@@ -31,9 +31,12 @@ roi_layer["source"] = {
     "url": roi_layer["source"],
     "transform": {
         "matrix": [
-            registration["rotation_matrix"][0:3] + [registration["translation"][0] / roi_dataset.resolution_um],
-            registration["rotation_matrix"][3:6] + [registration["translation"][1] / roi_dataset.resolution_um],
-            registration["rotation_matrix"][6:9] + [registration["translation"][2] / roi_dataset.resolution_um],
+            registration["rotation_matrix"][0:3]
+            + [registration["translation"][0] / roi_dataset.resolution_um],
+            registration["rotation_matrix"][3:6]
+            + [registration["translation"][1] / roi_dataset.resolution_um],
+            registration["rotation_matrix"][6:9]
+            + [registration["translation"][2] / roi_dataset.resolution_um],
         ],
         "outputDimensions": {
             "x": (roi_dataset.resolution_um, "um"),

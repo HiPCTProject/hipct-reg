@@ -1,6 +1,5 @@
 import json
 import logging
-from pathlib import Path
 
 import matplotlib.axes
 import matplotlib.pyplot as plt
@@ -38,6 +37,7 @@ transform = registration_sitk(reg_input, zrot=np.rad2deg(transform.GetAngleZ()))
 
 # Plot registration before/after
 
+
 def show_image(image: sitk.Image, ax: matplotlib.axes.Axes, z: int) -> None:
     """
     Function to show a SimpleITK image in a Matplotlib figure.
@@ -52,9 +52,12 @@ def show_image(image: sitk.Image, ax: matplotlib.axes.Axes, z: int) -> None:
         origin="lower",
     )
 
+
 # Before
 fig, axs = plt.subplots(
-    nrows=2, ncols=2, constrained_layout=True,
+    nrows=2,
+    ncols=2,
+    constrained_layout=True,
 )
 for im, ax in zip([reg_input.roi_image, reg_input.full_image], axs[0, :]):
     zmid = get_central_pixel_index(im)[2]
@@ -92,7 +95,9 @@ translation = transform.TransformPoint((0, 0, 0))
 
 print(f"Old translation = {transform.GetTranslation()} um")
 print(f"New translation = {translation} um")
-print(f"New translation = {np.array(translation) / reg_input.full_image.GetSpacing()[0]} pix")
+print(
+    f"New translation = {np.array(translation) / reg_input.full_image.GetSpacing()[0]} pix"
+)
 
 
 new_transform = sitk.Similarity3DTransform()
