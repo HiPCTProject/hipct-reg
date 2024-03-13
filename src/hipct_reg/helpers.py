@@ -92,7 +92,7 @@ def transform_to_dict(transform: sitk.Similarity3DTransform) -> TransformDict:
     Serialise the registered transform to a dict (that can be written to JSON).
     """
     return {
-        "translation": transform.TransformPoint([0, 0, 0]),
+        "translation": transform.GetTranslation(),
         "rotation_matrix": transform.GetMatrix(),
         "scale": transform.GetScale(),
     }
