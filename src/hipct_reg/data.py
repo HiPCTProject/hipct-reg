@@ -55,9 +55,11 @@ class Cube:
         Get cube as a SimpleITK image.
         """
         spacing = self.ds.resolution_um
+        origin = [(cp - self.size) * spacing for cp in self.centre_point]
 
         image = sitk.GetImageFromArray(self.get_array().T)
         image.SetSpacing((spacing, spacing, spacing))
+        image.SetOrigin(origin)
         image = sitk.Cast(image, sitk.sitkFloat32)
         return image
 

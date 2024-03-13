@@ -64,10 +64,14 @@ axs[0, 0].set_title("ROI scan (unregistered)")
 axs[0, 1].set_title("Full organ scan")
 
 # After
-roi_resampled = sitk.Resample(
-    reg_input.roi_image, transform.GetInverse(), defaultPixelValue=np.nan
+full_resampled = sitk.Resample(
+    reg_input.full_image,
+    reg_input.roi_image,
+    transform,
+    defaultPixelValue=np.nan,
+    interpolator=sitk.sitkNearestNeighbor,
 )
-for im, ax in zip([roi_resampled, reg_input.full_image], axs[1, :]):
+for im, ax in zip([reg_input.roi_image, full_resampled], axs[1, :]):
     zmid = get_central_pixel_index(im)[2]
     show_image(im, ax, zmid)
 
