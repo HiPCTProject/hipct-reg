@@ -34,6 +34,20 @@ class RotRegMetrics(TypedDict):
     metric: list[float]
 
 
+def show_fiji(
+    reg_input: RegistrationInput, transform: sitk.Transform, message: str
+) -> None:
+    moving_resampled = sitk.Resample(
+        reg_input.full_image,
+        reg_input.roi_image,
+        transform,
+        sitk.sitkLinear,
+        0,
+        reg_input.roi_image.GetPixelID(),
+    )
+    sitk.Show(0.6 * moving_resampled + 0.4 * reg_input.roi_image, message)
+
+
 def registration_rot(
     reg_input: RegistrationInput,
     *,
@@ -113,15 +127,7 @@ def registration_rot(
     R.SetInitialTransform(initial_transform, inPlace=True)
 
     if fiji:
-        moving_resampled = sitk.Resample(
-            reg_input.full_image,
-            reg_input.roi_image,
-            initial_transform,
-            sitk.sitkLinear,
-            0,
-            reg_input.roi_image.GetPixelID(),
-        )
-        sitk.Show(0.6 * moving_resampled + 0.4 * reg_input.roi_image, "before rot")
+        show_fiji(reg_input, initial_transform, "Before rotation")
 
     data: RotRegMetrics = {"rotation": [], "metric": []}
 
@@ -160,15 +166,7 @@ def registration_rot(
     logging.info("Registration finished!")
 
     if fiji:
-        moving_resampled = sitk.Resample(
-            reg_input.full_image,
-            reg_input.roi_image,
-            transform_rotation,
-            sitk.sitkLinear,
-            0,
-            reg_input.roi_image.GetPixelID(),
-        )
-        sitk.Show(0.6 * moving_resampled + 0.4 * reg_input.roi_image, "after rot")
+        show_fiji(reg_input, initial_transform, "After rotation")
 
     new_zrot = np.rad2deg(transform_rotation.GetAngleZ())
     logging.debug(f"Final metric value = {R.GetMetricValue()}")
@@ -258,15 +256,7 @@ def registration_sitk(
     R.SetInitialTransform(initial_transform, inPlace=True)
 
     if fiji:
-        moving_resampled = sitk.Resample(
-            reg_input.full_image,
-            reg_input.roi_image,
-            initial_transform,
-            sitk.sitkLinear,
-            0,
-            reg_input.roi_image.GetPixelID(),
-        )
-        sitk.Show(0.6 * moving_resampled + 0.4 * reg_input.roi_image, "ini")
+        show_fiji(reg_input, initial_transform, "Before registration")
 
     metric = []
 
@@ -302,15 +292,7 @@ def registration_sitk(
     logging.info("Registration finished!")
 
     if fiji:
-        moving_resampled = sitk.Resample(
-            reg_input.full_image,
-            reg_input.roi_image,
-            final_transform,
-            sitk.sitkLinear,
-            0,
-            reg_input.roi_image.GetPixelID(),
-        )
-        sitk.Show(0.6 * moving_resampled + 0.4 * reg_input.roi_image, "Final")
+        show_fiji(reg_input, initial_transform, "After registration")
 
     logging.debug(f"Final metric value: {R.GetMetricValue()}")
     logging.debug(
