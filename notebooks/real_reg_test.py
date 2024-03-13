@@ -1,3 +1,18 @@
+# ---
+# jupyter:
+#   jupytext:
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.16.1
+#   kernelspec:
+#     display_name: Python 3 (ipykernel)
+#     language: python
+#     name: python3
+# ---
+
+# %%
 import json
 import logging
 from pathlib import Path
@@ -11,6 +26,7 @@ from hipct_reg.data import get_reg_input
 from hipct_reg.helpers import get_central_pixel_index, transform_to_dict
 from hipct_reg.ITK_registration import registration_rot, registration_sitk
 
+# %%
 roi_name = (
     "LADAF-2020-27_heart_LR-vent-muscles-ramus-interventricularis-anterior_6.05um_bm05"
 )
@@ -24,6 +40,7 @@ reg_input = get_reg_input(
     full_size=32,
 )
 
+# %%
 # Do the registration
 transform: sitk.Transform
 transform, data_coarse = registration_rot(
@@ -36,6 +53,7 @@ transform, data_fine = registration_rot(
 transform = registration_sitk(reg_input, zrot=np.rad2deg(transform.GetAngleZ()))
 
 
+# %%
 # Plot registration before/after
 
 def show_image(image: sitk.Image, ax: matplotlib.axes.Axes, z: int) -> None:
@@ -84,9 +102,14 @@ ax.plot(data_fine["rotation"], data_fine["metric"])
 ax.set_xlabel("Rotation / deg")
 ax.set_ylabel("Registration metric")
 
+# %%
 # Print and save the transform
 print(transform)
-# For neuroglancer, the trasnform needs to be at the corner of the image
+# The transform we want for neuroglancer is in order:
+# 1. A translation from the [0, 0, 0] pixel of the full-organ image
+#    to the [0, 0, 0] pixel of the ROI image,
+# 2. A rotation about the [0, 0, 0] pixel of the ROI image,
+# 3. The isotropic scaling
 
 translation = transform.TransformPoint((0, 0, 0))
 
@@ -101,3 +124,5 @@ new_transform.SetTranslation(translation)
 print(new_transform)
 with open(f"transform_{roi_name}.json", "w") as f:
     f.write(json.dumps(transform_to_dict(new_transform), indent=4))
+
+# %%

@@ -186,7 +186,7 @@ def registration_sitk(
     """
     Run a registration using a full rigid transform.
 
-    The returned transform maps from the full-organ image to the ROI image.
+    The returned transform maps from the ROI iamge to the full-organ image.
 
     Parameters
     ----------
