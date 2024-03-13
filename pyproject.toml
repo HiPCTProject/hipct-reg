@@ -79,6 +79,7 @@ target-version = "py311"
 [tool.ruff.lint]
 ignore = [
     "E501", # Line length
+    "NPY002", # Use new numpy RNG
 ]
 per-file-ignores = {"tests*" = [
     "INP001",
