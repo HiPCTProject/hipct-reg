@@ -1,7 +1,8 @@
-from pathlib import Path
 import json
+from pathlib import Path
+
 from hipct_data_tools import load_datasets
-from hipct_data_tools.neuroglancer import dataset_to_layer, NEUROGLANCER_INSTANCE
+from hipct_data_tools.neuroglancer import NEUROGLANCER_INSTANCE, dataset_to_layer
 
 datasets = {d.name: d for d in load_datasets()}
 roi_name = (
@@ -25,19 +26,22 @@ roi_layer = dataset_to_layer(roi_dataset, add_transform=False)
 roi_layer["source"] = {
     "url": roi_layer["source"],
     "transform": {
-                "matrix": [
-                    # Note that translation has to be in units of `dimensions`,
-                    # which gives the size of a single un-transformed pixel in the global viewer
-                    registration["rotation_matrix"][0:3] + [registration['translation'][0] / full_dataset.resolution_um],
-                    registration["rotation_matrix"][3:6] + [registration['translation'][1] / full_dataset.resolution_um],
-                    registration["rotation_matrix"][6:9] + [registration['translation'][2] / full_dataset.resolution_um],
-                ],
-                "outputDimensions": {
-                    "x": (roi_dataset.resolution_um, "um"),
-                    "y": (roi_dataset.resolution_um, "um"),
-                    "z": (roi_dataset.resolution_um, "um"),
-                },
-            },
+        "matrix": [
+            # Note that translation has to be in units of `dimensions`,
+            # which gives the size of a single un-transformed pixel in the global viewer
+            registration["rotation_matrix"][0:3]
+            + [registration["translation"][0] / full_dataset.resolution_um],
+            registration["rotation_matrix"][3:6]
+            + [registration["translation"][1] / full_dataset.resolution_um],
+            registration["rotation_matrix"][6:9]
+            + [registration["translation"][2] / full_dataset.resolution_um],
+        ],
+        "outputDimensions": {
+            "x": (roi_dataset.resolution_um, "um"),
+            "y": (roi_dataset.resolution_um, "um"),
+            "z": (roi_dataset.resolution_um, "um"),
+        },
+    },
 }
 
 ng_dict = {
