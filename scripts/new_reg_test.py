@@ -2,6 +2,7 @@ import json
 import logging
 from pathlib import Path
 
+import matplotlib.axes
 import matplotlib.pyplot as plt
 import numpy as np
 import SimpleITK as sitk
@@ -14,6 +15,7 @@ roi_name = (
     "LADAF-2020-27_heart_LR-vent-muscles-ramus-interventricularis-anterior_6.05um_bm05"
 )
 logging.basicConfig(level=logging.INFO)
+# Get input data
 reg_input = get_reg_input(
     roi_name=roi_name,
     roi_point=(2115, 2284, 5179),
@@ -22,6 +24,7 @@ reg_input = get_reg_input(
     full_size=32,
 )
 
+# Do the registration
 transform: sitk.Transform
 transform, data_coarse = registration_rot(
     reg_input, zrot=0, angle_range=360, angle_step=2
@@ -35,32 +38,38 @@ with open(Path(__file__).parent / f"transform_{roi_name}.json", "w") as f:
     f.write(json.dumps(transform_to_dict(transform), indent=4))
 
 # Plot registration before/after
+
+def show_image(image: sitk.Image, ax: matplotlib.axes.Axes, z: int) -> None:
+    """
+    Function to show a SimpleITK image in a Matplotlib figure.
+    """
+    origin = image.GetOrigin()
+    top_right = image.TransformIndexToPhysicalPoint(image.GetSize())
+
+    ax.imshow(
+        sitk.GetArrayFromImage(image)[z, :, :],
+        extent=(origin[0], top_right[0], origin[1], top_right[1]),
+        origin="lower",
+    )
+
+# Before
 fig, axs = plt.subplots(
-    nrows=2, ncols=2, constrained_layout=True, sharex=True, sharey=True
+    nrows=2, ncols=2, constrained_layout=True,
 )
 for im, ax in zip([reg_input.roi_image, reg_input.full_image], axs[0, :]):
     zmid = get_central_pixel_index(im)[2]
-    half_size = im.GetSize()[0] * im.GetSpacing()[0] / 2
-    ax.imshow(
-        sitk.GetArrayViewFromImage(im)[zmid, :, :],
-        origin="lower",
-        extent=(-half_size, half_size, -half_size, half_size),
-    )
+    show_image(im, ax, zmid)
 
 axs[0, 0].set_title("ROI scan (unregistered)")
 axs[0, 1].set_title("Full organ scan")
 
+# After
 roi_resampled = sitk.Resample(
     reg_input.roi_image, transform.GetInverse(), defaultPixelValue=np.nan
 )
 for im, ax in zip([roi_resampled, reg_input.full_image], axs[1, :]):
     zmid = get_central_pixel_index(im)[2]
-    half_size = im.GetSize()[0] * im.GetSpacing()[0] / 2
-    ax.imshow(
-        sitk.GetArrayViewFromImage(im)[zmid, :, :],
-        origin="lower",
-        extent=(-half_size, half_size, -half_size, half_size),
-    )
+    show_image(im, ax, zmid)
 
 axs[1, 0].set_title("ROI scan (registered)")
 
