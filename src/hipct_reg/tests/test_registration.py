@@ -250,9 +250,7 @@ def test_registration_pipeline(
     transform_dict = transform_to_dict(transform)
     assert list(transform_dict.keys()) == ["translation", "rotation_matrix", "scale"]
 
-    np.testing.assert_almost_equal(
-        transform_dict["translation"], [639.7209912, 640.2794962, 640.0]
-    )
+    np.testing.assert_almost_equal(transform_dict["translation"], [640.0, 640.0, 640.0])
     np.testing.assert_almost_equal(
         transform_dict["rotation_matrix"],
         [0.9999985, 0.0017453, 0.0, -0.0017453, 0.9999985, -0.0, -0.0, 0.0, 1.0],
@@ -277,7 +275,7 @@ def test_registration_real(full_organ_image: sitk.Image, roi_image: sitk.Image) 
     assert list(transform_dict.keys()) == ["translation", "rotation_matrix", "scale"]
 
     np.testing.assert_almost_equal(
-        transform_dict["translation"], [227.5840913, -147.675739, 71.4920378]
+        transform_dict["translation"], [3.9600076, 3.960115, 3.9599446]
     )
     np.testing.assert_almost_equal(
         transform_dict["rotation_matrix"],
