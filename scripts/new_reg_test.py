@@ -21,7 +21,7 @@ reg_input = get_reg_input(
     roi_point=(2115, 2284, 5179),
     full_name="LADAF-2020-27_heart_complete-organ_25.08um_bm05",
     full_point=(3557, 2171, 4455),
-    full_size=32,
+    full_size=64,
 )
 
 # Do the registration
