@@ -54,7 +54,7 @@ It does this by fixing the centre of rotation at the common point identified in 
 
 ### Final full registration
 
-The second and final step of the automated pipeline uses a rigid transform that allows for variation in translation (x, y, z compoonents), a general rotation (three components), and a scale factor.
+The second and final step of the automated pipeline uses a rigid transform that allows for variation in translation (x, y, z compoonents), a rotation around the z-axis (one component), and a scale factor.
 The scaling factor is varied to take into account uncertainties in the resolution of each dataset.
 
 ## Getting Started

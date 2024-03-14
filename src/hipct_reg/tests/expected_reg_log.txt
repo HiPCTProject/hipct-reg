@@ -60,12 +60,12 @@ INFO Common point full = (40, 40, 40)
 INFO Initial rotation = 359.90 deg
 INFO Starting registration...
 INFO Registration finished!
-INFO translation = (128.0, 128.0, 128.0) pix
+INFO translation = \(.*,.*,.*\) pix
 INFO rotation = .* deg
 INFO Similarity registration finished!
 INFO
 INFO Results from similarity registration:
-INFO Translation = (640.0, 640.0, 640.0)
+INFO Translation = \(.*,.*,.*\)
 INFO Center of rot = (160.0, 160.0, 160.0)
 INFO Matrix = \(.*,.*,.*,.*,.*,.*,.*,.*,.*\)
 INFO Versor = \(.*,.*,.*,.*\)
