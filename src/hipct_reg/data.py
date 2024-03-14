@@ -70,7 +70,7 @@ class Cube:
         if not self.local_zarr_path.exists():
             self.download_cube()
 
-        return zarr.load(self.local_zarr_path)[:]  # type: ignore[no-any-return]
+        return zarr.load(self.local_zarr_path)[:]
 
     def download_cube(self) -> None:
         """

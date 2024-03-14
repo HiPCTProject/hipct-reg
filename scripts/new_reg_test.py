@@ -111,7 +111,7 @@ print(
 new_transform = sitk.Similarity3DTransform()
 new_transform.SetParameters(transform.GetParameters())
 new_transform.SetTranslation(translation)
-transform_dict: dict = transform_to_dict(new_transform)
+transform_dict: dict = transform_to_dict(new_transform)  # type: ignore[assignment]
 transform_dict["full_dataset"] = full_name
 transform_dict["roi_datset"] = roi_name
 
