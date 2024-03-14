@@ -6,8 +6,6 @@ import dask_image.imread
 import numpy as np
 import numpy.typing as npt
 import SimpleITK as sitk
-import skimage.io
-import skimage.measure
 
 
 def import_im(
