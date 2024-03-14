@@ -322,11 +322,7 @@ def registration_pipeline(
         Point that the ROI image will be rotated around, in the coordinate
         frame of the full organ scan image.
     """
-    # Crop the zoom scan to transform the circle fov into a square, thus avoiding the
-    # NaN part in the image
-    crop_circle_roi = False
     logging.info("Starting registration pipeline...")
-    logging.info(f"Crop the ROI iamge to avoid external circle = {crop_circle_roi}")
     logging.info(f"Center of rotation (in frame of ROI image) = {pt_roi}")
     logging.info(f"Center of rotation (in frame of full organ image) = {pt_full}")
     pixel_size_roi = get_pixel_size(path_roi)
@@ -348,37 +344,11 @@ def registration_pipeline(
     size_full = n_full * x_dim * y_dim * 2 / (1024 * 1024 * 1024)
     logging.info(f"Total size of full organ image is {size_full} GB")
 
-    # binning_moved = 1 + size_moved // 50  # I put a limit of 50 GB
-    # binning_moved = int((pixel_size_fixed // pixel_size_moved) / 2) * 2  # other way
-    binning_roi = 1
-    binning_full = 1
-
-    if binning_roi != 1:
-        n_roi = math.ceil(n_roi / binning_roi)
-        logging.info(f"After binning: I found {n_roi} images in the ROI image folder")
-    logging.info(f"ROI image will be binned by {binning_roi}")
-
-    if binning_full != 1:
-        logging.info(f"A binning of {binning_full} will be applied to the ROI image")
-        n_full = math.ceil(n_full / binning_full)
-        logging.info(
-            f"After binning: I found {n_full} images in the full organ image folder"
-        )
-    logging.info(f"Full organ image will be binned by {binning_full}")
-    logging.info("")
-
-    # pixel_size_fixed = pixel_size_fixed * binning_fixed
-    # pixel_size_moved = pixel_size_moved * binning_moved
-
-    # pt_roi = pt_roi / binning_fixed
-    # pt_full = pt_full / binning_moved
-
     logging.info("Importing full organ image...")
     logging.info(f"folder = {path_full}")
     image_full = import_im(
         path_full,
         pixel_size_full,
-        bin_factor=binning_full,
     )
     logging.info("Imported full organ image!")
     logging.info("Full organ image parameters:")
@@ -387,35 +357,11 @@ def registration_pipeline(
     logging.info(f"spacing = {image_full.GetSpacing()}")
     logging.info("")
 
-    """
-    # Get values to crop the fixed dataset
-    # TODO: check this maths
-    moved_z = (0, N_moved)
-    zmin = int(pt_roi[2] - 1.2 * ((pt_full[2]) * pixel_size_moved / pixel_size_fixed))
-    zmax = int(
-        pt_roi[2]
-        + 1.2
-        * (
-            ((moved_z[1] - moved_z[0]) - pt_full[2])
-            * pixel_size_moved
-            / pixel_size_fixed
-        )
-    )
-    zmin = max(zmin, 0)
-    zmax = min(zmax, int(N_fixed))
-
-    fixed_z = (zmin, zmax)
-    pt_roi[2] = pt_roi[2] - fixed_z[0]
-    """
-
     logging.info("Importing ROI image...")
     logging.info(f"folder = {path_roi}")
-    # logging.info(f"Fixed scan crop z = {fixed_z}")
     image_roi = import_im(
         path_roi,
         pixel_size_roi,
-        # crop_z=fixed_z,
-        bin_factor=binning_roi,
     )
     logging.info("Finished importing ROI image!")
     logging.info("ROI image parameters:")
