@@ -1,3 +1,12 @@
+"""
+Create a neuroglancer link from a registered dataset.
+
+First the script new_reg_test.py needs to be run to generate the registration
+data in a JSON file.
+
+Then run this script to generate a neuroglancer link.
+"""
+
 import json
 from pathlib import Path
 
@@ -15,17 +24,12 @@ with open(Path(__file__).parent / f"transform_{roi_name}.json") as f:
 
 roi_dataset = datasets[roi_name]
 full_dataset = datasets[full_name]
-res_ratio = full_dataset.resolution_um / roi_dataset.resolution_um
 
 dimensions = {dim: (full_dataset.resolution_um, "um") for dim in ["x", "y", "z"]}
-selectedLayer = {"layer": full_dataset.name, "visible": True}
 
 full_layer = dataset_to_layer(full_dataset, add_transform=False)
 roi_layer = dataset_to_layer(roi_dataset, add_transform=False)
 
-# registration["rotation_matrix"] = [1, 0, 0,0,1,0,0,0,1]
-print(registration["translation"])
-print(res_ratio)
 # Add transformation matrix to ROI layer
 roi_layer["source"] = {
     "url": roi_layer["source"],
@@ -52,7 +56,7 @@ ng_dict = {
     "layout": "4panel",
     "projectionOrientation": (0.3, 0.2, 0, -0.9),
     "projectionScale": 4096,
-    "selectedLayer": selectedLayer,
+    "selectedLayer": {"layer": full_dataset.name, "visible": True},
 }
 
 link = f"{NEUROGLANCER_INSTANCE}/#!{json.dumps(ng_dict, separators=(',', ':'))}"
