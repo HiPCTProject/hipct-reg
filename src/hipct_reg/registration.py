@@ -342,6 +342,7 @@ def registration_pipeline(
 
     size_full = n_full * x_dim * y_dim * 2 / (1024 * 1024 * 1024)
     logging.info(f"Total size of full organ image is {size_full} GB")
+    logging.info("")
 
     logging.info("Importing full organ image...")
     logging.info(f"folder = {path_full}")
