@@ -41,6 +41,16 @@ transform = registration_sitk(reg_input, zrot=np.rad2deg(transform.GetAngleZ()))
 def show_image(image: sitk.Image, ax: matplotlib.axes.Axes, z: int) -> None:
     """
     Function to show a SimpleITK image in a Matplotlib figure.
+
+    Parameters
+    ----------
+    image :
+        Image to show.
+    ax :
+        Axes to show it on.
+    z :
+        z-index at which to slice the image. A 2D x-y plane is displayed
+        at this index.
     """
     scale = image.GetSpacing()[0]
     origin = np.array(image.GetOrigin()) / scale
