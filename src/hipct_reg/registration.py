@@ -1,10 +1,3 @@
-"""
-Author: Joseph Brunet (joseph.brunet@ucl.ac.uk)
-
-This script does the registration of HiP-CT high-resolution volumes to low-resolution
-volumes.
-"""
-
 import logging
 import math
 from pathlib import Path
