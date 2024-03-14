@@ -17,7 +17,7 @@ from hipct_reg.helpers import (
     import_im,
     transform_to_dict,
 )
-from hipct_reg.ITK_registration import (
+from hipct_reg.registration import (
     registration_pipeline,
     registration_rot,
     registration_sitk,

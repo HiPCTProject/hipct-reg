@@ -9,7 +9,7 @@ import SimpleITK as sitk
 
 from hipct_reg.data import get_reg_input
 from hipct_reg.helpers import get_central_pixel_index, transform_to_dict
-from hipct_reg.ITK_registration import registration_rot, registration_sitk
+from hipct_reg.registration import registration_rot, registration_sitk
 
 roi_name = (
     "LADAF-2020-27_heart_LR-vent-muscles-ramus-interventricularis-anterior_6.05um_bm05"
