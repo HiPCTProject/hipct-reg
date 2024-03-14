@@ -198,21 +198,8 @@ def registration_sitk(
     # Set registration interpolator
     R.SetInterpolator(sitk.sitkLinear)
 
-    # Set registartion optimiser settings
-    R.SetOptimizerAsLBFGSB(
-        gradientConvergenceTolerance=1e-7,
-        numberOfIterations=2000,
-        maximumNumberOfCorrections=20,
-        maximumNumberOfFunctionEvaluations=2000,
-        costFunctionConvergenceFactor=1e9,
-    )
-    # Parameters are:
-    # - Three rotation angles
-    # - Three translation components
-    # - Scale factor
-    # R.SetOptimizerScalesFromPhysicalShift()
-    w = 10
-    R.SetOptimizerWeights([w, w, w, w, w, w, w / 1000])
+    # Set registration optimiser settings
+    R.SetOptimizerAsLBFGS2()
 
     # Setup for the multi-resolution framework.
     R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 2, 1, 1, 1])
@@ -244,6 +231,13 @@ def registration_sitk(
     initial_transform.SetCenter(rigid_euler.GetCenter())
 
     R.SetInitialTransform(initial_transform, inPlace=True)
+    # Parameters are:
+    # - Three rotation angles
+    # - Three translation components
+    # - Scale factor
+    w = 10
+    R.SetOptimizerScalesFromPhysicalShift()
+    R.SetOptimizerWeights([0, 0, w, w, w, w, w / 1000])
 
     if fiji:
         show_fiji(reg_input, initial_transform, "Before registration")
