@@ -1,5 +1,6 @@
 import json
 import logging
+from pathlib import Path
 
 import matplotlib.axes
 import matplotlib.pyplot as plt
@@ -13,12 +14,13 @@ from hipct_reg.ITK_registration import registration_rot, registration_sitk
 roi_name = (
     "LADAF-2020-27_heart_LR-vent-muscles-ramus-interventricularis-anterior_6.05um_bm05"
 )
+full_name = "LADAF-2020-27_heart_complete-organ_25.08um_bm05"
 logging.basicConfig(level=logging.INFO)
 # Get input data
 reg_input = get_reg_input(
     roi_name=roi_name,
     roi_point=(2115, 2284, 5179),
-    full_name="LADAF-2020-27_heart_complete-organ_25.08um_bm05",
+    full_name=full_name,
     full_point=(3557, 2171, 4455),
     full_size=64,
 )
@@ -36,8 +38,6 @@ transform = registration_sitk(reg_input, zrot=np.rad2deg(transform.GetAngleZ()))
 
 
 # Plot registration before/after
-
-
 def show_image(image: sitk.Image, ax: matplotlib.axes.Axes, z: int) -> None:
     """
     Function to show a SimpleITK image in a Matplotlib figure.
@@ -89,8 +89,7 @@ ax.set_ylabel("Registration metric")
 
 # Print and save the transform
 print(transform)
-# For neuroglancer, the trasnform needs to be at the corner of the image
-
+# For neuroglancer, the translation needs to be at the corner of the image
 translation = transform.TransformPoint((0, 0, 0))
 
 print(f"Old translation = {transform.GetTranslation()} um")
@@ -99,10 +98,14 @@ print(
     f"New translation = {np.array(translation) / reg_input.full_image.GetSpacing()[0]} pix"
 )
 
-
 new_transform = sitk.Similarity3DTransform()
 new_transform.SetParameters(transform.GetParameters())
 new_transform.SetTranslation(translation)
-print(new_transform)
-with open(f"transform_{roi_name}.json", "w") as f:
-    f.write(json.dumps(transform_to_dict(new_transform), indent=4))
+transform_dict: dict = transform_to_dict(new_transform)
+transform_dict["full_dataset"] = full_name
+transform_dict["roi_datset"] = roi_name
+
+with open(Path(__file__).parent / f"transform_{roi_name}.json", "w") as f:
+    f.write(json.dumps(transform_dict, indent=4))
+
+plt.show()
