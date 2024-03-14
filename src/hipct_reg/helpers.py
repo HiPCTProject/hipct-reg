@@ -6,15 +6,11 @@ import dask_image.imread
 import numpy as np
 import numpy.typing as npt
 import SimpleITK as sitk
-import skimage.io
-import skimage.measure
 
 
 def import_im(
     path: Path,
     pixel_size: float,
-    crop_z: tuple[int, int] | None = None,
-    bin_factor: int = 1,
 ) -> sitk.Image:
     """
     Load a file into an ITK image.
@@ -36,18 +32,7 @@ def import_im(
 
     file_type = test_file_type(path)
     img_array_dask = dask_image.imread.imread(f"{path}/*.{file_type}")
-
-    if crop_z is not None:
-        img_array_dask = img_array_dask[crop_z[0] : crop_z[1], :, :]
-
     img_array = img_array_dask.compute()
-
-    bin_factor = int(bin_factor)
-    if bin_factor > 1:
-        # Binning
-        img_array = skimage.measure.block_reduce(
-            img_array, (bin_factor, bin_factor, bin_factor), np.mean
-        )
 
     image = sitk.GetImageFromArray(img_array)
     image.SetOrigin([0, 0, 0])

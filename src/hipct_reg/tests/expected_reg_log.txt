@@ -1,12 +1,9 @@
 INFO Starting registration pipeline...
-INFO Crop the ROI iamge to avoid external circle = False
 INFO Center of rotation (in frame of ROI image) = (32, 32, 32)
 INFO Center of rotation (in frame of full organ image) = (40, 40, 40)
 INFO 64 images of shape (64, 64) in the ROI image folder
 INFO 64 images of shape (64, 64) in the full organ image folder
 INFO Total size of full organ image is 0.00048828125 GB
-INFO ROI image will be binned by 1
-INFO Full organ image will be binned by 1
 INFO
 INFO Importing full organ image...
 INFO folder = .*
