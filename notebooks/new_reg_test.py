@@ -26,7 +26,7 @@ reg_input = get_reg_input(
     roi_point=roi_point,
     full_name=full_name,
     full_point=full_point,
-    full_size=32,
+    full_size_xy=32,
 )
 
 # %%
@@ -113,7 +113,7 @@ print(
 new_transform = sitk.Similarity3DTransform()
 new_transform.SetParameters(transform.GetParameters())
 new_transform.SetTranslation(translation)
-transform_dict: dict = transform_to_dict(new_transform)
+transform_dict: dict = transform_to_dict(new_transform)  # type: ignore[assignment]
 transform_dict["full_dataset"] = full_name
 transform_dict["roi_datset"] = roi_name
 
