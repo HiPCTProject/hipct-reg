@@ -13,11 +13,9 @@ from pathlib import Path
 from hipct_data_tools import load_datasets
 from hipct_data_tools.neuroglancer import NEUROGLANCER_INSTANCE, dataset_to_layer
 
+roi_name = "LADAF-2020-27_kidney_left_central-column_6.05um_bm05"
+full_name = "LADAF-2020-27_kidney_left_complete-organ_25.08um_bm05"
 datasets = {d.name: d for d in load_datasets()}
-roi_name = (
-    "LADAF-2020-27_heart_LR-vent-muscles-ramus-interventricularis-anterior_6.05um_bm05"
-)
-full_name = "LADAF-2020-27_heart_complete-organ_25.08um_bm05"
 
 with open(Path(__file__).parent / f"transform_{roi_name}.json") as f:
     registration = json.loads(f.read())
