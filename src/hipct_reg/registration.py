@@ -1,16 +1,12 @@
 import logging
-from pathlib import Path
 from typing import TypedDict
 
 import numpy as np
 import numpy.typing as npt
 import psutil
 import SimpleITK as sitk
-import skimage.io
-import skimage.measure
 from scipy.spatial.transform import Rotation as ROT
 
-from hipct_reg.helpers import get_pixel_size, import_im
 from hipct_reg.types import RegistrationInput
 
 MAX_THREADS = 0  # 0 if all
@@ -290,93 +286,6 @@ def registration_sitk(
     logging.info(f"rotation = {rotation} deg")
 
     return final_transform
-
-
-def registration_pipeline(
-    *,
-    path_roi: Path,
-    path_full: Path,
-    pt_roi: tuple[int, int, int],
-    pt_full: tuple[int, int, int],
-) -> sitk.Similarity3DTransform:
-    """
-    Run the full registration pipeline on two folders of images.
-
-    Parameters
-    ----------
-    path_roi :
-        Path to the ROI image.
-    path_full :
-        Path to the full organ scan image.
-    pt_roi :
-        Point that the ROI image will be rotated around, in the coordinate
-        frame of the ROI image.
-    pt_full :
-        Point that the ROI image will be rotated around, in the coordinate
-        frame of the full organ scan image.
-    """
-    logging.info("Starting registration pipeline...")
-    logging.info(f"Center of rotation (in frame of ROI image) = {pt_roi}")
-    logging.info(f"Center of rotation (in frame of full organ image) = {pt_full}")
-    pixel_size_roi = get_pixel_size(path_roi)
-    pixel_size_full = get_pixel_size(path_full)
-
-    n_roi = len(list(path_roi.glob("*.tif")))
-    n_full = len(list(path_full.glob("*.tif")))
-
-    img = skimage.io.imread(next(path_roi.glob("*.tif")))
-    logging.info(f"{n_roi} images of shape {img.shape} in the ROI image folder")
-
-    img = skimage.io.imread(next(path_full.glob("*.tif")))
-    x_dim = img.shape[1]
-    y_dim = img.shape[0]
-    logging.info(f"{n_full} images of shape {img.shape} in the full organ image folder")
-
-    del img
-
-    size_full = n_full * x_dim * y_dim * 2 / (1024 * 1024 * 1024)
-    logging.info(f"Total size of full organ image is {size_full} GB")
-    logging.info("")
-
-    logging.info("Importing full organ image...")
-    logging.info(f"folder = {path_full}")
-    image_full = import_im(
-        path_full,
-        pixel_size_full,
-    )
-    logging.info("Imported full organ image!")
-    logging.info("Full organ image parameters:")
-    logging.info(f"size = {image_full.GetSize()}")
-    logging.info(f"dtype = {image_full.GetPixelIDTypeAsString()}")
-    logging.info(f"spacing = {image_full.GetSpacing()}")
-    logging.info("")
-
-    logging.info("Importing ROI image...")
-    logging.info(f"folder = {path_roi}")
-    image_roi = import_im(
-        path_roi,
-        pixel_size_roi,
-    )
-    logging.info("Finished importing ROI image!")
-    logging.info("ROI image parameters:")
-    logging.info(f"size = {image_roi.GetSize()}")
-    logging.info(f"dtype = {image_roi.GetPixelIDTypeAsString()}")
-    logging.info(f"spacing = {image_roi.GetSpacing()}")
-    logging.info("")
-
-    logging.info("Normalising images...")
-    image_roi = sitk.Normalize(image_roi)
-    image_full = sitk.Normalize(image_full)
-    logging.info("Images normalised!")
-    logging.info("")
-
-    reg_input = RegistrationInput(
-        roi_image=image_roi,
-        full_image=image_full,
-        common_point_roi=pt_roi,
-        common_point_full=pt_full,
-    )
-    return run_registration(reg_input)
 
 
 def run_registration(reg_input: RegistrationInput) -> sitk.Similarity3DTransform:
