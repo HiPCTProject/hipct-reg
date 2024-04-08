@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import numpy.typing as npt
 import SimpleITK as sitk
 import tensorstore as ts
@@ -70,7 +71,7 @@ class Cuboid:
         image = sitk.Cast(image, sitk.sitkFloat32)
         return image
 
-    def get_array(self) -> npt.NDArray:
+    def get_array(self) -> npt.NDArray[np.uint16]:
         """
         Get cube as a numpy array.
         """
@@ -119,8 +120,9 @@ def get_reg_input(
 ) -> RegistrationInput:
     """
     Given the dataset of a ROI scan, get:
-    - a (full_size_xy x 2) x (full_size_xy x 2) x 32 cubiod of it's parent full-organ scan
-    - the equivalent (larger) cube of the ROI itself.
+        - a ``(full_size_xy * 2), (full_size_xy * 2), 32`` shaped cubiod of it's parent
+          full-organ scan.
+        - the equivalent (larger) cube of the ROI itself.
 
     The size of the full-organ scan cube can be changed.
 
