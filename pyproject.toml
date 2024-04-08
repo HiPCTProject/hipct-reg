@@ -72,6 +72,7 @@ paths.source = [
 disallow_any_generics = false
 disallow_untyped_calls = false
 exclude = [
+    "docs/auto_examples/*",
     'build/.*',
 ]
 ignore_missing_imports = true

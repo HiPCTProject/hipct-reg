@@ -183,7 +183,7 @@ def test_registration_rigid(
     # Rotate the ROI slightly initially to give the registration something to do
     zrot = np.deg2rad(1)
     with caplog.at_level(logging.INFO):
-        final_registration = registration_rigid(
+        final_registration, final_metric = registration_rigid(
             reg_input,
             zrot=zrot,
         )
@@ -223,7 +223,7 @@ def test_registration_real(full_organ_image: sitk.Image, roi_image: sitk.Image) 
         common_point_roi=get_central_pixel_index(roi_image),
     )
 
-    transform = run_registration(reg_input)
+    transform, reg_metric = run_registration(reg_input)
     transform_dict = transform_to_dict(transform)
     assert list(transform_dict.keys()) == ["translation", "rotation_matrix", "scale"]
 

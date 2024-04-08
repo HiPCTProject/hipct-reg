@@ -45,7 +45,7 @@ reg_input = get_reg_input(
 # Run registration
 # ----------------
 # Do the registration
-transform = run_registration(reg_input)
+transform, reg_metric = run_registration(reg_input)
 
 
 # %%
@@ -77,6 +77,7 @@ axs[1, 0].set_title("ROI scan (registered)")
 neuroglancer_dict = dict(transform_to_neuroglancer_dict(transform))
 neuroglancer_dict["full_dataset"] = full_name
 neuroglancer_dict["roi_datset"] = roi_name
+neuroglancer_dict["registration_metric"] = reg_metric
 
 print(neuroglancer_dict)
 
