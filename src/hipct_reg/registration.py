@@ -143,7 +143,7 @@ def registration_rigid(
     reg_input: RegistrationInput,
     *,
     zrot: float,
-) -> sitk.Similarity3DTransform:
+) -> tuple[sitk.Similarity3DTransform, float]:
     """
     Run a registration using a full rigid transform.
 
@@ -153,6 +153,15 @@ def registration_rigid(
     ----------
     zrot :
         Initial rotation for the registration. In units of degrees.
+
+    Returns
+    -------
+    transform :
+        Registered transform from ROI iamge to the full-organ image.
+
+    metric :
+        Registration metric at the final step. The registration metric is
+        Mattes mutual information.
 
     """
     logging.info("Starting full registration...")
@@ -256,12 +265,23 @@ def registration_rigid(
     logging.info(f"translation = {translation_pix} pix")
     logging.info(f"rotation = {rotation} deg")
 
-    return final_transform
+    return final_transform, R.GetMetricValue()
 
 
-def run_registration(reg_input: RegistrationInput) -> sitk.Similarity3DTransform:
+def run_registration(
+    reg_input: RegistrationInput,
+) -> tuple[sitk.Similarity3DTransform, float]:
     """
     Run registration pipeline on pre-loaded/pre-processed images.
+
+    Returns
+    -------
+    transform :
+        Registered transform from ROI iamge to the full-organ image.
+
+    metric :
+        Registration metric at the final step. The registration metric is
+        Mattes mutual information.
     """
 
     logging.info("Runinng registration...")
@@ -298,7 +318,7 @@ def run_registration(reg_input: RegistrationInput) -> sitk.Similarity3DTransform
         zrot = zrot + 360
 
     logging.info("Similarity registration started...")
-    final_transform = registration_rigid(
+    final_transform, final_metric = registration_rigid(
         reg_input,
         zrot=zrot,
     )
@@ -311,6 +331,7 @@ def run_registration(reg_input: RegistrationInput) -> sitk.Similarity3DTransform
     logging.info(f"Matrix = {final_transform.GetMatrix()}")
     logging.info(f"Versor = {final_transform.GetVersor()}")
     logging.info(f"Scale = {final_transform.GetScale()}")
+    logging.info(f"Metric = {final_metric}")
     logging.info("")
 
-    return final_transform
+    return final_transform, final_metric
