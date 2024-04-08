@@ -1,8 +1,9 @@
 from pathlib import Path
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 
 import dask_image
 import dask_image.imread
+import matplotlib.axes
 import numpy as np
 import numpy.typing as npt
 import SimpleITK as sitk
@@ -40,6 +41,35 @@ def import_im(
 
     image = sitk.Cast(image, sitk.sitkFloat32)
     return image
+
+
+def show_image(
+    image: sitk.Image, ax: matplotlib.axes.Axes, z: int, **imshow_kwargs: Any
+) -> None:
+    """
+    Show a 2D SimpleITK image in a Matplotlib figure.
+
+    Parameters
+    ----------
+    image :
+        Image to show.
+    ax :
+        Axes to show it on.
+    z :
+        z-index at which to slice the image. A 2D x-y plane is displayed
+        at this index.
+    imshow_kwargs :
+        Any additional keyword arguments are handed to ``imshow``.
+    """
+    origin = np.array(image.GetOrigin())
+    top_right = np.array(image.TransformIndexToPhysicalPoint(image.GetSize()))
+
+    ax.imshow(
+        sitk.GetArrayFromImage(image)[z, :, :],
+        extent=(origin[0], top_right[0], origin[1], top_right[1]),
+        origin="lower",
+        **imshow_kwargs,
+    )
 
 
 def test_file_type(path: Path) -> Literal["tif", "jp2"]:
