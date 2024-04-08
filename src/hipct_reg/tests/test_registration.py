@@ -17,8 +17,8 @@ from hipct_reg.helpers import (
     transform_to_dict,
 )
 from hipct_reg.registration import (
+    registration_rigid,
     registration_rot,
-    registration_sitk,
     run_registration,
 )
 from hipct_reg.types import RegistrationInput
@@ -177,13 +177,13 @@ INFO Registered rotation angele = 0.0 deg
     assert zrot == pytest.approx(-0.1)
 
 
-def test_registration_sitk(
+def test_registration_rigid(
     reg_input: RegistrationInput, caplog: pytest.LogCaptureFixture
 ) -> None:
     # Rotate the ROI slightly initially to give the registration something to do
     zrot = np.deg2rad(1)
     with caplog.at_level(logging.INFO):
-        final_registration = registration_sitk(
+        final_registration = registration_rigid(
             reg_input,
             zrot=zrot,
         )

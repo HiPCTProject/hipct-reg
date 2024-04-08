@@ -9,7 +9,7 @@ Registration functions
 
 .. autofunction:: hipct_reg.registration.registration_rot
 
-.. autofunction:: hipct_reg.registration.registration_sitk
+.. autofunction:: hipct_reg.registration.registration_rigid
 
 
 Data helpers
