@@ -52,6 +52,7 @@ docs = [
     "sphinx-autoapi",
     "sphinx-gallery",
     "tensorstore",
+    "zarr",
 ]
 test = [
     "pooch",
