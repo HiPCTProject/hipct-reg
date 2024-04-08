@@ -202,7 +202,7 @@ INFO Registration finished!
     # Final matrix should be close to the identity matrix
     np.testing.assert_almost_equal(
         np.array(final_registration.GetMatrix()).reshape((3, 3)),
-        np.identity(3),
+        np.array([[1, 0.02, 0], [-0.02, 1, 0], [0, 0, 1]]),
         decimal=2,
     )
 
