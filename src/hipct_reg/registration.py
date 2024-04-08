@@ -17,27 +17,12 @@ class RotRegMetrics(TypedDict):
     metric: list[float]
 
 
-def show_fiji(
-    reg_input: RegistrationInput, transform: sitk.Transform, message: str
-) -> None:
-    moving_resampled = sitk.Resample(
-        reg_input.full_image,
-        reg_input.roi_image,
-        transform,
-        sitk.sitkLinear,
-        0,
-        reg_input.roi_image.GetPixelID(),
-    )
-    sitk.Show(0.6 * moving_resampled + 0.4 * reg_input.roi_image, message)
-
-
 def registration_rot(
     reg_input: RegistrationInput,
     *,
     zrot: float,
     angle_range: float,
     angle_step: float,
-    fiji: bool = False,
     verbose: bool = False,
 ) -> tuple[sitk.Euler3DTransform, RotRegMetrics]:
     """
@@ -109,9 +94,6 @@ def registration_rot(
     )
     R.SetInitialTransform(initial_transform, inPlace=True)
 
-    if fiji:
-        show_fiji(reg_input, initial_transform, "Before rotation")
-
     data: RotRegMetrics = {"rotation": [], "metric": []}
 
     def command_iteration(
@@ -148,9 +130,6 @@ def registration_rot(
     )
     logging.info("Registration finished!")
 
-    if fiji:
-        show_fiji(reg_input, initial_transform, "After rotation")
-
     new_zrot = np.rad2deg(transform_rotation.GetAngleZ())
     logging.debug(f"Final metric value = {R.GetMetricValue()}")
     logging.debug(f"Stopping condition = {R.GetOptimizerStopConditionDescription()}")
@@ -164,7 +143,6 @@ def registration_sitk(
     reg_input: RegistrationInput,
     *,
     zrot: float,
-    fiji: bool = False,
 ) -> sitk.Similarity3DTransform:
     """
     Run a registration using a full rigid transform.
@@ -234,9 +212,6 @@ def registration_sitk(
     R.SetOptimizerScalesFromPhysicalShift()
     R.SetOptimizerWeights([0, 0, w, w, w, w, w / 1000])
 
-    if fiji:
-        show_fiji(reg_input, initial_transform, "Before registration")
-
     metric = []
 
     def command_iteration(
@@ -269,10 +244,6 @@ def registration_sitk(
         reg_input.roi_image, reg_input.full_image
     )
     logging.info("Registration finished!")
-
-    if fiji:
-        show_fiji(reg_input, initial_transform, "After registration")
-
     logging.debug(f"Final metric value: {R.GetMetricValue()}")
     logging.debug(
         f"Optimizer's stopping condition, {R.GetOptimizerStopConditionDescription()}"
