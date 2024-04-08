@@ -10,12 +10,11 @@ import logging
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import numpy as np
-import SimpleITK as sitk
 
 from hipct_reg.data import get_reg_input
 from hipct_reg.helpers import (
     get_central_pixel_index,
+    resample_roi_image,
     show_image,
     transform_to_neuroglancer_dict,
 )
@@ -63,15 +62,7 @@ axs[0, 0].set_title("ROI scan (unregistered)")
 axs[0, 1].set_title("Full organ scan")
 
 # After
-roi_resampled = sitk.Resample(
-    reg_input.roi_image,
-    reg_input.roi_image.GetSize(),
-    outputOrigin=reg_input.full_image.GetOrigin(),
-    outputSpacing=reg_input.roi_image.GetSpacing(),
-    transform=transform.GetInverse(),
-    defaultPixelValue=np.nan,
-    interpolator=sitk.sitkNearestNeighbor,
-)
+roi_resampled = resample_roi_image(reg_input, transform)
 for im, ax in zip([roi_resampled, reg_input.full_image], axs[1, :]):
     zmid = get_central_pixel_index(im)[2]
     show_image(im, ax, zmid)
