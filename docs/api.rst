@@ -14,6 +14,15 @@ Registration functions
 .. autofunction:: hipct_reg.registration.registration_sitk
 
 
+Data helpers
+------------
+
+.. autofunction:: hipct_reg.data.get_reg_input
+
+.. autoclass:: hipct_reg.data.Cuboid
+    :members:
+
+
 Misc
 ----
 
@@ -23,10 +32,5 @@ Misc
 .. autoclass:: hipct_reg.registration.RotRegMetrics
     :members:
 
-Data helpers
-------------
-
-.. autofunction:: hipct_reg.data.get_reg_input
-
-.. autoclass:: hipct_reg.data.Cuboid
+.. autoclass:: hipct_reg.helpers.show_image
     :members:

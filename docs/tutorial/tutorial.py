@@ -8,15 +8,13 @@ This page steps through running the HiP-CT registration pipeline.
 import json
 import logging
 from pathlib import Path
-from typing import Any
 
-import matplotlib.axes
 import matplotlib.pyplot as plt
 import numpy as np
 import SimpleITK as sitk
 
 from hipct_reg.data import get_reg_input
-from hipct_reg.helpers import get_central_pixel_index, transform_to_dict
+from hipct_reg.helpers import get_central_pixel_index, show_image, transform_to_dict
 from hipct_reg.registration import run_registration
 
 # %%
@@ -49,32 +47,6 @@ transform = run_registration(reg_input)
 # %%
 # Plot results
 # ------------
-def show_image(
-    image: sitk.Image, ax: matplotlib.axes.Axes, z: int, **imshow_kwargs: Any
-) -> None:
-    """
-    Function to show a SimpleITK image in a Matplotlib figure.
-
-    Parameters
-    ----------
-    image :
-        Image to show.
-    ax :
-        Axes to show it on.
-    z :
-        z-index at which to slice the image. A 2D x-y plane is displayed
-        at this index.
-    """
-    origin = np.array(image.GetOrigin())
-    top_right = np.array(image.TransformIndexToPhysicalPoint(image.GetSize()))
-
-    ax.imshow(
-        sitk.GetArrayFromImage(image)[z, :, :],
-        extent=(origin[0], top_right[0], origin[1], top_right[1]),
-        origin="lower",
-        **imshow_kwargs,
-    )
-
 
 # %%
 # Before
