@@ -9,6 +9,36 @@ import numpy.typing as npt
 import SimpleITK as sitk
 
 
+class TransformDict(TypedDict):
+    translation: tuple[float, float, float]
+    rotation_matrix: tuple[
+        float, float, float, float, float, float, float, float, float
+    ]
+    scale: float
+
+
+def transform_to_neuroglancer_dict(
+    transform: sitk.Similarity3DTransform,
+) -> TransformDict:
+    """
+    Convert a registered transform to a neuroglancer dict.
+
+    Parameters
+    ----------
+    transform :
+        Registered transform.
+    """
+    # For neuroglancer, the translation needs to be at the corner of the image
+    translation = transform.TransformPoint((0, 0, 0))
+
+    new_transform = sitk.Similarity3DTransform()
+    new_transform.SetParameters(transform.GetParameters())
+    new_transform.SetTranslation(translation)
+    transform_dict = transform_to_dict(new_transform)
+
+    return transform_dict
+
+
 def import_im(
     path: Path,
     pixel_size: float,
@@ -92,14 +122,6 @@ def arr_to_index_tuple(arr: npt.NDArray) -> tuple[int, int, int]:
     """
     assert arr.shape == (3,)
     return (int(arr[0]), int(arr[1]), int(arr[2]))
-
-
-class TransformDict(TypedDict):
-    translation: tuple[float, float, float]
-    rotation_matrix: tuple[
-        float, float, float, float, float, float, float, float, float
-    ]
-    scale: float
 
 
 def transform_to_dict(transform: sitk.Similarity3DTransform) -> TransformDict:

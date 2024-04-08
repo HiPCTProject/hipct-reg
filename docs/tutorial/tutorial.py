@@ -14,7 +14,11 @@ import numpy as np
 import SimpleITK as sitk
 
 from hipct_reg.data import get_reg_input
-from hipct_reg.helpers import get_central_pixel_index, show_image, transform_to_dict
+from hipct_reg.helpers import (
+    get_central_pixel_index,
+    show_image,
+    transform_to_neuroglancer_dict,
+)
 from hipct_reg.registration import run_registration
 
 # %%
@@ -76,26 +80,16 @@ for im, ax in zip([roi_resampled, reg_input.full_image], axs[1, :]):
 axs[1, 0].set_title("ROI scan (registered)")
 
 # %%
-# Print and save the transform
-print(transform)
-# For neuroglancer, the translation needs to be at the corner of the image
-translation = transform.TransformPoint((0, 0, 0))
+# Save the transform
+# ------------------
+neuroglancer_dict = dict(transform_to_neuroglancer_dict(transform))
+neuroglancer_dict["full_dataset"] = full_name
+neuroglancer_dict["roi_datset"] = roi_name
 
-print(f"Old translation = {transform.GetTranslation()} um")
-print(f"New translation = {translation} um")
-print(
-    f"New translation = {np.array(translation) / reg_input.full_image.GetSpacing()[0]} pix"
-)
-
-new_transform = sitk.Similarity3DTransform()
-new_transform.SetParameters(transform.GetParameters())
-new_transform.SetTranslation(translation)
-transform_dict = dict(transform_to_dict(new_transform))
-transform_dict["full_dataset"] = full_name
-transform_dict["roi_datset"] = roi_name
+print(neuroglancer_dict)
 
 # Save to a JSON file
 with open(Path(__file__).parent / f"transform_{roi_name}.json", "w") as f:
-    f.write(json.dumps(transform_dict, indent=4))
+    f.write(json.dumps(neuroglancer_dict, indent=4))
 
 plt.show()
