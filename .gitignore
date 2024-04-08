@@ -171,3 +171,7 @@ _version.py
 scripts/data
 scripts/*.json
 notebooks/*.json
+
+# Docs
+docs/auto_examples
+docs/sg_execution_times.rst

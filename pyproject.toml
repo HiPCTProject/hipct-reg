@@ -46,6 +46,12 @@ dev = [
     "tox>=4",
     "twine",
 ]
+docs = [
+    "pydata-sphinx-theme",
+    "sphinx",
+    "sphinx-autoapi",
+    "sphinx-gallery",
+]
 test = [
     "pooch",
     "pytest",
