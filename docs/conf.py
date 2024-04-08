@@ -5,13 +5,13 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-import stack_to_chunk
+import hipct_reg
 
 project = "hipct-reg"
 project_copyright = "2024, David Stansby"
 author = "David Stansby"
-version = stack_to_chunk.__version__
-release = stack_to_chunk.__version__
+version = hipct_reg.__version__
+release = hipct_reg.__version__
 language = "en"
 
 # -- General configuration ---------------------------------------------------
