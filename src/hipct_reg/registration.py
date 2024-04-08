@@ -139,7 +139,7 @@ def registration_rot(
     return transform_rotation, data
 
 
-def registration_sitk(
+def registration_rigid(
     reg_input: RegistrationInput,
     *,
     zrot: float,
@@ -298,7 +298,7 @@ def run_registration(reg_input: RegistrationInput) -> sitk.Similarity3DTransform
         zrot = zrot + 360
 
     logging.info("Similarity registration started...")
-    final_transform = registration_sitk(
+    final_transform = registration_rigid(
         reg_input,
         zrot=zrot,
     )
