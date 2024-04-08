@@ -11,7 +11,7 @@ import SimpleITK as sitk
 
 from hipct_reg.data import get_reg_input
 from hipct_reg.helpers import get_central_pixel_index, transform_to_dict
-from hipct_reg.registration import registration_rot, registration_sitk
+from hipct_reg.registration import run_registration
 
 # %%
 roi_name = "LADAF-2020-27_kidney_left_central-column_6.05um_bm05"
@@ -31,15 +31,7 @@ reg_input = get_reg_input(
 
 # %%
 # Do the registration
-transform: sitk.Transform
-transform, data_coarse = registration_rot(
-    reg_input, zrot=0, angle_range=360, angle_step=2
-)
-transform, data_fine = registration_rot(
-    reg_input, zrot=np.rad2deg(transform.GetAngleZ()), angle_range=5, angle_step=0.1
-)
-# Transform maps from ROI image to the full-organ image.
-transform = registration_sitk(reg_input, zrot=np.rad2deg(transform.GetAngleZ()))
+transform = run_registration(reg_input)
 
 
 # %%
@@ -113,7 +105,7 @@ print(
 new_transform = sitk.Similarity3DTransform()
 new_transform.SetParameters(transform.GetParameters())
 new_transform.SetTranslation(translation)
-transform_dict: dict = transform_to_dict(new_transform)  # type: ignore[assignment]
+transform_dict = dict(transform_to_dict(new_transform))
 transform_dict["full_dataset"] = full_name
 transform_dict["roi_datset"] = roi_name
 
