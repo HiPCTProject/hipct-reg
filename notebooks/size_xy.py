@@ -78,6 +78,8 @@ def run_reg(dxy_full: int) -> tuple[RegistrationInput, sitk.Similarity3DTransfor
     )
 
     new_reg_input = RegistrationInput(
+        roi_name,
+        full_name,
         roi_image,
         full_image,
         common_point_roi,

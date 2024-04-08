@@ -148,6 +148,8 @@ def get_reg_input(
     roi_cube = Cuboid(roi_dataset, roi_point, size_xy=roi_size_xy, size_z=roi_size_z)
 
     return RegistrationInput(
+        roi_name=roi_name,
+        full_name=full_name,
         roi_image=roi_cube.get_image(),
         full_image=full_cube.get_image(),
         common_point_full=(full_size_xy, full_size_xy, full_size_z),

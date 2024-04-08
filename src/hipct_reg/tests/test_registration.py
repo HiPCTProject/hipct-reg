@@ -114,6 +114,8 @@ def reg_input(roi_scan: sitk.Image, full_organ_scan: sitk.Image) -> Registration
         / BIN_FACTOR
     )
     return RegistrationInput(
+        roi_name="roi_name",
+        full_name="full_name",
         roi_image=roi_scan,
         full_image=full_organ_scan,
         common_point_roi=common_point_roi,
@@ -213,6 +215,8 @@ def test_registration_real(full_organ_image: sitk.Image, roi_image: sitk.Image) 
     """
 
     reg_input = RegistrationInput(
+        roi_name="roi_name",
+        full_name="full_name",
         roi_image=roi_image,
         full_image=full_organ_image,
         common_point_full=get_central_pixel_index(full_organ_image),

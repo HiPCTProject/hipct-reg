@@ -11,6 +11,8 @@ class RegistrationInput:
     Contains both images, and pixel indices of a common point in both images.
     """
 
+    roi_name: str
+    full_name: str
     roi_image: sitk.Image
     full_image: sitk.Image
     # Common points are in units of pixels
