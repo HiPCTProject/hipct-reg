@@ -8,6 +8,8 @@ import numpy as np
 import numpy.typing as npt
 import SimpleITK as sitk
 
+from hipct_reg.types import RegistrationInput
+
 
 class TransformDict(TypedDict):
     translation: tuple[float, float, float]
@@ -37,6 +39,36 @@ def transform_to_neuroglancer_dict(
     transform_dict = transform_to_dict(new_transform)
 
     return transform_dict
+
+
+def resample_roi_image(
+    reg_input: RegistrationInput, transform: sitk.Transform
+) -> sitk.Image:
+    """
+    Resample the region of interest image on to the full-organ grid using the
+    registered transform.
+
+    Parameters
+    ----------
+    reg_input :
+        Registration input (contains the ROI and full-organ images).
+    transform :
+        Registered transform.
+
+    Returns
+    -------
+    roi_resampled :
+        ROI image transformed and resampled on to the same grid as the full-organ image.
+    """
+    return sitk.Resample(
+        reg_input.roi_image,
+        reg_input.roi_image.GetSize(),
+        outputOrigin=reg_input.full_image.GetOrigin(),
+        outputSpacing=reg_input.roi_image.GetSpacing(),
+        transform=transform.GetInverse(),
+        defaultPixelValue=np.nan,
+        interpolator=sitk.sitkNearestNeighbor,
+    )
 
 
 def import_im(
