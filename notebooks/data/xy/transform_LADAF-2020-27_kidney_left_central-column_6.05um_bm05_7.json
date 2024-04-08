@@ -1,0 +1,9 @@
+{
+  "translation": [25641.659999999996, 30488.03999999999, 22698.499999999993],
+  "rotation_matrix": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0],
+  "scale": 1.0,
+  "full_dataset": "LADAF-2020-27_kidney_left_complete-organ_25.08um_bm05",
+  "roi_datset": "LADAF-2020-27_kidney_left_central-column_6.05um_bm05",
+  "full_size": [114, 114, 32],
+  "roi_size": [472, 472, 132]
+}
