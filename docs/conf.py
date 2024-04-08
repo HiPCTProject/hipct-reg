@@ -19,6 +19,13 @@ language = "en"
 
 default_role = "any"
 nitpicky = True
+nitpick_ignore = [
+    ("py:class", "SimpleITK.SimpleITK.Similarity3DTransform"),
+    ("py:class", "SimpleITK.SimpleITK.Image"),
+    ("py:class", "SimpleITK.SimpleITK.Euler3DTransform"),
+    ("py:class", "hipct_data_tools.data_model.HiPCTDataSet"),
+    ("py:class", "numpy.uint16"),
+]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 extensions = [
     "sphinx.ext.autodoc",
@@ -28,6 +35,8 @@ extensions = [
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
+    "matplotlib": ("https://matplotlib.org/", None),
 }
 sphinx_gallery_conf = {
     "examples_dirs": "tutorial",  # path to your example scripts
@@ -46,6 +55,7 @@ html_theme_options = {
     "logo": {
         "text": "hipct-reg",
     },
+    "navigation_with_keys": False,
 }
 
 html_use_index = False
