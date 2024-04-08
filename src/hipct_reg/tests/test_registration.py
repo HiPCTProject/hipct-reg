@@ -1,5 +1,4 @@
 import logging
-import re
 from pathlib import Path
 from typing import Any
 
@@ -18,7 +17,6 @@ from hipct_reg.helpers import (
     transform_to_dict,
 )
 from hipct_reg.registration import (
-    registration_pipeline,
     registration_rot,
     registration_sitk,
     run_registration,
@@ -207,57 +205,6 @@ INFO Registration finished!
         np.identity(3),
         decimal=2,
     )
-
-
-def test_registration_pipeline(
-    full_organ_scan_folder: Path,
-    roi_scan_folder: Path,
-    reg_input: RegistrationInput,
-    caplog: pytest.LogCaptureFixture,
-) -> None:
-    """
-    Test a really simple registration where the common point given is exactly the
-    correct point, and there is no rotation between the two datasets.
-    """
-    with caplog.at_level(logging.INFO):
-        transform = registration_pipeline(
-            path_full=full_organ_scan_folder,
-            path_roi=roi_scan_folder,
-            pt_roi=reg_input.common_point_roi,
-            pt_full=reg_input.common_point_full,
-        )
-
-    log_lines = caplog.text.split("\n")
-    with open(Path(__file__).parent / "expected_reg_log.txt") as f:
-        expected_lines = f.read().split("\n")
-
-    for i, (log_line, expected_line) in enumerate(
-        zip(log_lines, expected_lines, strict=True)
-    ):
-        log_line = log_line.strip()
-        expected_line = expected_line.strip()
-        # First check for equality so we don't have to escape a bunch of special regex c
-        # characters if lines exactly match. Then check regex match.
-        if not ((log_line == expected_line) or re.match(expected_line, log_line)):
-            # Raise our own error to get a nicer message
-            raise AssertionError(
-                f"""Expected line {i + 1} does not match log line:
-{expected_line}
-{log_line}"""
-            )
-
-    # Check transform serialisation
-    transform_dict = transform_to_dict(transform)
-    assert list(transform_dict.keys()) == ["translation", "rotation_matrix", "scale"]
-
-    np.testing.assert_almost_equal(
-        transform_dict["translation"], [632.199943, 632.3876893, 631.8473232]
-    )
-    np.testing.assert_almost_equal(
-        transform_dict["rotation_matrix"],
-        [0.9999882, 0.0016654, 0.0, -0.0016654, 0.9999882, -0.0, -0.0, 0.0, 0.9999896],
-    )
-    np.testing.assert_almost_equal(transform_dict["scale"], 1, decimal=5)
 
 
 def test_registration_real(full_organ_image: sitk.Image, roi_image: sitk.Image) -> None:
