@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from hipct_reg.data import get_reg_input
 from hipct_reg.helpers import (
     get_central_pixel_index,
+    neuroglancer_link,
     resample_roi_image,
     show_image,
     transform_to_neuroglancer_dict,
@@ -82,5 +83,8 @@ print(neuroglancer_dict)
 # Save to a JSON file
 with open(Path(__file__).parent / f"transform_{roi_name}.json", "w") as f:
     f.write(json.dumps(neuroglancer_dict, indent=4))
+
+neuroglancer_url = neuroglancer_link(reg_input, transform)
+print(neuroglancer_url)
 
 plt.show()
