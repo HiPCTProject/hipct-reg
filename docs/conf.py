@@ -32,7 +32,6 @@ intersphinx_mapping = {
 sphinx_gallery_conf = {
     "examples_dirs": "tutorial",  # path to your example scripts
     "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
-    "filename_pattern": "/",
 }
 
 # -- Options for HTML output -------------------------------------------------
