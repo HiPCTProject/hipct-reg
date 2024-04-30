@@ -2,7 +2,7 @@ name,parent_name,common_point_x,common_point_y,common_point_z,common_point_paren
 FO-20-124-OL_lung_central-column_6.24um_bm05,FO-20-124-OL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
 FO-20-124-OL_lung_column1_6.24um_bm05,FO-20-124-OL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
 FO-20-124-OL_lung_column2_6.24um_bm05,FO-20-124-OL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
-FO-20-124-OL_lung_column3_6.24um_bm05,FO-20-124-OL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
+FO-20-124-OL_lung_column3_6.24um_bm05,FO-20-124-OL_lung_complete-organ_26.38um_bm05,1660,2174,17657,1499,2554,4359,,,,,,,
 FO-20-125-OL_lung_column1_6.24um_bm05,FO-20-125-OL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
 FO-20-125-OL_lung_column2_6.24um_bm05,FO-20-125-OL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
 FO-20-125-OL_lung_column3_6.24um_bm05,FO-20-125-OL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
