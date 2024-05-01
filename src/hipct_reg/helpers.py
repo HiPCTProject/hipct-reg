@@ -42,6 +42,52 @@ def transform_to_neuroglancer_dict(
     return transform_dict
 
 
+class PixelTransformDict(TypedDict):
+    """
+    Parameters for a pixel-to-pixel transfrom, mapping from a ROI to a full-organ
+    image.
+    """
+
+    tx_pix: float
+    ty_pix: float
+    tz_pix: float
+    rotation_deg: float
+    scale: float
+
+
+def get_pixel_transform_params(
+    reg_input: RegistrationInput,
+    coord_transform: sitk.Similarity3DTransform,
+) -> PixelTransformDict:
+    """
+    Convert the registered transform to a pixel-to-pixel transfrom mapping from a ROI
+    to a full-organ image.
+    """
+    translation = coord_transform.TransformPoint((0, 0, 0))
+
+    new_transform = sitk.Similarity3DTransform()
+    new_transform.SetParameters(coord_transform.GetParameters())
+    new_transform.SetTranslation(translation)
+
+    full_spacing = reg_input.full_image.GetSpacing()[0]
+    roi_spacing = reg_input.roi_image.GetSpacing()[0]
+
+    rotation = np.arctan2(new_transform.GetMatrix()[1], new_transform.GetMatrix()[0])
+    scale = new_transform.GetScale() * roi_spacing / full_spacing
+
+    transform_dict = PixelTransformDict(
+        {
+            "tx_pix": new_transform.GetTranslation()[0] / full_spacing,
+            "ty_pix": new_transform.GetTranslation()[1] / full_spacing,
+            "tz_pix": new_transform.GetTranslation()[2] / full_spacing,
+            "rotation_deg": np.rad2deg(rotation),
+            "scale": scale,
+        }
+    )
+
+    return transform_dict
+
+
 def resample_roi_image(
     reg_input: RegistrationInput, transform: sitk.Transform
 ) -> sitk.Image:

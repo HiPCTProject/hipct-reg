@@ -13,6 +13,7 @@ from skimage.measure import block_reduce
 from hipct_reg.helpers import (
     arr_to_index_tuple,
     get_central_pixel_index,
+    get_pixel_transform_params,
     import_im,
     transform_to_dict,
 )
@@ -224,9 +225,18 @@ def test_registration_real(full_organ_image: sitk.Image, roi_image: sitk.Image) 
     transform_dict = transform_to_dict(transform)
     assert list(transform_dict.keys()) == ["translation", "rotation_matrix", "scale"]
 
-    np.testing.assert_almost_equal(transform_dict["translation"], [3.96, 3.96, 3.96])
+    np.testing.assert_almost_equal(
+        transform_dict["translation"], [1445.96, -109.04, -720.04]
+    )
     np.testing.assert_almost_equal(
         transform_dict["rotation_matrix"],
         [0.976296, -0.2164396, 0.0, 0.2164396, 0.976296, 0.0, 0.0, 0.0, 1.0],
     )
     np.testing.assert_almost_equal(transform_dict["scale"], 1)
+
+    pix_params = get_pixel_transform_params(reg_input, transform)
+    np.testing.assert_almost_equal(pix_params["rotation_deg"], -12.500000000000004)
+    np.testing.assert_almost_equal(pix_params["scale"], 0.2412280701754386)
+    np.testing.assert_almost_equal(pix_params["tx_pix"], 87.01039503911316)
+    np.testing.assert_almost_equal(pix_params["ty_pix"], -26.57849006052485)
+    np.testing.assert_almost_equal(pix_params["tz_pix"], -28.709728867623642)

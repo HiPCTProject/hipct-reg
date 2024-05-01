@@ -21,6 +21,7 @@ def full_organ_image() -> sitk.Image:
     spacing = 25.08
     image = sitk.GetImageFromArray(arr.T)
     image.SetSpacing((spacing, spacing, spacing))
+    image.SetOrigin((3557, 2171, 4455))
     image = sitk.Cast(image, sitk.sitkFloat32)
     return image
 
@@ -38,5 +39,6 @@ def roi_image() -> sitk.Image:
     spacing = 6.05
     image = sitk.GetImageFromArray(arr.T)
     image.SetSpacing((spacing, spacing, spacing))
+    image.SetOrigin((2115, 2284, 5179))
     image = sitk.Cast(image, sitk.sitkFloat32)
     return image

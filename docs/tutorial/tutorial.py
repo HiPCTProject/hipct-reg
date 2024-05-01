@@ -13,6 +13,7 @@ from hipct_reg.data import get_reg_input
 from hipct_reg.helpers import (
     get_central_pixel_index,
     get_central_point,
+    get_pixel_transform_params,
     resample_roi_image,
     show_image,
 )
@@ -60,6 +61,13 @@ transform, reg_metric = run_registration(reg_input)
 # coordinates of the full-organ image. For HiP-CT data these are just the voxel
 # coordinates multiplied by the image resolution.
 #
+# To get the parameters for a pixel-to-pixel mapping from the ROI image to the
+# full-organ image we can use `get_pixel_transform_params`:
+
+pixel_transform_params = get_pixel_transform_params(reg_input, transform)
+print(pixel_transform_params)
+
+# %%
 # Plot results
 # ------------
 
