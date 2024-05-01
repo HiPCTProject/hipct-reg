@@ -177,12 +177,15 @@ def registration_rigid(
     R.SetInterpolator(sitk.sitkLinear)
 
     # Set registration optimiser settings
-    R.SetOptimizerAsLBFGS2()
+    R.SetOptimizerAsOnePlusOneEvolutionary(
+        numberOfIterations=1000,
+        seed=1
+    )
 
     # Setup for the multi-resolution framework.
-    R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 2, 1, 1, 1])
-    R.SetSmoothingSigmasPerLevel(smoothingSigmas=[2, 1, 1, 1, 1, 0])
-    R.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
+    # R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 2, 1, 1, 1])
+    # R.SetSmoothingSigmasPerLevel(smoothingSigmas=[2, 1, 1, 1, 1, 0])
+    # R.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
 
     # These variables are in physical coordinates
     # Rotation centre of transform in ROI image
