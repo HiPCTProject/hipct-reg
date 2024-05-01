@@ -142,11 +142,9 @@ def test_registration_rot(
 INFO Initial rotation = 0 deg
 INFO Range = 360 deg
 INFO Step = 2 deg
-INFO Common point ROI = (32, 32, 32) pix
-INFO Common point full = (40, 40, 40) pix
 INFO Starting rotational registration...
 INFO Registration finished!
-INFO Registered rotation angele = 0.0 deg
+INFO Registered rotation angle = 0.0 deg
 """
             assert caplog.text.replace("INFO \n", "") == expected
 
@@ -191,9 +189,8 @@ def test_registration_rigid(
     # Don't test output lines, as the final values are subject to floating point
     # differences on each run
     expected = r"""INFO Starting full registration...
-INFO Common point ROI = (32, 32, 32)
-INFO Common point full = (40, 40, 40)
 INFO Initial rotation = 0.02 deg
+INFO Initial translation = (128.0, 128.0, 128.0) pix
 INFO Starting registration...
 INFO Registration finished!
 """

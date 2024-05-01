@@ -63,8 +63,6 @@ def registration_rot(
     logging.info(f"Initial rotation = {zrot} deg")
     logging.info(f"Range = {angle_range} deg")
     logging.info(f"Step = {angle_step} deg")
-    logging.info(f"Common point ROI = {reg_input.common_point_roi} pix")
-    logging.info(f"Common point full = {reg_input.common_point_full} pix")
 
     R.SetOptimizerAsExhaustive(
         numberOfSteps=[0, 0, int((angle_range / 2) / angle_step), 0, 0, 0],
@@ -133,7 +131,7 @@ def registration_rot(
     new_zrot = np.rad2deg(transform_rotation.GetAngleZ())
     logging.debug(f"Final metric value = {R.GetMetricValue()}")
     logging.debug(f"Stopping condition = {R.GetOptimizerStopConditionDescription()}")
-    logging.info(f"Registered rotation angele = {new_zrot} deg")
+    logging.info(f"Registered rotation angle = {new_zrot} deg")
     logging.info("")
 
     return transform_rotation, data
@@ -165,8 +163,6 @@ def registration_rigid(
 
     """
     logging.info("Starting full registration...")
-    logging.info(f"Common point ROI = {reg_input.common_point_roi}")
-    logging.info(f"Common point full = {reg_input.common_point_full}")
     logging.info(f"Initial rotation = {zrot:.02f} deg")
     pixel_size_roi: int = reg_input.roi_image.GetSpacing()[0]
 
@@ -198,7 +194,6 @@ def registration_rigid(
         reg_input.full_image.TransformIndexToPhysicalPoint(reg_input.common_point_full)
     )
     logging.debug(f"rotation center = {rotation_center}")
-    logging.debug(f"translation from ROI to full organ = {translation}")
 
     theta_x = 0.0
     theta_y = 0.0
@@ -218,8 +213,8 @@ def registration_rigid(
     # - Three translation components
     # - Scale factor
     w = 10
-    R.SetOptimizerScalesFromPhysicalShift()
     R.SetOptimizerWeights([0, 0, w, w, w, w, w / 1000])
+    R.SetOptimizerScalesFromPhysicalShift()
 
     metric = []
 
@@ -248,6 +243,10 @@ def registration_rigid(
         lambda: command_iteration(R, initial_transform, pixel_size_roi),
     )
 
+    translation_pix = reg_input.roi_image.TransformPhysicalPointToContinuousIndex(
+        initial_transform.GetTranslation()
+    )
+    logging.info(f"Initial translation = {translation_pix} pix")
     logging.info("Starting registration...")
     final_transform: sitk.Similarity3DTransform = R.Execute(
         reg_input.roi_image, reg_input.full_image
@@ -262,8 +261,8 @@ def registration_rigid(
         final_transform.GetTranslation()
     )
     rotation = np.rad2deg(np.array(final_transform.GetVersor()))
-    logging.info(f"translation = {translation_pix} pix")
-    logging.info(f"rotation = {rotation} deg")
+    logging.info(f"Final translation = {translation_pix} pix")
+    logging.info(f"Final rotation = {rotation} deg")
 
     return final_transform, R.GetMetricValue()
 
@@ -327,9 +326,7 @@ def run_registration(
 
     logging.info("Results from similarity registration:")
     logging.info(f"Translation = {final_transform.GetTranslation()}")
-    logging.info(f"Center of rot = {final_transform.GetCenter()}")
     logging.info(f"Matrix = {final_transform.GetMatrix()}")
-    logging.info(f"Versor = {final_transform.GetVersor()}")
     logging.info(f"Scale = {final_transform.GetScale()}")
     logging.info(f"Metric = {final_metric}")
     logging.info("")
