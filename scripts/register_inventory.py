@@ -69,7 +69,9 @@ def register(ds: Dataset) -> tuple[RegistrationInput, sitk.Similarity3DTransform
     ds.ty = translation[1]
     ds.tz = translation[2]
     ds.scale = new_transform.GetScale()
-    ds.rotation = np.rad2deg(new_transform.GetParameters()[2])
+    ds.rotation = np.rad2deg(
+        np.arctan2(new_transform.GetMatrix()[1], new_transform.GetMatrix()[0])
+    )
 
     ds.reg_metric = metric
 
