@@ -234,10 +234,9 @@ def test_registration_real(full_organ_image: sitk.Image, roi_image: sitk.Image) 
     )
     np.testing.assert_almost_equal(transform_dict["scale"], 1)
 
-    assert get_pixel_transform_params(reg_input, transform) == {
-        "rotation_deg": -12.500000000000004,
-        "scale": 0.2412280701754386,
-        "tx_pix": 87.01039503911316,
-        "ty_pix": -26.57849006052485,
-        "tz_pix": -28.709728867623642,
-    }
+    pix_params = get_pixel_transform_params(reg_input, transform)
+    np.testing.assert_almost_equal(pix_params["rotation_deg"], -12.500000000000004)
+    np.testing.assert_almost_equal(pix_params["scale"], 0.2412280701754386)
+    np.testing.assert_almost_equal(pix_params["tx_pix"], 87.01039503911316)
+    np.testing.assert_almost_equal(pix_params["ty_pix"], -26.57849006052485)
+    np.testing.assert_almost_equal(pix_params["tz_pix"], -28.709728867623642)
