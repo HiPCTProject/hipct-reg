@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any, Literal, TypedDict
+from typing import Any, Literal, TypedDict, cast
 
 import dask_image
 import dask_image.imread
@@ -239,3 +239,15 @@ def get_central_pixel_index(image: sitk.Image) -> tuple[int, int, int]:
     Get index of pixel in the centre of an image.
     """
     return arr_to_index_tuple(np.array(image.GetSize()) // 2)
+
+
+def get_central_point(image: sitk.Image) -> tuple[float, float, float]:
+    """
+    Get the physical point of the pixel at the centre of the image.
+    """
+    return cast(
+        tuple[float, float, float],
+        image.TransformIndexToPhysicalPoint(
+            arr_to_index_tuple(np.array(image.GetSize()) // 2)
+        ),
+    )
