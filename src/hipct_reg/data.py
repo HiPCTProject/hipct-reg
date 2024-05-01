@@ -2,6 +2,7 @@
 Helper functions for downloading/managing data locally.
 """
 
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -60,9 +61,9 @@ class Cuboid:
         """
         spacing = self.ds.resolution.to_value("um")
         origin = [
-            (self.centre_point[0] - self.size_xy) * spacing,
-            (self.centre_point[1] - self.size_xy) * spacing,
-            (self.centre_point[2] - self.size_z) * spacing,
+            (self.lower_idx[0]) * spacing,
+            (self.lower_idx[1]) * spacing,
+            (self.lower_idx[2]) * spacing,
         ]
 
         image = sitk.GetImageFromArray(self.get_array().T)
@@ -80,15 +81,37 @@ class Cuboid:
 
         return zarr.load(self.local_zarr_path)[:]
 
+    @property
+    def lower_idx(self) -> tuple[int, int, int]:
+        return (
+            max(0, self.centre_point[0] - self.size_xy),
+            max(0, self.centre_point[1] - self.size_xy),
+            max(0, self.centre_point[2] - self.size_z),
+        )
+
+    @property
+    def upper_idx(self) -> tuple[int, int, int]:
+        remote_arr = self.get_remote_arr()
+        shape = remote_arr.shape
+
+        return (
+            min(self.centre_point[0] + self.size_xy, shape[0]),
+            min(self.centre_point[1] + self.size_xy, shape[1]),
+            min(self.centre_point[2] + self.size_z, shape[2]),
+        )
+
     def download_cube(self) -> None:
         """
         Download the cube from GCS.
         """
+        logging.info(
+            f"Downloading cube for {self.ds.name}, {self.lower_idx} --> {self.upper_idx}"
+        )
         remote_arr = self.get_remote_arr()
         data = remote_arr[
-            self.centre_point[2] - self.size_z : self.centre_point[2] + self.size_z,
-            self.centre_point[1] - self.size_xy : self.centre_point[1] + self.size_xy,
-            self.centre_point[0] - self.size_xy : self.centre_point[0] + self.size_xy,
+            self.lower_idx[2] : self.upper_idx[2],
+            self.lower_idx[1] : self.upper_idx[1],
+            self.lower_idx[0] : self.upper_idx[0],
         ].T
         zarr.convenience.save(self.local_zarr_path, data)
 
