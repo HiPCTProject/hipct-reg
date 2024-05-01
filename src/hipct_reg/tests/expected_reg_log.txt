@@ -34,18 +34,14 @@ INFO Starting rotational registration
 INFO Initial rotation = 0 deg
 INFO Range = 360 deg
 INFO Step = 2.0 deg
-INFO Common point ROI = (32, 32, 32) pix
-INFO Common point full = (40, 40, 40) pix
 INFO Starting rotational registration...
 INFO Registration finished!
-INFO Registered rotation angele = 0.0 deg
+INFO Registered rotation angle = 0.0 deg
 INFO
 INFO Starting rotational registration
 INFO Initial rotation = 0.0 deg
 INFO Range = 5 deg
 INFO Step = 0.1 deg
-INFO Common point ROI = (32, 32, 32) pix
-INFO Common point full = (40, 40, 40) pix
 INFO Starting rotational registration...
 INFO Registration finished!
 INFO Registered rotation angele = -0.1 deg
