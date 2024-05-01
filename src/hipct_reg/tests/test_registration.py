@@ -13,6 +13,7 @@ from skimage.measure import block_reduce
 from hipct_reg.helpers import (
     arr_to_index_tuple,
     get_central_pixel_index,
+    get_pixel_transform_params,
     import_im,
     transform_to_dict,
 )
@@ -230,3 +231,11 @@ def test_registration_real(full_organ_image: sitk.Image, roi_image: sitk.Image) 
         [0.976296, -0.2164396, 0.0, 0.2164396, 0.976296, 0.0, 0.0, 0.0, 1.0],
     )
     np.testing.assert_almost_equal(transform_dict["scale"], 1)
+
+    assert get_pixel_transform_params(reg_input, transform) == {
+        "rotation_deg": -12.500000000000004,
+        "scale": 0.2412280701754386,
+        "tx_pix": 7.80457274342066,
+        "ty_pix": -5.979213196848001,
+        "tz_pix": 0.1578947368421022,
+    }

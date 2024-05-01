@@ -11,6 +11,8 @@ Registration functions
 
 .. autofunction:: hipct_reg.registration.registration_rigid
 
+.. autofunction:: hipct_reg.helpers.get_pixel_transform_params
+
 
 Data helpers
 ------------
