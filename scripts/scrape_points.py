@@ -20,13 +20,17 @@ for d in datasets:
         if l.startswith("Point moved"):
             point_moved = eval(l.split("=")[1].strip())
 
-    dataset = datasets_reg[d.name]
-    dataset.common_point_x = point_moved[0] * 2
-    dataset.common_point_y = point_moved[1] * 2
-    dataset.common_point_z = point_moved[2] * 2
+    try:
+        dataset = datasets_reg[d.name]
+    except KeyError:
+        print(f"Didn't find {d.name} in registration database")
+        continue
+    dataset.common_point_x = int(point_moved[0] * 2)
+    dataset.common_point_y = int(point_moved[1] * 2)
+    dataset.common_point_z = int(point_moved[2] * 2)
 
-    dataset.common_point_parent_x = point_fixed[0] * 2
-    dataset.common_point_parent_y = point_fixed[1] * 2
-    dataset.common_point_parent_z = point_fixed[2] * 2
+    dataset.common_point_parent_x = int(point_fixed[0] * 2)
+    dataset.common_point_parent_y = int(point_fixed[1] * 2)
+    dataset.common_point_parent_z = int(point_fixed[2] * 2)
 
     save_datasets(list(datasets_reg.values()))
