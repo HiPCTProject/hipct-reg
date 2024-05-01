@@ -198,7 +198,7 @@ def registration_rigid(
         reg_input.full_image.TransformIndexToPhysicalPoint(reg_input.common_point_full)
     )
     logging.debug(f"rotation center = {rotation_center}")
-    logging.debug(f"translation from ROI to full organ = {translation}")
+    logging.info(f"translation from ROI to full organ = {translation}")
 
     theta_x = 0.0
     theta_y = 0.0
@@ -248,6 +248,10 @@ def registration_rigid(
         lambda: command_iteration(R, initial_transform, pixel_size_roi),
     )
 
+    translation_pix = reg_input.roi_image.TransformPhysicalPointToContinuousIndex(
+        initial_transform.GetTranslation()
+    )
+    logging.info(f"initial translation = {translation_pix} pix")
     logging.info("Starting registration...")
     final_transform: sitk.Similarity3DTransform = R.Execute(
         reg_input.roi_image, reg_input.full_image
