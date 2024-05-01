@@ -3,9 +3,11 @@ Run registration from entries in the inventory,
 saving results to the inventory.
 """
 
+import logging
 import tkinter as ttk
 from tkinter import Button, Tk
 
+import numpy as np
 import SimpleITK as sitk
 from matplotlib.axes import Axes
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -21,6 +23,7 @@ from hipct_reg.inventory import Dataset, load_datasets, save_datasets
 from hipct_reg.registration import run_registration
 from hipct_reg.types import RegistrationInput
 
+logging.basicConfig(level=logging.INFO)
 DATASETS = {d.name: d for d in load_datasets()}
 
 
@@ -66,7 +69,7 @@ def register(ds: Dataset) -> tuple[RegistrationInput, sitk.Similarity3DTransform
     ds.ty = translation[1]
     ds.tz = translation[2]
     ds.scale = new_transform.GetScale()
-    ds.rotation = new_transform.GetVersor()[0]
+    ds.rotation = np.rad2deg(new_transform.GetParameters()[2])
 
     ds.reg_metric = metric
 
@@ -141,7 +144,8 @@ class RegWindow(Tk):
         self.button_register["state"] = "disabled"
         dataset = DATASETS[self.dataset_name.get()]
         reg_input, new_transform = register(dataset)
-        # plot_central_slice(reg_input, new_transform, self.fig.axes)
+        plot_central_slice(reg_input, new_transform, self.fig.axes)
+        print(dataset.neuroglancer_link)
         self.canvas.draw()
 
         self.button_good["state"] = "normal"
