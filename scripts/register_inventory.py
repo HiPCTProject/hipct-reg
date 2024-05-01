@@ -100,11 +100,15 @@ def plot_central_slice(
         ax.grid(color="k")
 
 
+def keep_dataset(d: Dataset) -> bool:
+    return d.common_point_x is not None and d.rotation is None
+
+
 class RegWindow(Tk):
     def __init__(self) -> None:
         super().__init__()
 
-        dataset_names = list(DATASETS.keys())
+        dataset_names = [d for d in DATASETS if keep_dataset(DATASETS[d])]
 
         self.title("HiP-CT registration")
         self.fig = Figure(figsize=(10, 4), dpi=100)
