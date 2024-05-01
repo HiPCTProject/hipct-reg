@@ -5,34 +5,40 @@ Tutorial
 This page steps through running the HiP-CT registration pipeline.
 """
 
-import json
 import logging
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 
 from hipct_reg.data import get_reg_input
 from hipct_reg.helpers import (
     get_central_pixel_index,
-    neuroglancer_link,
+    get_central_point,
     resample_roi_image,
     show_image,
-    transform_to_neuroglancer_dict,
 )
 from hipct_reg.registration import run_registration
+
+logging.basicConfig(level=logging.INFO)
 
 # %%
 # Get data
 # --------
-# Start by defining the datasets, and fetching them.
+# The registration pipeline makes use of simpleITK, both for the actual registration
+# and for inputting the images. Using it for image input allows a smaller volume than
+# the whole image volume to be used to register, while keeping track of its offset from
+# the origin of the original (full) data volume.
+#
+# hipct-reg takes a `RegistrationInput` object as input to the registration pipeline.
+# This class stores the two images, the (pixel) indices of a common point in them, and
+# their names.
+#
+# `get_reg_input` provides an easy way to get the registration input for two datasets:
 
 roi_name = "LADAF-2020-27_heart_ROI-02_6.5um_bm18"
 full_name = "LADAF-2020-27_heart_complete-organ_19.89um_bm18"
 roi_point = (3478, 2398, 4730)
 full_point = (6110, 5025, 4117)
 
-logging.basicConfig(level=logging.INFO)
-# Get input data
 reg_input = get_reg_input(
     roi_name=roi_name,
     roi_point=roi_point,
@@ -44,48 +50,41 @@ reg_input = get_reg_input(
 # %%
 # Run registration
 # ----------------
-# Do the registration
+# This is all the input we need - we can just pass this to `run_registration` to run
+# the full registration pipeline:
 transform, reg_metric = run_registration(reg_input)
 
-
 # %%
+# This resturns two objects - the registered transform, and the registration metric.
+# The transform maps from the physical coordinates of the ROI image to the physical
+# coordinates of the full-organ image. For HiP-CT data these are just the voxel
+# coordinates multiplied by the image resolution.
+#
 # Plot results
 # ------------
 
-# %%
-# Before
-fig, axs = plt.subplots(nrows=2, ncols=2, constrained_layout=True, figsize=(10, 10))
-for im, ax in zip([reg_input.roi_image, reg_input.full_image], axs[0, :]):
-    zmid = get_central_pixel_index(im)[2]
-    show_image(im, ax, zmid)
+# Get physical point in centre of full organ image
+central_point = get_central_point(reg_input.full_image)
 
-axs[0, 0].set_title("ROI scan (unregistered)")
-axs[0, 1].set_title("Full organ scan")
+fig, axs = plt.subplots(nrows=1, ncols=3, constrained_layout=True, figsize=(10, 5))
+
+# Before
+central_idx = get_central_pixel_index(reg_input.roi_image)
+show_image(reg_input.roi_image, axs[0], central_idx[2])
+axs[0].set_title("ROI before registration")
 
 # After
 roi_resampled = resample_roi_image(reg_input, transform)
-for im, ax in zip([roi_resampled, reg_input.full_image], axs[1, :]):
-    zmid = get_central_pixel_index(im)[2]
-    show_image(im, ax, zmid)
-    ax.grid(color="k")
+resampled_idx = roi_resampled.TransformPhysicalPointToIndex(central_point)
+show_image(roi_resampled, axs[1], resampled_idx[2])
+axs[1].set_title("ROI after registration")
+axs[1].grid(color="black")
 
-axs[1, 0].set_title("ROI scan (registered)")
+# Full-organ image
+central_idx = get_central_pixel_index(reg_input.full_image)
+show_image(reg_input.full_image, axs[2], central_idx[2])
+axs[2].set_title("Full-organ")
+axs[2].grid(color="black")
 
-# %%
-# Save the transform
-# ------------------
-neuroglancer_dict = dict(transform_to_neuroglancer_dict(transform))
-neuroglancer_dict["full_dataset"] = full_name
-neuroglancer_dict["roi_datset"] = roi_name
-neuroglancer_dict["registration_metric"] = reg_metric
-
-print(neuroglancer_dict)
-
-# Save to a JSON file
-with open(Path(__file__).parent / f"transform_{roi_name}.json", "w") as f:
-    f.write(json.dumps(neuroglancer_dict, indent=4))
-
-neuroglancer_url = neuroglancer_link(reg_input, transform)
-print(neuroglancer_url)
 
 plt.show()
