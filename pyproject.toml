@@ -17,12 +17,12 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "dask-image~=2023.08",
-    "matplotlib~=3.8",
-    "numpy~=1.26",
-    "psutil~=5.9",
-    "scikit-image~=0.22",
-    "simpleitk~=2.3",
+    "dask-image==2024.5.0",
+    "matplotlib==3.8.4",
+    "numpy==1.26.4",
+    "psutil==5.9.8",
+    "scikit-image==0.23.2",
+    "simpleitk==2.3.1",
 ]
 description = "Code to register regions of interest with full organ datasets."
 dynamic = [
@@ -57,7 +57,7 @@ test = [
     "pytest",
     "pytest-cov",
     "tifffile==2024.1.30",
-    "zarr",
+    "zarr==2.18.1",
 ]
 
 [tool.coverage]
