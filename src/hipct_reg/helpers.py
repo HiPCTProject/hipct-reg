@@ -1,9 +1,6 @@
 import json
-from pathlib import Path
-from typing import Any, Literal, TypedDict, cast
+from typing import Any, TypedDict, cast
 
-import dask_image
-import dask_image.imread
 import matplotlib.axes
 import numpy as np
 import numpy.typing as npt
@@ -118,40 +115,6 @@ def resample_roi_image(
     )
 
 
-def import_im(
-    path: Path,
-    pixel_size: float,
-) -> sitk.Image:
-    """
-    Load a file into an ITK image.
-    - Reads all files into memory
-    - Casts data to float32
-
-    Parameters
-    ----------
-    path :
-        Path to TIFF or JP2 folder.
-    pixel_size :
-        Pixel size in nm.
-    crop_z :
-        If given, crop the number of slices in the z-direction.
-    bin_factor :
-        Downsample the image by a binning factor before returning.
-
-    """
-
-    file_type = test_file_type(path)
-    img_array_dask = dask_image.imread.imread(f"{path}/*.{file_type}")
-    img_array = img_array_dask.compute()
-
-    image = sitk.GetImageFromArray(img_array)
-    image.SetOrigin([0, 0, 0])
-    image.SetSpacing([pixel_size, pixel_size, pixel_size])
-
-    image = sitk.Cast(image, sitk.sitkFloat32)
-    return image
-
-
 def show_image(
     image: sitk.Image, ax: matplotlib.axes.Axes, z: int, **imshow_kwargs: Any
 ) -> None:
@@ -179,20 +142,6 @@ def show_image(
         origin="lower",
         **imshow_kwargs,
     )
-
-
-def test_file_type(path: Path) -> Literal["tif", "jp2"]:
-    N_tif = len(list(path.glob("*.tif")))
-    N_jp2 = len(list(path.glob("*.jp2")))
-
-    if (N_tif) > 0 and (N_jp2) > 0:
-        raise RuntimeError("Error: tif and jp2 files in the folder")
-    elif (N_tif) == 0 and (N_jp2) == 0:
-        raise RuntimeError("Error: no tif or jp2 files in the folder")
-    elif N_tif > 0 and (N_jp2) == 0:
-        return "tif"
-    else:
-        return "jp2"
 
 
 def arr_to_index_tuple(arr: npt.NDArray) -> tuple[int, int, int]:
@@ -271,13 +220,6 @@ def neuroglancer_link(
 
     link = f"{NEUROGLANCER_INSTANCE}/#!{json.dumps(ng_dict, separators=(',', ':'))}"
     return link
-
-
-def get_pixel_size(path: Path) -> float:
-    """
-    Get pixel size in um from a path.
-    """
-    return float(path.name.split("um")[0])
 
 
 def get_central_pixel_index(image: sitk.Image) -> tuple[int, int, int]:

@@ -16,9 +16,8 @@ The registration is done in several steps, described in the following sections.
 Manually finding a common point
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The first step is to manually find a common point between the two datasetsbegin registered.
-The easiest way to do this is using neuroglancer, with both datasets open side by side.
-Once you have found a common point, record the pixel coordinates in both the full organ dataset and the ROI dataset.
+The first step is to manually find a common point between the two datasets being registered.
+This provides a starting point for the registration code.
 
 Initial rotational registration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

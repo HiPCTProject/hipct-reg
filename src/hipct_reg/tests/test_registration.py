@@ -14,7 +14,6 @@ from hipct_reg.helpers import (
     arr_to_index_tuple,
     get_central_pixel_index,
     get_pixel_transform_params,
-    import_im,
     transform_to_dict,
 )
 from hipct_reg.registration import (
@@ -22,6 +21,7 @@ from hipct_reg.registration import (
     registration_rot,
     run_registration,
 )
+from hipct_reg.tests.helpers import import_tiff_stack
 from hipct_reg.types import RegistrationInput
 
 # Pixel size of full resolution (ROI) pixels
@@ -80,7 +80,9 @@ def full_organ_scan(
     """
     Downsampled ground truth data, to mimic a full organ scan.
     """
-    return import_im(full_organ_scan_folder, pixel_size=PIXEL_SIZE_UM * BIN_FACTOR)
+    return import_tiff_stack(
+        full_organ_scan_folder, pixel_size=PIXEL_SIZE_UM * BIN_FACTOR
+    )
 
 
 @pytest.fixture
@@ -101,7 +103,7 @@ def roi_scan(roi_scan_folder: Path) -> sitk.Image:
     """
     Sub-volume of ground truth data, to mimic ROI data.
     """
-    return import_im(roi_scan_folder, pixel_size=PIXEL_SIZE_UM)
+    return import_tiff_stack(roi_scan_folder, pixel_size=PIXEL_SIZE_UM)
 
 
 @pytest.fixture

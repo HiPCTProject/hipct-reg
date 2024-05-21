@@ -9,8 +9,6 @@ from scipy.spatial.transform import Rotation as ROT
 
 from hipct_reg.types import RegistrationInput
 
-MAX_THREADS = 0  # 0 if all
-
 
 class RotRegMetrics(TypedDict):
     rotation: list[float]

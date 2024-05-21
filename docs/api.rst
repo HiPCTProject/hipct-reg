@@ -14,15 +14,6 @@ Registration functions
 .. autofunction:: hipct_reg.helpers.get_pixel_transform_params
 
 
-Data helpers
-------------
-
-.. autofunction:: hipct_reg.data.get_reg_input
-
-.. autoclass:: hipct_reg.data.Cuboid
-    :members:
-
-
 Misc
 ----
 
