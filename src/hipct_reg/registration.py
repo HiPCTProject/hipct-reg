@@ -177,10 +177,7 @@ def registration_rigid(
     R.SetInterpolator(sitk.sitkLinear)
 
     # Set registration optimiser settings
-    R.SetOptimizerAsOnePlusOneEvolutionary(
-        numberOfIterations=1000,
-        seed=1
-    )
+    R.SetOptimizerAsOnePlusOneEvolutionary(numberOfIterations=1000, seed=1)
 
     # Setup for the multi-resolution framework.
     # R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 2, 1, 1, 1])
