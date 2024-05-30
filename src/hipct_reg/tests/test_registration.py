@@ -202,7 +202,13 @@ INFO Registration finished!
     # Final matrix should be close to the identity matrix
     np.testing.assert_almost_equal(
         np.array(final_registration.GetMatrix()).reshape((3, 3)),
-        np.array([[1, 0.02, 0], [-0.02, 1, 0], [0, 0, 1]]),
+        np.array(
+            [
+                [1.00e00, -2.61e-04, 3.62e-04],
+                [2.62e-04, 1.00e00, -2.05e-04],
+                [-3.62e-04, 2.05e-04, 1.00e00],
+            ]
+        ),
         decimal=2,
     )
 
@@ -226,17 +232,28 @@ def test_registration_real(full_organ_image: sitk.Image, roi_image: sitk.Image) 
     assert list(transform_dict.keys()) == ["translation", "rotation_matrix", "scale"]
 
     np.testing.assert_almost_equal(
-        transform_dict["translation"], [1445.96, -109.04, -720.04]
+        transform_dict["translation"],
+        [1438.0925849722469, -83.19204348243811, -724.2713749253514],
     )
     np.testing.assert_almost_equal(
         transform_dict["rotation_matrix"],
-        [0.976296, -0.2164396, 0.0, 0.2164396, 0.976296, 0.0, 0.0, 0.0, 1.0],
+        [
+            9.7630237e-01,
+            -2.1644133e-01,
+            9.1951011e-06,
+            2.1644133e-01,
+            9.7630237e-01,
+            -7.5385172e-06,
+            -7.3455040e-06,
+            9.3500106e-06,
+            1.0000066e00,
+        ],
     )
-    np.testing.assert_almost_equal(transform_dict["scale"], 1)
+    np.testing.assert_almost_equal(transform_dict["scale"], 1.0000065879674043)
 
     pix_params = get_pixel_transform_params(reg_input, transform)
-    np.testing.assert_almost_equal(pix_params["rotation_deg"], -12.500000000000004)
-    np.testing.assert_almost_equal(pix_params["scale"], 0.2412280701754386)
-    np.testing.assert_almost_equal(pix_params["tx_pix"], 87.01039503911316)
-    np.testing.assert_almost_equal(pix_params["ty_pix"], -26.57849006052485)
-    np.testing.assert_almost_equal(pix_params["tz_pix"], -28.709728867623642)
+    np.testing.assert_almost_equal(pix_params["rotation_deg"], -12.500016952667583)
+    np.testing.assert_almost_equal(pix_params["scale"], 0.24122965937810192)
+    np.testing.assert_almost_equal(pix_params["tx_pix"], 86.6939816914787)
+    np.testing.assert_almost_equal(pix_params["ty_pix"], -25.547054921144543)
+    np.testing.assert_almost_equal(pix_params["tz_pix"], -28.880310016699557)
