@@ -18,12 +18,13 @@ classifiers = [
 ]
 dependencies = [
     "dask-image==2024.5.0",
+    "hoa-tools @ git+https://github.com/HumanOrganAtlas/hoa-tools.git@main",
     "matplotlib==3.8.4",
     "numpy==1.26.4",
     "psutil==5.9.8",
     "scikit-image==0.23.2",
     "simpleitk==2.3.1",
-    "tensorstore==0.1.59",
+    "zarr==2.18.1",
 ]
 description = "Code to register regions of interest with full organ datasets."
 dynamic = [
@@ -58,7 +59,6 @@ test = [
     "pytest",
     "pytest-cov",
     "tifffile==2024.1.30",
-    "zarr==2.18.1",
 ]
 
 [tool.coverage]

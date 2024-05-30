@@ -4,22 +4,22 @@ Helper functions for downloading/managing data locally.
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import numpy.typing as npt
 import SimpleITK as sitk
-import tensorstore as ts
-import zarr
-from hipct_data_tools import load_datasets
-from hipct_data_tools.data_model import HiPCTDataSet
+import zarr.convenience
+import zarr.core
+from hoa_tools.dataset import Dataset, get_dataset
+from hoa_tools.inventory import load_inventory
 
 from hipct_reg.types import RegistrationInput
 
 STORAGE_DIR = Path.home() / "hipct" / "reg_data"
 STORAGE_DIR.mkdir(parents=True, exist_ok=True)
 
-datasets = {d.name: d for d in load_datasets()}
+inventory = load_inventory()
+datasets = {name: get_dataset(name) for name in inventory.index}
 
 
 @dataclass
@@ -39,7 +39,7 @@ class Cuboid:
         Half the thickness of the cuboid along the z-axis.
     """
 
-    ds: HiPCTDataSet
+    ds: Dataset
     centre_point: tuple[int, int, int]
     size_xy: int
     size_z: int
@@ -58,7 +58,7 @@ class Cuboid:
         """
         Get cube as a SimpleITK image.
         """
-        spacing = self.ds.resolution_um
+        spacing = self.ds.resolution.to_value("um")
         origin = [
             (self.centre_point[0] - self.size_xy) * spacing,
             (self.centre_point[1] - self.size_xy) * spacing,
@@ -84,30 +84,19 @@ class Cuboid:
         """
         Download the cube from GCS.
         """
-        gcs_store = self.get_gcs_store()
-        data = (
-            gcs_store[
-                self.centre_point[0] - self.size_xy : self.centre_point[0]
-                + self.size_xy,
-                self.centre_point[1] - self.size_xy : self.centre_point[1]
-                + self.size_xy,
-                self.centre_point[2] - self.size_z : self.centre_point[2] + self.size_z,
-            ]
-            .read()
-            .result()
-        )
+        remote_arr = self.get_remote_arr()
+        data = remote_arr[
+            self.centre_point[2] - self.size_z : self.centre_point[2] + self.size_z,
+            self.centre_point[1] - self.size_xy : self.centre_point[1] + self.size_xy,
+            self.centre_point[0] - self.size_xy : self.centre_point[0] + self.size_xy,
+        ].T
         zarr.convenience.save(self.local_zarr_path, data)
 
-    def get_gcs_store(self) -> Any:
+    def get_remote_arr(self) -> zarr.core.Array:
         """
         Get remote GCS store for the cube.
         """
-        return ts.open(
-            {
-                "driver": "n5",
-                "kvstore": f"gs://{self.ds.gcs_bucket}/{self.ds.gcs_path}s0",
-            }
-        ).result()
+        return self.ds.remote_array(level=0)
 
 
 def get_reg_input(
@@ -130,7 +119,7 @@ def get_reg_input(
     """
     full_dataset = datasets[full_name]
     assert (
-        full_dataset.is_complete_organ
+        full_dataset.is_full_organ
     ), "Full dataset name given is not a full organ dataset"
     full_size_z = 16
     full_cube = Cuboid(
@@ -138,13 +127,13 @@ def get_reg_input(
     )
 
     roi_dataset = datasets[roi_name]
-    assert not roi_dataset.is_complete_organ, "ROI dataset name given is a ROI dataset"
-    roi_size_xy = int(
-        full_size_xy * full_dataset.resolution_um / roi_dataset.resolution_um
-    )
-    roi_size_z = int(
-        full_size_z * full_dataset.resolution_um / roi_dataset.resolution_um
-    )
+
+    full_resolution_um = full_dataset.resolution.to_value("um")
+    roi_resolution_um = roi_dataset.resolution.to_value("um")
+
+    assert not roi_dataset.is_full_organ, "ROI dataset name given is a ROI dataset"
+    roi_size_xy = int(full_size_xy * full_resolution_um / roi_resolution_um)
+    roi_size_z = int(full_size_z * full_resolution_um / roi_resolution_um)
     roi_cube = Cuboid(roi_dataset, roi_point, size_xy=roi_size_xy, size_z=roi_size_z)
 
     return RegistrationInput(

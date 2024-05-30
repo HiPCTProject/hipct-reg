@@ -23,7 +23,6 @@ nitpick_ignore = [
     ("py:class", "SimpleITK.SimpleITK.Similarity3DTransform"),
     ("py:class", "SimpleITK.SimpleITK.Image"),
     ("py:class", "SimpleITK.SimpleITK.Euler3DTransform"),
-    ("py:class", "hipct_data_tools.data_model.HiPCTDataSet"),
     ("py:class", "numpy.uint16"),
 ]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]

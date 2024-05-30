@@ -35,10 +35,10 @@ logging.basicConfig(level=logging.INFO)
 #
 # `get_reg_input` provides an easy way to get the registration input for two datasets:
 
-roi_name = "LADAF-2020-27_heart_ROI-02_6.5um_bm18"
-full_name = "LADAF-2020-27_heart_complete-organ_19.89um_bm18"
-roi_point = (3478, 2398, 4730)
-full_point = (6110, 5025, 4117)
+roi_name = "LADAF-2021-64_heart_VOI-01_6.51um_bm18"
+full_name = "LADAF-2021-64_heart_complete-organ_19.89um_bm18"
+roi_point = (2240, 1770, 1546)
+full_point = (4040, 5136, 502)
 
 reg_input = get_reg_input(
     roi_name=roi_name,
