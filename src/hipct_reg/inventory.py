@@ -7,7 +7,6 @@ import pandas as pd
 from pydantic import BaseModel
 
 INVENTORY_FILE = Path(__file__).parent / "reg_inventory.csv"
-from hipct_data_tools.neuroglancer import NEUROGLANCER_INSTANCE, dataset_to_layer
 
 
 class Dataset(BaseModel):
@@ -61,6 +60,10 @@ class Dataset(BaseModel):
     @property
     def neuroglancer_link(self) -> str:
         from hipct_data_tools import load_datasets
+        from hipct_data_tools.neuroglancer import (
+            NEUROGLANCER_INSTANCE,
+            dataset_to_layer,
+        )
 
         assert (
             self.tx is not None

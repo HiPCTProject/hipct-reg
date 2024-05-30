@@ -15,7 +15,7 @@ def keep_dataset(d: HiPCTDataSet) -> bool:
     """
     Return whether to keep the dataset and add it to the registration inventory.
     """
-    return d.public or d.release == "hoa"
+    return d.public or d.release == "hoa"  # type: ignore[no-any-return]
 
 
 def parent_date(parent: HiPCTDataSet) -> datetime:
@@ -24,7 +24,7 @@ def parent_date(parent: HiPCTDataSet) -> datetime:
     past if the dataset doesn't have a date.
     """
     if parent.date_reconstruction is not None:
-        return parent.date_reconstruction.replace(tzinfo=UTC)
+        return parent.date_reconstruction.replace(tzinfo=UTC)  # type: ignore[no-any-return]
     else:
         return datetime(1900, 1, 1, tzinfo=UTC)
 
