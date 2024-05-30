@@ -15,7 +15,6 @@ from hipct_reg.helpers import (
     get_central_pixel_index,
     get_pixel_transform_params,
     import_im,
-    transform_to_dict,
 )
 from hipct_reg.registration import (
     registration_rigid,
@@ -228,28 +227,6 @@ def test_registration_real(full_organ_image: sitk.Image, roi_image: sitk.Image) 
     )
 
     transform, reg_metric = run_registration(reg_input)
-    transform_dict = transform_to_dict(transform)
-    assert list(transform_dict.keys()) == ["translation", "rotation_matrix", "scale"]
-
-    np.testing.assert_almost_equal(
-        transform_dict["translation"],
-        [1438.0925849722469, -83.19204348243811, -724.2713749253514],
-    )
-    np.testing.assert_almost_equal(
-        transform_dict["rotation_matrix"],
-        [
-            9.7630237e-01,
-            -2.1644133e-01,
-            9.1951011e-06,
-            2.1644133e-01,
-            9.7630237e-01,
-            -7.5385172e-06,
-            -7.3455040e-06,
-            9.3500106e-06,
-            1.0000066e00,
-        ],
-    )
-    np.testing.assert_almost_equal(transform_dict["scale"], 1.0000065879674043)
 
     pix_params = get_pixel_transform_params(reg_input, transform)
     np.testing.assert_almost_equal(pix_params["rotation_deg"], -12.500016952667583)

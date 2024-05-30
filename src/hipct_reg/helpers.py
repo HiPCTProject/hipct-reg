@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 from typing import Any, Literal, TypedDict, cast
 
@@ -10,36 +9,6 @@ import numpy.typing as npt
 import SimpleITK as sitk
 
 from hipct_reg.types import RegistrationInput
-
-
-class TransformDict(TypedDict):
-    translation: tuple[float, float, float]
-    rotation_matrix: tuple[
-        float, float, float, float, float, float, float, float, float
-    ]
-    scale: float
-
-
-def transform_to_neuroglancer_dict(
-    transform: sitk.Similarity3DTransform,
-) -> TransformDict:
-    """
-    Convert a registered transform to a neuroglancer dict.
-
-    Parameters
-    ----------
-    transform :
-        Registered transform.
-    """
-    # For neuroglancer, the translation needs to be at the corner of the image
-    translation = transform.TransformPoint((0, 0, 0))
-
-    new_transform = sitk.Similarity3DTransform()
-    new_transform.SetParameters(transform.GetParameters())
-    new_transform.SetTranslation(translation)
-    transform_dict = transform_to_dict(new_transform)
-
-    return transform_dict
 
 
 class PixelTransformDict(TypedDict):
@@ -173,10 +142,14 @@ def show_image(
     origin = np.array(image.GetOrigin())
     top_right = np.array(image.TransformIndexToPhysicalPoint(image.GetSize()))
 
+    im = sitk.GetArrayFromImage(image)[z, :, :]
+    lims = np.percentile(im[np.isfinite(im)], [1, 99])
     ax.imshow(
-        sitk.GetArrayFromImage(image)[z, :, :],
+        im,
         extent=(origin[0], top_right[0], origin[1], top_right[1]),
         origin="lower",
+        vmin=lims[0],
+        vmax=lims[1],
         **imshow_kwargs,
     )
 
@@ -201,76 +174,6 @@ def arr_to_index_tuple(arr: npt.NDArray) -> tuple[int, int, int]:
     """
     assert arr.shape == (3,)
     return (int(arr[0]), int(arr[1]), int(arr[2]))
-
-
-def transform_to_dict(transform: sitk.Similarity3DTransform) -> TransformDict:
-    """
-    Serialise the registered transform to a dict (that can be written to JSON).
-    """
-    return {
-        "translation": transform.GetTranslation(),
-        "rotation_matrix": transform.GetMatrix(),
-        "scale": transform.GetScale(),
-    }
-
-
-def neuroglancer_link(
-    reg_input: RegistrationInput, transform: sitk.Similarity3DTransform
-) -> str:
-    # Put hipct_data_tools import here to avoid needing it during testing
-    from hipct_data_tools import load_datasets
-    from hipct_data_tools.neuroglancer import NEUROGLANCER_INSTANCE, dataset_to_layer
-
-    roi_name = reg_input.roi_name
-    full_name = reg_input.full_name
-    datasets = {d.name: d for d in load_datasets()}
-
-    roi_dataset = datasets[roi_name]
-    full_dataset = datasets[full_name]
-
-    dimensions = {dim: (full_dataset.resolution_um, "um") for dim in ["x", "y", "z"]}
-
-    full_layer = dataset_to_layer(full_dataset, add_transform=False)
-    roi_layer = dataset_to_layer(roi_dataset, add_transform=False)
-    registration = transform_to_neuroglancer_dict(transform)
-
-    # Add transformation matrix to ROI layer
-    roi_layer["source"] = {
-        "url": roi_layer["source"],
-        "transform": {
-            "matrix": [
-                [
-                    *registration["rotation_matrix"][0:3],
-                    registration["translation"][0] / roi_dataset.resolution_um,
-                ],
-                [
-                    *registration["rotation_matrix"][3:6],
-                    registration["translation"][1] / roi_dataset.resolution_um,
-                ],
-                [
-                    *registration["rotation_matrix"][6:9],
-                    registration["translation"][2] / roi_dataset.resolution_um,
-                ],
-            ],
-            "outputDimensions": {
-                "x": (roi_dataset.resolution_um, "um"),
-                "y": (roi_dataset.resolution_um, "um"),
-                "z": (roi_dataset.resolution_um, "um"),
-            },
-        },
-    }
-
-    ng_dict = {
-        "layers": [full_layer, roi_layer],
-        "dimensions": dimensions,
-        "layout": "4panel",
-        "projectionOrientation": (0.3, 0.2, 0, -0.9),
-        "projectionScale": 4096,
-        "selectedLayer": {"layer": full_dataset.name, "visible": True},
-    }
-
-    link = f"{NEUROGLANCER_INSTANCE}/#!{json.dumps(ng_dict, separators=(',', ':'))}"
-    return link
 
 
 def get_pixel_size(path: Path) -> float:
