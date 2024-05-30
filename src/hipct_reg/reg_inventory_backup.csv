@@ -1,0 +1,350 @@
+name,parent_name,common_point_x,common_point_y,common_point_z,common_point_parent_x,common_point_parent_y,common_point_parent_z,notes,tx,ty,tz,rotation,scale,reg_metric
+FO-20-124-OL_lung_central-column_6.24um_bm05,FO-20-124-OL_lung_complete-organ_26.38um_bm05,1787.0,1115.0,5448.0,1887.0,1727.0,4736.0,,1464.1885459843238,1462.131998224752,3446.6327822582734,-0.19984801738688351,0.23654287407345215,-0.46730426935837943
+FO-20-124-OL_lung_column1_6.24um_bm05,FO-20-124-OL_lung_complete-organ_26.38um_bm05,1473.0,2082.0,3875.0,2250.0,2418.0,4442.0,,1911.7614920828394,1916.8030692478494,3525.688151903281,-1.0996997506137773,0.2365427513517751,-0.216967083913009
+FO-20-124-OL_lung_column2_6.24um_bm05,FO-20-124-OL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
+FO-20-124-OL_lung_column3_6.24um_bm05,FO-20-124-OL_lung_complete-organ_26.38um_bm05,1660.0,2174.0,17657.0,1499.0,2554.0,4359.0,,1100.83347578976,2044.6788699328981,183.12451436662664,0.6000460804170852,0.23654323674490982,-0.2091121333753624
+FO-20-125-OL_lung_column1_6.24um_bm05,FO-20-125-OL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
+FO-20-125-OL_lung_column2_6.24um_bm05,FO-20-125-OL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
+FO-20-125-OL_lung_column3_6.24um_bm05,FO-20-125-OL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
+FO-20-126-UL_lung_central-column_6.24um_bm05,FO-20-126-UL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
+FO-20-126-UL_lung_column1_6.24um_bm05,FO-20-126-UL_lung_complete-organ_26.38um_bm05,,,,,,,,,,,,,
+FO-20-154-UL_lung_col1_2.5um_bm05,FO-20-154-UL_lung_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+FO-20-154-UL_lung_col2_2.5um_bm05,FO-20-154-UL_lung_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+FO-20-154-UL_lung_col3_2.5um_bm05,FO-20-154-UL_lung_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+FO-20-154-UL_lung_col4_2.5um_bm05,FO-20-154-UL_lung_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+FO-20-154-UL_lung_col5_2.5um_bm05,FO-20-154-UL_lung_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+FO-20-154-UL_lung_col6_2.5um_bm05,FO-20-154-UL_lung_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+FO-20-154-UL_lung_col7_2.5um_bm05,FO-20-154-UL_lung_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+FO-20-154-UL_lung_col1_6.5um_bm05,FO-20-154-UL_lung_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+FO-20-154-UL_lung_col2_6.5um_bm05,FO-20-154-UL_lung_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+FO-20-155-OL_lung_col1_2.5um_bm05,FO-20-155-OL_lung_complete-organ_25.28um_bm05,,,,,,,,,,,,,
+FO-20-155-OL_lung_col2_2.5um_bm05,FO-20-155-OL_lung_complete-organ_25.28um_bm05,,,,,,,,,,,,,
+FO-20-155-OL_lung_col3_2.5um_bm05,FO-20-155-OL_lung_complete-organ_25.28um_bm05,,,,,,,,,,,,,
+FO-20-155-OL_lung_col4_2.5um_bm05,FO-20-155-OL_lung_complete-organ_25.28um_bm05,,,,,,,,,,,,,
+FO-20-155-OL_lung_col5_2.5um_bm05,FO-20-155-OL_lung_complete-organ_25.28um_bm05,,,,,,,,,,,,,
+FO-20-155-OL_lung_col6_2.5um_bm05,FO-20-155-OL_lung_complete-organ_25.28um_bm05,,,,,,,,,,,,,
+FO-20-155-OL_lung_col1_6.5um_bm05,FO-20-155-OL_lung_complete-organ_25.28um_bm05,,,,,,,,,,,,,
+FO-20-155-OL_lung_col2_6.5um_bm05,FO-20-155-OL_lung_complete-organ_25.28um_bm05,,,,,,,,,,,,,
+FO-20-155-OL_lung_col3_6.5um_bm05,FO-20-155-OL_lung_complete-organ_25.28um_bm05,,,,,,,,,,,,,
+FO-20-155-OL_lung_col4_6.5um_bm05,FO-20-155-OL_lung_complete-organ_25.28um_bm05,,,,,,,,,,,,,
+I58-LH_brain_IC-pieces_4.236um_bm18,I58-LH_brain_complete-organ_15.13um_bm18,,,,,,,,,,,,,
+I58-LH_brain_VOI-01_6.21um_bm18,I58-LH_brain_complete-organ_15.13um_bm18,1498.0,6993.0,7243.0,5027.0,4446.0,4925.0,,3781.4982328486117,1789.1472188556766,1952.62661256638,12.99983051654353,0.4104458221886503,-0.30102174775753276
+I58-LH_brain_VOI-02_6.21um_bm18,I58-LH_brain_complete-organ_15.13um_bm18,5014.0,4996.0,3092.0,4637.0,6015.0,5904.0,Point looks slightly off,,,,,,
+K334_kidney_VOI-1_2.196um_bm18,K334_kidney_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+K336_kidney_VOI-1_2.191um_bm18,K336_kidney_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+K336_kidney_VOI-1_2.196um_bm18,K336_kidney_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+K336_kidney_VOI-2_2.196um_bm18,K336_kidney_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+K336_kidney_VOI-3_2.196um_bm18,K336_kidney_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+K336_kidney_VOI-4_2.196um_bm18,K336_kidney_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+K337_kidney_VOI-3_2.191um_bm18,K337_kidney_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+LADAF-2020-27_heart_L-vent-muscle_2.22um_bm05,LADAF-2020-27_heart_complete-organ_25.08um_bm05,2468.0,3252.0,136.0,2788.0,2339.0,3558.0,,2625.230560497797,2018.327139631631,3543.9270523661153,-10.100117314518169,0.08851658498342181,-0.19857142532125677
+LADAF-2020-27_heart_LR-vent-muscles-ramus-interventricularis-anterior_6.05um_bm05,LADAF-2020-27_heart_complete-organ_25.08um_bm05,1936.0,2312.0,4992.0,3514.0,2172.0,4412.0,"Reg okay, but common point could be better",,,,,,
+LADAF-2020-27_heart_ROI-01_6.5um_bm18,LADAF-2020-27_heart_complete-organ_19.89um_bm18,2278.0,2699.0,3835.0,3366.0,1885.0,3619.0,,2488.9425990591385,1132.948993534009,2364.5957184089807,9.200098157856559,0.3267973915416225,-0.5157239486875533
+LADAF-2020-27_heart_ROI-02_6.5um_bm18,LADAF-2020-27_heart_complete-organ_19.89um_bm18,3478.0,2398.0,4730.0,6110.0,5025.0,4117.0,,4853.183764786352,4455.3952951560905,2572.2837098649,10.199946758553034,0.3267979230733007,-0.4460594925131479
+LADAF-2020-27_heart_ROI-03_6.5um_bm18,LADAF-2020-27_heart_complete-organ_19.89um_bm18,1258.0,2266.0,130.0,4834.0,3581.0,4521.0,,4321.1244845276215,2910.294576572874,4469.824950220024,8.202617366733218,0.3267945825750399,-0.4171086612937245
+LADAF-2020-27_kidney_left_central-column_6.05um_bm05,LADAF-2020-27_kidney_left_complete-organ_25.08um_bm05,660.0,1032.0,2728.0,1174.0,1464.0,1566.0,,1015.647710639054,1216.3270767034828,906.143929656302,-0.09977031883926162,0.24122780183119433,-0.6383036357162171
+LADAF-2020-27_liver_complete-organ-bubbling_25.25um_bm05,LADAF-2020-27_liver_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+LADAF-2020-27_lung_left_VOI-01-upper-lobe-apical_2.45um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,2287.0,2144.0,2192.0,2528.0,2071.0,1710.0,,2318.4394144810663,1849.001817582029,1493.227518704038,-3.499779265959912,0.0976873880912458,-0.16913708218735618
+LADAF-2020-27_lung_left_VOI-02-lower-lobe-basal_2.45um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,2736.0,2210.0,2240.0,2779.0,3490.0,6872.0,,2525.714584382665,3259.342468197947,6649.207402752265,-3.3998393636651034,0.0976873670295016,-0.2122994947718345
+LADAF-2020-27_lung_left_VOI-06-lower-lobe-basal_2.45um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,1461.0,1676.0,66.0,2173.0,2753.0,6862.0,,2039.0383242820835,2584.0002913316375,6853.384822181857,-2.799829214927388,0.09768745726470415,-0.2411869804765239
+LADAF-2020-27_lung_left_FSC-A_2.51um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,,,,,,,
+LADAF-2020-27_lung_left_FSC-B_2.51um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,,,,,,,
+LADAF-2020-27_lung_left_VOI-01-upper-lobe-apical_2.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,1748.0,2012.0,254.0,3705.0,2203.0,376.0,,3625.3920771345684,1948.5707416994328,347.7407668598542,-23.699895243590177,0.0996806794858343,-0.26409495259579663
+LADAF-2020-27_lung_left_VOI-02b-upper-lobe-apical_2.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,456.0,2088.0,1784.0,2859.0,2112.0,926.0,,2923.6090655436055,1908.548498235083,744.0428868177607,-28.79680309971943,0.09968116160161132,-0.34472485290752364
+LADAF-2020-27_lung_left_VOI-03-upper-lobe-apical_2.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,2044.0,1864.0,1948.0,2497.0,1996.0,1648.0,,2386.5525436214675,1745.4266980574525,1453.3215202263639,-24.30008115409863,0.09968114239895809,-0.47937995333050804
+LADAF-2020-27_lung_left_VOI-04-upper-lobe-medial_2.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,696.0,2020.0,1930.0,3690.0,2194.0,2560.0,,3714.476471967571,1982.5057659651186,2365.745422674405,-25.199964163423797,0.09968074757885138,-0.12821186245523236
+LADAF-2020-27_lung_left_VOI-05-lower-lobe-basal_2.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,3438.0,1554.0,9658.0,2265.0,3285.0,7100.0,,2018.1860722033173,3000.6862593357973,6135.225571705007,-24.599749580243966,0.09968106056279055,-0.16222762059075066
+LADAF-2020-27_lung_left_FSC-A_25.25um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,,,,,,,
+LADAF-2020-27_lung_left_FSC-B_25.25um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,,,,,,,
+LADAF-2020-27_lung_left_VOI-01-upper-lobe-apical_6.05um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,713.0,2095.0,710.0,2199.0,2074.0,1672.0,,,,,,,
+LADAF-2020-27_lung_left_VOI-02-lower-lobe-basal_6.05um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,1854.0,1428.0,264.0,2698.0,3336.0,6158.0,,2273.9599033501977,2963.392867775875,6091.85320403002,-3.7998070815716054,0.24122711555631404,-0.34416604622237046
+LADAF-2020-27_lung_left_VOI-06-lower-lobe-basal_6.05um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,1689.0,1907.0,4414.0,2162.0,2775.0,6828.0,,1767.3777384511768,2304.0100366281936,5756.583391119505,-1.6004248928431077,0.24122739120392628,-0.18095070045917633
+LADAF-2020-27_lung_left_FSC-A_6.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,,,,,,,
+LADAF-2020-27_lung_left_FSC-B_6.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,,,,,,,
+LADAF-2020-27_lung_left_VOI-01-upper-lobe-apical_6.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,1747.0,2508.0,6446.0,3808.0,2731.0,1828.0,,3683.4860509207274,1949.9977717142096,150.82551854870755,-25.69996262028297,0.2591702109769531,-0.18100918602024077
+LADAF-2020-27_lung_left_VOI-02b-upper-lobe-medial_6.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,2656.0,1419.0,3114.0,3443.0,2344.0,3572.0,,2979.8757026413214,1717.4569985735593,2763.836988294414,-25.499767388683257,0.2591709833336518,-0.25271532637946675
+LADAF-2020-27_lung_left_VOI-03_6.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,2362.0,1558.0,821.0,3299.0,3061.0,3787.0,,2910.515137915296,2439.2247790457427,3574.6481032908587,-24.500060035971305,0.2591706988583556,-0.6014810809983848
+LADAF-2020-27_lung_left_VOI-03b-interlobular-fissure_6.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,1282.0,2130.0,1110.0,3031.0,3000.0,3868.0,,2966.90399218003,2359.3877918482517,3578.2945879443546,-25.299840331313927,0.25917022498957715,-0.24333019614813148
+LADAF-2020-27_lung_left_VOI-04b-lower-lobe-basal-medial_6.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,2318.0,2736.0,304.0,2175.0,3535.0,3762.0,,1915.5179790964814,2642.737299335714,3680.401438574396,-23.999674382839327,0.2591706729743206,-0.11874204406754887
+LADAF-2020-27_lung_left_VOI-05-upper-lobe-apical_6.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,2658.0,2556.0,7610.0,2961.0,2614.0,2326.0,,2604.4691576829614,1726.7591479689486,351.6344011433587,-24.19988580530538,0.2591702710242375,-0.22273183425054113
+LADAF-2020-27_spleen_central-column_1.29um_bm05,LADAF-2020-27_spleen_complete-organ_25.08um_bm05,1824.0,1296.0,2760.0,1026.0,1335.0,548.0,,933.3984395585187,1267.3488342319704,405.53657079063635,-0.30002735514589357,0.05143542165286007,-0.03698504076038279
+LADAF-2020-27_spleen_central-column_6.05um_bm05,LADAF-2020-27_spleen_complete-organ_25.08um_bm05,115.0,1842.0,902.0,620.0,1348.0,486.0,Bad (but close??) common point,,,,,,
+LADAF-2020-31_brain_cerebellum_2.45um_bm05,LADAF-2020-31_brain_complete-organ_25.08um_bm05,2078.0,2530.0,942.0,2064.0,2437.0,684.0,,1857.5001636711102,2195.1936839080745,590.40087651634,1.2002135868131214,0.0976873553094522,-0.15150988444716101
+LADAF-2020-31_brain_frontal_2.45um_bm05,LADAF-2020-31_brain_complete-organ_25.08um_bm05,3004.0,1324.0,264.0,2943.0,2219.0,5454.0,,2655.0149055007973,2080.9878555664436,5427.145104964328,-1.5997541356060212,0.09768748108851574,-0.13277839226131347
+LADAF-2020-31_brain_hippocampus_2.45um_bm05,LADAF-2020-31_brain_complete-organ_25.08um_bm05,1084.0,3108.0,6116.0,3852.0,2105.0,3310.0,,3744.647212922214,1801.1225090914268,2711.0471941068986,0.20008306913931156,0.09768735671581703,-0.10937798364232927
+LADAF-2020-31_brain_cerebellum-occipital_6.05um_bm05,LADAF-2020-31_brain_complete-organ_25.08um_bm05,1894.0,2142.0,1270.0,2054.0,2712.0,930.0,,1597.9145408607394,2196.481617968372,622.2354511609486,0.10023858775897536,0.2412285036260233,-0.11354129919791603
+LADAF-2020-31_brain_hippocampus_6.05um_bm05,LADAF-2020-31_brain_complete-organ_25.08um_bm05,1514.0,2410.0,412.0,3763.0,2219.0,2564.0,,3396.564312333679,1640.792699722187,2462.2353270314256,0.09981408007598334,0.2412287267394448,-0.06546101758679033
+LADAF-2020-31_heart_VOI-1.2_2.5um_bm05,LADAF-2020-31_heart_complete-organ_25.17um_bm05,,,,,,,,,,,,,
+LADAF-2020-31_heart_ROI-01_6.36um_bm18,LADAF-2020-31_heart_complete-organ_19.89um_bm18,977.0,853.0,2907.0,3321.0,4385.0,3009.0,VOI image flipped?,,,,,,
+LADAF-2020-31_heart_ROI-02_6.36um_bm18,LADAF-2020-31_heart_complete-organ_19.89um_bm18,899.0,2927.0,1040.0,3498.0,2156.0,3127.0,Common point not good enough,,,,,,
+LADAF-2020-31_heart_ROI-03_6.36um_bm18,LADAF-2020-31_heart_complete-organ_19.89um_bm18,3652.0,1854.0,2782.0,3039.0,2993.0,3682.0,Bad common point,,,,,,
+LADAF-2020-31_heart_ROI-04_6.36um_bm18,LADAF-2020-31_heart_complete-organ_19.89um_bm18,542.0,1605.0,4462.0,3689.0,3176.0,5403.0,Bad common point,,,,,,
+LADAF-2020-31_heart_ROI-05_6.36um_bm18,LADAF-2020-31_heart_complete-organ_19.89um_bm18,2753.0,1667.0,940.0,3752.0,2653.0,4502.0,VOI data flipped?,,,,,,
+LADAF-2020-31_heart_ROI-06_6.36um_bm18,LADAF-2020-31_heart_complete-organ_19.89um_bm18,2182.0,1472.0,6901.0,2628.0,5092.0,6751.0,Data flipped,,,,,,
+LADAF-2020-31_heart_ROI-07_6.36um_bm18,LADAF-2020-31_heart_complete-organ_19.89um_bm18,1008.0,768.0,3025.0,3181.0,3372.0,6222.0,Data flipped,,,,,,
+LADAF-2020-31_heart_ROI-01_6.5um_bm05,LADAF-2020-31_heart_complete-organ_25.17um_bm05,2178.0,2024.0,4075.0,3276.0,5025.0,3163.0,,,,,,,
+LADAF-2020-31_heart_ROI-02_6.5um_bm05,LADAF-2020-31_heart_complete-organ_25.17um_bm05,2060.0,2158.0,1035.0,3689.0,5127.0,3802.0,,,,,,,
+LADAF-2020-31_heart_ROI-03_6.5um_bm05,LADAF-2020-31_heart_complete-organ_25.17um_bm05,,,,,,,,,,,,,
+LADAF-2020-31_heart_ROI-04_6.5um_bm05,LADAF-2020-31_heart_complete-organ_25.17um_bm05,,,,,,,,,,,,,
+LADAF-2020-31_heart_ROI-05_6.5um_bm05,LADAF-2020-31_heart_complete-organ_25.17um_bm05,1946.0,570.0,3465.0,2307.0,2805.0,6708.0,,,,,,,
+LADAF-2020-31_heart_ROI-06_6.5um_bm05,LADAF-2020-31_heart_complete-organ_25.17um_bm05,,,,,,,,,,,,,
+LADAF-2020-31_kidney_lateral-transect_2.5um_bm05,LADAF-2020-31_kidney_complete-organ_25.0um_bm05,,,,,,,,,,,,,
+LADAF-2021-17_brain_VOI-01.1_2.256um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_VOI-02.1_2.256um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,1404.0,884.0,770.0,3741.0,2203.0,1918.0,Bad common point,,,,,,
+LADAF-2021-17_brain_VOI-03.1_2.256um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_VOI-03.2_2.256um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_VOI-04.1_2.256um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_VOI-05.1_2.256um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_VOI-06.1_2.256um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_VOI-08.1_2.256um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_VOI-09.1_2.256um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,1350.0,2507.0,2546.0,9528.0,14583.0,10692.0,,9626.655401054122,13759.099426184068,9929.963695412824,-33.89440932964164,0.29222732853954764,-0.0805561278115772
+LADAF-2021-17_brain_VOI-10.1_2.256um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_VOI-12.1_2.256um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_VOI-13.1_2.256um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,2416.0,2952.0,4040.0,3435.0,2656.0,3918.0,Bad common point,,,,,,
+LADAF-2021-17_brain_ROI-11_6.36um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_ROI-12_6.36um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_ROI-13_6.36um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,2082.0,2582.0,5038.0,3304.0,2897.0,4460.0,Bad common point,,,,,,
+LADAF-2021-17_brain_ROI-14_6.36um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_ROI-15_6.36um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_ROI-01_6.54um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_ROI-02_6.54um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,1292.0,2756.0,3450.0,3697.0,2409.0,2144.0,Bad common point,,,,,,
+LADAF-2021-17_brain_ROI-03_6.54um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_ROI-04_6.54um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_ROI-05_6.54um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_ROI-06_6.54um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_ROI-07_6.54um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_ROI-08_6.54um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_ROI-09_6.54um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_brain_ROI-10_6.54um_bm18,LADAF-2021-17_brain_complete-organ_7.72um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_colon_VOI-01_1.444um_bm05,LADAF-2021-17_colon_complete-organ_20.025um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_colon_VOI-07_1.444um_bm05,LADAF-2021-17_colon_complete-organ_20.025um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_colon_VOI-11_1.444um_bm05,LADAF-2021-17_colon_complete-organ_20.025um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_colon_VOI-01_4.502um_bm18,LADAF-2021-17_colon_complete-organ_20.025um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_colon_VOI-11_4.502um_bm18,LADAF-2021-17_colon_complete-organ_20.025um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_heart_ROI-1.1_2.256um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,1676.0,2095.0,6024.0,4101.0,2795.0,1736.0,,4171.004374215233,2498.5837989813185,1050.7778240249268,-51.79992756117379,0.1136524303685021,-0.23148069363579893
+LADAF-2021-17_heart_ROI-1.2_2.256um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,2044.0,1132.0,1864.0,4004.0,2930.0,1264.0,,3974.0937511529314,2665.9006323052577,1051.9858901847388,-53.69971255921062,0.11365208515300813,-0.06646434025841247
+LADAF-2021-17_heart_ROI-3.1_2.256um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,2328.0,1316.0,3974.0,3898.0,5366.0,3944.0,,3848.126787431292,5068.87602394965,3492.0693772592895,-50.89984103938802,0.11365215270715123,-0.5745985462752027
+LADAF-2021-17_heart_ROI-4.1_2.256um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,2094.0,1692.0,4332.0,4467.0,3463.0,4376.0,,4466.018872144566,3157.425975051609,3883.520786245652,-50.49959229605428,0.11365245887351785,-0.6656505449464194
+LADAF-2021-17_heart_ROI-4.2_2.256um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,250.0,2230.0,2620.0,4081.0,3518.0,4182.0,"Good point, bad reg",,,,,,
+LADAF-2021-17_heart_ROI-4.3_2.256um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,1566.0,1690.0,2688.0,4008.0,3769.0,4192.0,,4046.3826595835976,3511.2811117538868,3884.0422583699906,-51.40024190220465,0.11365183481608036,-0.3705313537266325
+LADAF-2021-17_heart_ROI-5.1_2.256um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,2016.0,1856.0,7808.0,2141.0,3181.0,5172.0,,2171.868811521884,2874.1639615837794,4282.897639525739,-52.60030350624798,0.11365275102768475,-0.19655338738059175
+LADAF-2021-17_heart_ROI-7.1_2.256um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,1556.0,224.0,17000.0,4022.0,3725.0,7026.0,"Good point, bad reg",,,,,,
+LADAF-2021-17_heart_ROI-01_6.36um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,1910.0,2156.0,3430.0,3836.0,3050.0,1588.0,Bad common point,,,,,,
+LADAF-2021-17_heart_ROI-02_6.36um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,1330.0,1906.0,3816.0,4404.0,5352.0,3490.0,,4546.257237447779,4621.530202754772,2266.384806163413,-45.79969122831545,0.32040339298337084,-0.1301070744528874
+LADAF-2021-17_heart_ROI-03_6.36um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,1475.0,3061.0,3362.0,3670.0,5758.0,3702.0,Bad common point,,,,,,
+LADAF-2021-17_heart_ROI-04_6.36um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,2804.0,2000.0,4006.0,4343.0,3907.0,3896.0,Bad common point,,,,,,
+LADAF-2021-17_heart_ROI-05_6.36um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,1810.0,1994.0,2648.0,2256.0,3175.0,4876.0,Bad common point,,,,,,
+LADAF-2021-17_heart_ROI-06_6.36um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,2373.0,1192.0,5972.0,5128.0,5192.0,6294.0,,4878.109847145376,4377.594264871103,4376.172604013098,-45.899028687347496,0.32040256102430326,-0.300515645704875
+LADAF-2021-17_heart_ROI-07_6.36um_bm18,LADAF-2021-17_heart_complete-organ_19.85um_bm18,1435.0,2006.0,9202.0,3580.0,3644.0,7680.0,,3733.708747049123,2870.5318232227396,4730.355773055129,-46.799991493036345,0.32040300093185226,-0.3416320815335723
+LADAF-2021-17_heart_ROI-01_6.5um_bm05,LADAF-2021-17_heart_complete-organ_25.08um_bm05,3055.0,1445.0,12100.0,3863.0,1944.0,5090.0,,3053.639723587547,1610.9225204939141,1953.4190892617914,2.9000687564549446,0.2591709085067626,-0.22503373172984473
+LADAF-2021-17_heart_ROI-02_6.5um_bm05,LADAF-2021-17_heart_complete-organ_25.08um_bm05,2177.0,1931.0,10830.0,2741.0,2961.0,6170.0,Bad common point,,,,,,
+LADAF-2021-17_heart_ROI-03_6.5um_bm05,LADAF-2021-17_heart_complete-organ_25.08um_bm05,1203.0,1649.0,4140.0,1916.0,1924.0,4440.0,,1586.7827010190556,1511.5257041008463,3365.4313896419576,2.3999767935515113,0.2591704906744203,-0.24951273044478617
+LADAF-2021-17_kidney_left_VOI-01.1_2.6um_bm05,LADAF-2021-17_kidney_left_complete-organ_25.14um_bm05,1917.0,1187.0,638.0,2811.0,1076.0,42.0,Bad common point,,,,,,
+LADAF-2021-17_kidney_left_VOI-02.1_2.6um_bm05,LADAF-2021-17_kidney_left_complete-organ_25.14um_bm05,1524.0,644.0,2188.0,1235.0,1779.0,1198.0,,1079.5009457961075,1711.1619451354923,970.826271960676,-0.599888453995468,0.10342098184718766,-0.17258617745212734
+LADAF-2021-17_kidney_left_VOI-01_6.49um_bm05,LADAF-2021-17_kidney_left_complete-organ_25.14um_bm05,1431.0,1627.0,6996.0,1864.0,1051.0,2258.0,,1507.3276919697462,622.287927667218,451.7352420052583,-1.4996670868831838,0.25815460444518334,-0.046160182044127696
+LADAF-2021-17_kidney_left_VOI-02_6.49um_bm05,LADAF-2021-17_kidney_left_complete-organ_25.14um_bm05,2811.0,1076.0,42.0,1478.0,1855.0,1336.0,,758.2807247860812,1565.0334493897872,1322.1200777415968,-1.0000236679269046,0.2581544715491284,-0.15287980719260572
+LADAF-2021-17_kidney_right_VOI-01.1_2.6um_bm05,LADAF-2021-17_kidney_right_complete-organ_25.0um_bm05,856.0,872.0,12646.0,773.0,947.0,1248.0,,664.7808872771334,886.3781866216881,-67.78157788693221,16.5998678160181,0.10400013979836595,-0.07799289523005992
+LADAF-2021-17_kidney_right_VOI-02.1_2.6um_bm05,LADAF-2021-17_kidney_right_complete-organ_25.0um_bm05,1844.0,1484.0,1008.0,821.0,1827.0,1242.0,,588.6994113083083,1747.0166835876873,1136.1999393726103,19.899932213192113,0.10399993497329862,-0.11794996049387654
+LADAF-2021-17_kidney_right_VOI-03.1_2.6um_bm05,LADAF-2021-17_kidney_right_complete-organ_25.0um_bm05,2278.0,773.0,1127.0,2432.0,1836.0,4301.0,,,,,,,
+LADAF-2021-17_kidney_right_VOI-01_6.5um_bm05,LADAF-2021-17_kidney_right_complete-organ_25.0um_bm05,2422.0,2710.0,4696.0,1114.0,1012.0,1162.0,,294.65439332711264,543.888364779071,-59.372060674060194,18.400179411393847,0.2600002639371921,-0.2336003659512164
+LADAF-2021-17_kidney_right_VOI-02_6.5um_bm05,LADAF-2021-17_kidney_right_complete-organ_25.0um_bm05,2288.0,1595.0,1928.0,821.0,1827.0,1242.0,,120.62509506274984,1638.0723291798806,740.499084035948,19.800047063758942,0.2600006452377454,-0.6632897367312296
+LADAF-2021-17_kidney_right_VOI-03_6.5um_bm05,LADAF-2021-17_kidney_right_complete-organ_25.0um_bm05,3284.0,3037.0,4424.0,755.0,1277.0,1298.0,"Point looks good, registration bad...",,,,,,
+LADAF-2021-17_liver_VOI-01_4.14um_bm18,LADAF-2021-17_liver_complete-organ_22.56um_bm18,2448.0,3778.0,216.0,4848.0,3595.0,539.0,,4403.410836487908,2898.9932322312243,500.02718409008537,-0.4000536831349061,0.18351106282913937,-0.062419411999505826
+LADAF-2021-17_liver_VOI-02_4.14um_bm18,LADAF-2021-17_liver_complete-organ_22.56um_bm18,2805.0,4768.0,1227.0,4562.0,5796.0,2582.0,,4015.659800679128,4940.524067916509,2357.100186027583,2.1998882889651785,0.18351069393177669,-0.03685710251357854
+LADAF-2021-17_liver_VOI-03_4.14um_bm18,LADAF-2021-17_liver_complete-organ_22.56um_bm18,2098.0,1220.0,1121.0,4571.0,3833.0,4431.0,,4209.310073125329,3568.3873308281486,4226.62212303813,-4.698963749352945,0.18351291460633115,-0.24303776793709264
+LADAF-2021-17_liver_VOI-04_4.14um_bm18,LADAF-2021-17_liver_complete-organ_22.56um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_liver_VOI-05_4.14um_bm18,LADAF-2021-17_liver_complete-organ_22.56um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_liver_VOI-06_4.14um_bm18,LADAF-2021-17_liver_complete-organ_22.56um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_liver_VOI-07_4.14um_bm18,LADAF-2021-17_liver_complete-organ_22.56um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_liver_VOI-08_4.14um_bm18,LADAF-2021-17_liver_complete-organ_22.56um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_lung_right_VOI-01_5.05um_bm18,LADAF-2021-17_lung_right_complete-organ_21.64um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_lung_right_VOI-02_5.05um_bm18,LADAF-2021-17_lung_right_complete-organ_21.64um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_lung_right_VOI-03_5.05um_bm18,LADAF-2021-17_lung_right_complete-organ_21.64um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_lung_right_VOI-04_5.05um_bm18,LADAF-2021-17_lung_right_complete-organ_21.64um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_lung_right_VOI-05_5.05um_bm18,LADAF-2021-17_lung_right_complete-organ_21.64um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_lung_right_VOI-06_5.05um_bm18,LADAF-2021-17_lung_right_complete-organ_21.64um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_lung_right_VOI-07_5.05um_bm18,LADAF-2021-17_lung_right_complete-organ_21.64um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_lung_right_VOI-08_5.05um_bm18,LADAF-2021-17_lung_right_complete-organ_21.64um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_lung_right_VOI-09_5.05um_bm18,LADAF-2021-17_lung_right_complete-organ_21.64um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_lung_right_VOI-10_5.05um_bm18,LADAF-2021-17_lung_right_complete-organ_21.64um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_lung_right_VOI-11_5.05um_bm18,LADAF-2021-17_lung_right_complete-organ_21.64um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_testis_1_VOI-01_0.718um_bm18,LADAF-2021-17_testis_1_complete-organ_9.595um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_testis_1_VOI-01_1.449um_bm18,LADAF-2021-17_testis_1_complete-organ_9.595um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_testis_1_VOI-01_2.02um_bm18,LADAF-2021-17_testis_1_complete-organ_9.595um_bm18,,,,,,,,,,,,,
+LADAF-2021-17_testis_2_VOI-02_2.02um_bm18,LADAF-2021-17_testis_2_complete-organ_9.595um_bm18,,,,,,,,,,,,,
+LADAF-2021-64_heart_VOI-1.1_2.26um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,1836.0,1762.0,3566.0,4014.0,5072.0,686.0,,3821.956392718641,4856.121794211358,279.70200953793085,-4.300085887542654,0.11362482843220797,-0.15454238067778683
+LADAF-2021-64_heart_VOI-1.2_2.26um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,2352.0,1566.0,3916.0,3970.0,4704.0,728.0,,3718.5040753987673,4505.443358312441,280.6636555252892,-4.5997714087231785,0.1136246908603903,-0.1602431554131624
+LADAF-2021-64_heart_VOI-3.1_2.26um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,,,,,,,,,,,,,
+LADAF-2021-64_heart_VOI-4.1_2.26um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,1932.0,2472.0,2856.0,3538.0,4254.0,3366.0,,3318.1449416528426,3975.3396078015576,3040.2086184219165,-0.1996088404271985,0.11362508961209562,-0.11399460725673982
+LADAF-2021-64_heart_VOI-4.2_2.26um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,2878.0,756.0,2758.0,3360.0,4220.0,3354.0,,3038.3855074295448,4121.694859888428,3038.10555375967,-2.100050154035224,0.11362466878051923,-0.2397780177273502
+LADAF-2021-64_heart_VOI-5.1_2.26um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,492.0,2680.0,2450.0,5104.0,4322.0,4590.0,Bad registration,,,,,,
+LADAF-2021-64_heart_VOI-6.1_2.26um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,2542.0,2164.0,3392.0,1900.0,3854.0,5328.0,Point needs to be more accurate,,,,,,
+LADAF-2021-64_heart_VOI-7.1_2.26um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,3388.0,2556.0,4064.0,3816.0,4120.0,5196.0,,3445.7160048214755,3810.559228252656,4732.699249371928,-2.799662911894221,0.11362489248296832,-0.15522747554842684
+LADAF-2021-64_heart_VOI-01_6.51um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,2240.0,1770.0,1546.0,4040.0,5136.0,502.0,,4923.9038516173205,4831.407330536595,-4.172456950222678,-122.70003878011406,0.32730028105015657,-0.3704909374358851
+LADAF-2021-64_heart_VOI-02_6.51um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,2060.0,1202.0,2874.0,5634.0,5414.0,2830.0,"Bad registration, needs new common point",,,,,,
+LADAF-2021-64_heart_VOI-04_6.51um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,2198.0,1552.0,2556.0,3536.0,4256.0,3366.0,Could pick a better common point,,,,,,
+LADAF-2021-64_heart_VOI-05_6.51um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,2516.0,2240.0,2988.0,5334.0,4524.0,4136.0,,6403.582613582083,4249.6454095595545,3157.4512699875418,-123.89880640955602,0.3273005177083566,-0.2740448555691683
+LADAF-2021-64_heart_VOI-06_6.51um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,1302.0,864.0,5380.0,2240.0,3334.0,5560.0,,2712.702650945204,3135.2232777361432,3798.0434145918725,-123.59951596137047,0.32730027123400635,-0.22090396382830849
+LADAF-2021-64_heart_VOI-07_6.51um_bm18,LADAF-2021-64_heart_complete-organ_19.89um_bm18,1938.0,1702.0,4608.0,3864.0,4236.0,4898.0,Bad common point,,,,,,
+LADAF-2022-49_brain_VOI-01_4.14um_bm18,LADAF-2022-49_brain_complete-organ_16.42um_bm18,,,,,,,,,,,,,
+LADAF-2022-49_brain_VOI-02_4.14um_bm18,LADAF-2022-49_brain_complete-organ_16.42um_bm18,,,,,,,,,,,,,
+LADAF-2022-49_brain_VOI-03_4.14um_bm18,LADAF-2022-49_brain_complete-organ_16.42um_bm18,,,,,,,,,,,,,
+LADAF-2022-49_brain_VOI-04_4.14um_bm18,LADAF-2022-49_brain_complete-organ_16.42um_bm18,,,,,,,,,,,,,
+LADAF-2022-49_brain_VOI-05_4.14um_bm18,LADAF-2022-49_brain_complete-organ_16.42um_bm18,,,,,,,,,,,,,
+LADAF-2022-49_brain_VOI-1b_5.0um_bm18,LADAF-2022-49_brain_complete-organ_16.42um_bm18,,,,,,,,,,,,,
+LADAF-2023-91_oesophagus_trachea_VOI-4_0.357um_bm18,LADAF-2023-91_oesophagus_trachea_complete-organ_10.0um_bm18,,,,,,,,,,,,,
+LADAF-2023-91_oesophagus_trachea_VOI-5_0.357um_bm18,LADAF-2023-91_oesophagus_trachea_complete-organ_10.0um_bm18,,,,,,,,,,,,,
+LADAF-2023-91_oesophagus_trachea_VOI-6_0.357um_bm18,LADAF-2023-91_oesophagus_trachea_complete-organ_10.0um_bm18,,,,,,,,,,,,,
+LADAF-2023-91_oesophagus_trachea_VOI-7_0.357um_bm18,LADAF-2023-91_oesophagus_trachea_complete-organ_10.0um_bm18,,,,,,,,,,,,,
+LADAF-2023-91_oesophagus_trachea_VOI-01_1.44um_bm18,LADAF-2023-91_oesophagus_trachea_complete-organ_10.0um_bm18,,,,,,,,,,,,,
+LADAF-2023-91_oesophagus_trachea_VOI-02_1.44um_bm18,LADAF-2023-91_oesophagus_trachea_complete-organ_10.0um_bm18,,,,,,,,,,,,,
+LADAF-2023-91_oesophagus_trachea_VOI-03_1.44um_bm18,LADAF-2023-91_oesophagus_trachea_complete-organ_10.0um_bm18,,,,,,,,,,,,,
+LADAF-2023-91_oesophagus_trachea_VOI-04_1.44um_bm18,LADAF-2023-91_oesophagus_trachea_complete-organ_10.0um_bm18,,,,,,,,,,,,,
+LADAF-2023-91_oesophagus_trachea_VOI-05_1.44um_bm18,LADAF-2023-91_oesophagus_trachea_complete-organ_10.0um_bm18,,,,,,,,,,,,,
+S-20-28_heart_VOI-01-tricuspid-valve_12.02um_bm05,S-20-28_heart_complete-organ_25.27um_bm05,,,,,,,,,,,,,
+S-20-28_heart_VOI-01_6.51um_bm18,S-20-28_heart_complete-organ_41.84um_bm18,,,,,,,,,,,,,
+S-20-28_heart_VOI-02_6.51um_bm18,S-20-28_heart_complete-organ_41.84um_bm18,,,,,,,,,,,,,
+S-20-28_heart_VOI-03_6.51um_bm18,S-20-28_heart_complete-organ_41.84um_bm18,,,,,,,,,,,,,
+S-20-28_heart_VOI-04_6.51um_bm18,S-20-28_heart_complete-organ_41.84um_bm18,,,,,,,,,,,,,
+S-20-28_heart_VOI-05_6.51um_bm18,S-20-28_heart_complete-organ_41.84um_bm18,,,,,,,,,,,,,
+S-20-28_heart_VOI-06_6.51um_bm18,S-20-28_heart_complete-organ_41.84um_bm18,,,,,,,,,,,,,
+S-20-28_heart_VOI-07_6.51um_bm18,S-20-28_heart_complete-organ_41.84um_bm18,,,,,,,,,,,,,
+S-20-28_heart_VOI-08_6.51um_bm18,S-20-28_heart_complete-organ_41.84um_bm18,,,,,,,,,,,,,
+S-20-28_kidney_VOI-01_2.5um_bm05,S-20-28_kidney_complete-organ_25.0um_bm05,,,,,,,,,,,,,
+S-20-28_kidney_VOI-02_2.5um_bm05,S-20-28_kidney_complete-organ_25.0um_bm05,,,,,,,,,,,,,
+S-20-28_kidney_VOI-03_2.5um_bm05,S-20-28_kidney_complete-organ_25.0um_bm05,,,,,,,,,,,,,
+S-20-28_kidney_VOI-04_2.5um_bm05,S-20-28_kidney_complete-organ_25.0um_bm05,,,,,,,,,,,,,
+S-20-28_kidney_VOI-05_2.5um_bm05,S-20-28_kidney_complete-organ_25.0um_bm05,,,,,,,,,,,,,
+S-20-28_kidney_VOI-06_2.5um_bm05,S-20-28_kidney_complete-organ_25.0um_bm05,,,,,,,,,,,,,
+S-20-28_kidney_VOI-07_2.5um_bm05,S-20-28_kidney_complete-organ_25.0um_bm05,,,,,,,,,,,,,
+S-20-28_kidney_VOI-01_6.51um_bm05,S-20-28_kidney_complete-organ_25.0um_bm05,3489.0,1737.0,5066.0,1011.0,1003.0,1929.0,,103.28143838997389,546.5774434350669,609.2340231605008,-0.2998737627615949,0.26039980960250636,-0.5650892163867401
+S-20-28_kidney_VOI-02_6.51um_bm05,S-20-28_kidney_complete-organ_25.0um_bm05,1170.0,1912.0,1000.0,1387.0,727.0,3510.0,,1061.030910504265,244.20505088107024,3249.3980677436934,2.299885030999869,0.2603998237940825,-0.2665592900605264
+S-20-28_kidney_VOI-03_6.51um_bm05,S-20-28_kidney_complete-organ_25.0um_bm05,2411.0,2456.0,7597.0,1220.0,1736.0,2236.0,,591.0339383387374,1097.3597312710576,257.71216048180673,0.09999479767316914,0.2604003892887504,-0.3039941137344038
+S-20-28_kidney_VOI-04_6.51um_bm05,S-20-28_kidney_complete-organ_25.0um_bm05,956.0,467.0,1671.0,1055.0,677.0,3244.0,,805.1931054483497,561.2300952551872,2807.958942507436,1.3002576954133898,0.26040039897521405,-0.11080367921656349
+S-20-29_brain_VOI-1.1_2.256um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-2.1_2.256um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-3.1_2.256um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-3.2_2.256um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-4.1_2.256um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-6.1_2.256um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-6.2_2.256um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-7.1_2.256um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-7.2_2.256um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-01_2.5um_bm05,S-20-29_brain_complete-organ_25.33um_bm05,3036.0,908.0,3990.0,2038.0,3364.0,2592.0,,1744.4034655400708,3272.277895330688,2200.180547565257,-0.6997428937485647,0.0986976043469072,-0.11166930613932331
+S-20-29_brain_VOI-02_2.5um_bm05,S-20-29_brain_complete-organ_25.33um_bm05,2603.0,2147.0,4686.0,3571.0,3533.0,2006.0,,3308.462366746551,3330.9951012142237,1542.5158140031779,2.0002958959476986,0.09869755068405994,-0.2538092082122006
+S-20-29_brain_VOI-03_2.5um_bm05,S-20-29_brain_complete-organ_25.33um_bm05,2064.0,580.0,6390.0,3774.0,4004.0,3648.0,"Good point, bad reg",,,,,,
+S-20-29_brain_VOI-04_2.5um_bm05,S-20-29_brain_complete-organ_25.33um_bm05,2016.0,2736.0,2660.0,2715.0,1627.0,3992.0,,2511.8970248761457,1363.047009222663,3727.7148269218624,1.3003708172712432,0.09869736756679547,-0.23907839910270415
+S-20-29_brain_VOI-05_2.5um_bm05,S-20-29_brain_complete-organ_25.33um_bm05,1122.0,2068.0,1764.0,2416.0,4517.0,4532.0,,2299.923381382527,4319.065590687604,4356.048334794111,2.200106098825127,0.09869742825015558,-0.11885807896096792
+S-20-29_brain_VOI-01_6.54um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-02_6.54um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-03_6.54um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-04_6.54um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-05_6.54um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-06_6.54um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-07_6.54um_bm18,S-20-29_brain_complete-organ_19.57um_bm18,,,,,,,,,,,,,
+S-20-29_brain_VOI-01_6.5um_bm05,S-20-29_brain_complete-organ_25.33um_bm05,2608.0,2930.0,1976.0,2109.0,3728.0,2252.0,,,,,,,
+S-20-29_brain_VOI-01b_6.5um_bm05,S-20-29_brain_complete-organ_25.33um_bm05,1224.0,2536.0,264.0,1759.0,3629.0,2872.0,Bad common point,,,,,,
+S-20-29_brain_VOI-02_6.5um_bm05,S-20-29_brain_complete-organ_25.33um_bm05,1784.0,3436.0,4172.0,3720.0,4098.0,2418.0,,3215.150939508685,3244.162418490507,1345.8577295271327,3.2003774575742043,0.25661287762314305,-0.47456176106738773
+S-20-29_brain_VOI-03_6.5um_bm05,S-20-29_brain_complete-organ_25.33um_bm05,1906.0,1778.0,870.0,4027.0,3754.0,2982.0,Could pick a better common point,,,,,,
+S-20-29_brain_VOI-04_6.5um_bm05,S-20-29_brain_complete-organ_25.33um_bm05,2258.0,2938.0,1408.0,2683.0,1927.0,3998.0,,2073.7968877910994,1199.0645709601504,3634.531617081634,2.2999922081778137,0.25661304570802024,-0.6204068274612179
+S-20-29_brain_VOI-05_6.5um_bm05,S-20-29_brain_complete-organ_25.33um_bm05,1548.0,486.0,410.0,2644.0,3853.0,4280.0,,2246.8169588007117,3729.342032767995,4174.079481003277,-1.4268498315844556e-05,0.25661326151056923,-0.461707628852353
+S-20-29_heart_VOI-1.2_2.256um_bm18,S-20-29_heart_complete-organ_19.89um_bm18,,,,,,,,,,,,,
+S-20-29_heart_VOI-5.1_2.256um_bm18,S-20-29_heart_complete-organ_19.89um_bm18,,,,,,,,,,,,,
+S-20-29_heart_VOI-5.2_2.256um_bm18,S-20-29_heart_complete-organ_19.89um_bm18,,,,,,,,,,,,,
+S-20-29_heart_VOI-01_2.5um_bm05,S-20-29_heart_complete-organ_25.25um_bm05,824.0,2008.0,2446.0,1587.0,3136.0,1754.0,,1427.0265785323732,3299.006431377661,1533.2031924552675,113.29281405737082,0.09900593057010013,-0.048002264520148816
+S-20-29_heart_VOI-02_2.5um_bm05,S-20-29_heart_complete-organ_25.25um_bm05,3054.0,1524.0,2.0,3201.0,3150.0,2380.0,Bad common point,,,,,,
+S-20-29_heart_VOI-03_2.5um_bm05,S-20-29_heart_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+S-20-29_heart_VOI-04_2.5um_bm05,S-20-29_heart_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+S-20-29_heart_VOI-01_6.51um_bm18,S-20-29_heart_complete-organ_19.89um_bm18,,,,,,,,,,,,,
+S-20-29_heart_VOI-02_6.51um_bm18,S-20-29_heart_complete-organ_19.89um_bm18,,,,,,,,,,,,,
+S-20-29_heart_VOI-03_6.51um_bm18,S-20-29_heart_complete-organ_19.89um_bm18,,,,,,,,,,,,,
+S-20-29_heart_VOI-04_6.51um_bm18,S-20-29_heart_complete-organ_19.89um_bm18,,,,,,,,,,,,,
+S-20-29_heart_VOI-05_6.51um_bm18,S-20-29_heart_complete-organ_19.89um_bm18,,,,,,,,,,,,,
+S-20-29_heart_VOI-06_6.51um_bm18,S-20-29_heart_complete-organ_19.89um_bm18,,,,,,,,,,,,,
+S-20-29_heart_VOI-07_6.51um_bm18,S-20-29_heart_complete-organ_19.89um_bm18,,,,,,,,,,,,,
+S-20-29_heart_VOI-08_6.51um_bm18,S-20-29_heart_complete-organ_19.89um_bm18,,,,,,,,,,,,,
+S-20-29_heart_ROI-03_6.5um_bm05,S-20-29_heart_complete-organ_25.25um_bm05,1764.0,264.0,202.0,2946.0,2809.0,2472.0,Bad common point,,,,,,
+S-20-29_heart_VOI-01_6.5um_bm05,S-20-29_heart_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+S-20-29_heart_VOI-02_6.5um_bm05,S-20-29_heart_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+S-20-29_heart_VOI-04_6.5um_bm05,S-20-29_heart_complete-organ_25.25um_bm05,1680.0,3399.0,4176.0,2413.0,3510.0,4022.0,Bad common point,,,,,,
+S-20-29_heart_VOI-05b_6.5um_bm05,S-20-29_heart_complete-organ_25.25um_bm05,2143.0,966.0,7076.0,2550.0,4196.0,4758.0,Common point bad,,,,,,
+S-20-29_heart_VOI-06_6.5um_bm05,S-20-29_heart_complete-organ_25.25um_bm05,,,,,,,,,,,,,
+S-20-29_kidney_VOI-01_1.4um_bm05,S-20-29_kidney_complete-organ_25.38um_bm05,972.0,616.0,36302.0,483.0,520.0,2626.0,,,,,,,
+S-20-29_kidney_VOI-01_6.5um_bm05,S-20-29_kidney_complete-organ_25.38um_bm05,2266.0,2542.0,5168.0,751.0,842.0,1680.0,,140.46230360139978,218.81110115358288,355.41619011588875,2.8001230588186976,0.2561073033152994,-0.1949563621821328
+S-20-29_kidney_VOI-02_6.5um_bm05,S-20-29_kidney_complete-organ_25.38um_bm05,1604.0,1796.0,2296.0,991.0,603.0,668.0,,584.3303504438443,139.18072087789545,78.66157628035778,-0.49971505234041846,0.2561070329218048,-0.2033048675698666
+S-20-29_kidney_VOI-03_6.5um_bm05,S-20-29_kidney_complete-organ_25.38um_bm05,2014.0,2510.0,2048.0,1093.0,2225.0,4300.0,Bad common point,,,,,,
+S-20-29_lung_left_ROI-2.1_2.256um_bm18,S-20-29_lung_left_complete-organ_25.31um_bm05,998.0,3201.0,3459.0,1777.0,2533.0,2122.0,,,,,,,
+S-20-29_lung_left_ROI-3.1_2.256um_bm18,S-20-29_lung_left_complete-organ_25.31um_bm05,2495.0,1395.0,8354.0,4067.0,2170.0,1280.0,,,,,,,
+S-20-29_lung_left_ROI-5.3_2.256um_bm18,S-20-29_lung_left_complete-organ_25.31um_bm05,1701.0,1522.0,10716.0,1576.0,2113.0,4482.0,,,,,,,
+S-20-29_lung_left_VOI-01_6.5um_bm05,S-20-29_lung_left_complete-organ_25.31um_bm05,2276.0,1300.0,8744.0,2813.0,1627.0,2858.0,,2231.694368695998,1295.102234910827,617.7005193816966,-0.0002954648749113865,0.25681663154622064,-0.24751796847234359
+S-20-29_lung_left_VOI-02_6.5um_bm05,S-20-29_lung_left_complete-organ_25.31um_bm05,2580.0,2312.0,8794.0,2183.0,2785.0,2870.0,,1576.402344323467,2134.7262847419897,609.0718091934594,-5.099741808108452,0.2568151282212436,-0.2093967408818291
+S-20-29_lung_left_VOI-04_6.5um_bm05,S-20-29_lung_left_complete-organ_25.31um_bm05,964.0,1480.0,6568.0,3367.0,1548.0,2394.0,,3152.9288389393128,1150.7204260501092,706.6007880085996,-4.699955263625036,0.2568155750985389,-0.45954008501712906
+S-20-29_lung_left_VOI-05_6.5um_bm05,S-20-29_lung_left_complete-organ_25.31um_bm05,1684.0,800.0,18566.0,1668.0,1250.0,5560.0,,1257.7257673685622,1005.485226013251,789.8548884643609,-5.299835000447964,0.2568154947103331,-0.3728457801023491
+004_uterus_VOI-2_2.195um_bm18,004_uterus_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+005_uterus_VOI-1_2.195um_bm18,005_uterus_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+005_uterus_VOI-2_2.195um_bm18,005_uterus_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+005_uterus_VOI-3_2.195um_bm18,005_uterus_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+005_uterus_VOI-4_2.195um_bm18,005_uterus_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+006_uterus_VOI-1_2.195um_bm18,006_uterus_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+006_uterus_VOI-2_2.195um_bm18,006_uterus_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+006_uterus_VOI-3_2.195um_bm18,006_uterus_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+006_uterus_VOI-4_2.195um_bm18,006_uterus_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+S45_brain_VOI-1_2.195um_bm18,S45_brain_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+S45_brain_VOI-01_4.236um_bm18,S45_brain_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+A106_lung_VOI-1_4.388um_bm18,A106_lung_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+A106_lung_VOI-2_4.388um_bm18,A106_lung_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+A109_lung_VOI-4.1_2.0um_bm18,A109_lung_complete-organ_19.19um_bm18,,,,,,,,,,,,,
+A109_lung_VOI-01b_4.14um_bm18,A109_lung_complete-organ_19.19um_bm18,,,,,,,,,,,,,
+A109_lung_VOI-02b_4.14um_bm18,A109_lung_complete-organ_19.19um_bm18,,,,,,,,,,,,,
+A109_lung_VOI-03_4.14um_bm18,A109_lung_complete-organ_19.19um_bm18,,,,,,,,,,,,,
+A109_lung_VOI-04_4.14um_bm18,A109_lung_complete-organ_19.19um_bm18,,,,,,,,,,,,,
+A129_lung_VOI-01_2.0um_bm18,A129_lung_complete-organ_20.01um_bm18,,,,,,,,,,,,,
+A129_lung_VOI-02_2.0um_bm18,A129_lung_complete-organ_20.01um_bm18,,,,,,,,,,,,,
+A129_lung_VOI-03_2.0um_bm18,A129_lung_complete-organ_20.01um_bm18,,,,,,,,,,,,,
+A129_lung_VOI-04_2.0um_bm18,A129_lung_complete-organ_20.01um_bm18,,,,,,,,,,,,,
+A129_lung_VOI-05_2.0um_bm18,A129_lung_complete-organ_20.01um_bm18,,,,,,,,,,,,,
+A130_lung_VOI-1_4.236um_bm18,A130_lung_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+A130_lung_VOI-2_4.236um_bm18,A130_lung_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+A130_lung_VOI-3_4.236um_bm18,A130_lung_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+A130_lung_VOI-4_4.236um_bm18,A130_lung_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+A135_lung_VOI-01_2.0um_bm18,A135_lung_complete-organ_10.005um_bm18,3462.0,2447.0,4107.0,4580.0,4750.0,6822.0,,3831.701888472341,4357.815864911239,5998.620035998688,8.201999855437077,0.1999008244626696,-0.1331555685000709
+A138_lung_VOI-1_4.388um_bm18,A138_lung_complete-organ_24.028um_bm18,,,,,,,,,,,,,
+A142_lung_VOI-1_4.236um_bm18,A142_lung_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+A142_lung_VOI-2_4.236um_bm18,A142_lung_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+A142_lung_VOI-3_4.236um_bm18,A142_lung_complete-organ_20.022um_bm18,,,,,,,,,,,,,
+A98_lung_right_ROI-01_4.61um_bm18,A98_lung_right_complete-organ_21.64um_bm18,2502.0,2836.0,2164.0,6154.0,5694.0,1862.0,Bad common point,,,,,,
+A98_lung_right_VOI-02_4.61um_bm18,A98_lung_right_complete-organ_21.64um_bm18,2466.0,1958.0,1808.0,5602.0,5772.0,3656.0,Common point looks wrong,,,,,,
+A98_lung_right_VOI-03_4.61um_bm18,A98_lung_right_complete-organ_21.64um_bm18,2486.0,1806.0,668.0,4428.0,5082.0,7704.0,Common point looks wrong,,,,,,
+A98_lung_right_VOI-01_5.055um_bm18,A98_lung_right_complete-organ_21.64um_bm18,2400.0,344.0,680.0,3284.0,4692.0,3272.0,"Point okay, registration bad",,,,,,
+A98_lung_right_VOI-02_5.055um_bm18,A98_lung_right_complete-organ_21.64um_bm18,1900.0,3454.0,2818.0,3202.0,4876.0,4098.0,,2778.304550248733,4059.5609555620454,3439.0127282102007,-1.2999108862543989,0.23359504668315506,-0.16215220527995403
+A98_lung_right_VOI-03_5.055um_bm18,A98_lung_right_complete-organ_21.64um_bm18,2100.0,2812.0,1390.0,3258.0,4738.0,6998.0,"Point okay, registration bad",,,,,,
+PUoB1_placenta_VOI-1_2.195um_bm18,PUoB1_placenta_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+PUoB2_placenta_VOI-2_2.195um_bm18,PUoB2_placenta_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+PUoB3_placenta_VOI-1_2.195um_bm18,PUoB3_placenta_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+PUoB3_placenta_VOI-2_2.195um_bm18,PUoB3_placenta_complete-organ_20.026um_bm18,,,,,,,,,,,,,
+PL19_heart_VOI-01_4.14um_bm18,PL19_heart_complete-organ_19.19um_bm18,,,,,,,,,,,,,
+PL19_heart_VOI-02_4.14um_bm18,PL19_heart_complete-organ_19.19um_bm18,,,,,,,,,,,,,
+PL19_heart_VOI-03_4.14um_bm18,PL19_heart_complete-organ_19.19um_bm18,,,,,,,,,,,,,
+PL19_heart_VOI-04_4.14um_bm18,PL19_heart_complete-organ_19.19um_bm18,,,,,,,,,,,,,
+A138_lung_VOI-02_4.388um_bm18,A138_lung_complete-organ_24.028um_bm18,,,,,,,,,,,,,
+A138_lung_VOI-03_4.388um_bm18,A138_lung_complete-organ_24.028um_bm18,,,,,,,,,,,,,
+A138_lung_VOI-04_4.388um_bm18,A138_lung_complete-organ_24.028um_bm18,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-aa_0.65um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-01.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-01.2b_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-02.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,2830.0,1531.0,9495.0,1439.0,1849.0,4582.0,,1199.8460767456922,1729.1126260428284,3784.0994369230298,1.7002339252181466,0.08415481376670611,-0.1930881698504742
+FO-20-129_lung_left_upper_lobe_VOI-03.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-04.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,1645.0,3079.0,15127.0,653.0,1737.0,4898.0,,511.8966950877511,1462.1541977478028,3567.7332157785463,-1.1001302195652043,0.08792065738441676,-0.17588311480060953
+FO-20-129_lung_left_upper_lobe_VOI-05.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,975.0,1602.0,25325.0,2165.0,1611.0,4332.0,,2081.6101979710515,1469.1879047474629,2105.8862750183807,-1.4000687136867085,0.08792103345587314,-0.25554133152679054
+FO-20-129_lung_left_upper_lobe_VOI-08.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-09.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-10.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-03b-bis_2.2um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-aa-bis_2.2um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-01_6.24um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-02_6.24um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,2269.0,2991.0,6776.0,737.0,1940.0,4508.0,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-03_6.24um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-04_6.24um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-05_6.24um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,2011.0,1682.0,2887.0,703.0,728.0,2506.0,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-sx20_6.24um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,2510.0,3222.0,12601.0,1720.0,1259.0,4372.0,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-04-bis_6.5um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,,,,,,,,,,,,,

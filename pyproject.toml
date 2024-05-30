@@ -73,10 +73,12 @@ paths.source = [
 disallow_any_generics = false
 disallow_untyped_calls = false
 exclude = [
-    "docs/auto_examples/*",
     'build/.*',
+    'docs/auto_examples/*',
+    'notebooks/.*',
 ]
 ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
 strict = true
 
 [tool.ruff]

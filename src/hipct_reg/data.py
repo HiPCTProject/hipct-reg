@@ -6,6 +6,8 @@ import logging
 from dataclasses import dataclass
 from pathlib import Path
 
+import hoa_tools
+import hoa_tools.inventory
 import numpy as np
 import numpy.typing as npt
 import SimpleITK as sitk
@@ -16,8 +18,9 @@ from hoa_tools.inventory import load_inventory
 
 from hipct_reg.types import RegistrationInput
 
-STORAGE_DIR = Path.home() / "hipct" / "reg_data"
-STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+STORAGE_DIR: Path | None = None
+
+hoa_tools.inventory.INVENTORY_PATH = Path.home() / "hoa_inventory.csv"
 
 inventory = load_inventory()
 datasets = {name: get_dataset(name) for name in inventory.index}
@@ -50,6 +53,10 @@ class Cuboid:
         """
         Path to cube saved to a local zarr store.
         """
+        if STORAGE_DIR is None:
+            raise RuntimeError(
+                "The hipct_reg.data.STORAGE_DIR variable must be set to a data download folder first."
+            )
         return (
             STORAGE_DIR
             / f"{self.ds.name}_{'_'.join([str(i) for i in self.centre_point])}_{self.size_xy}_{self.size_z}.zarr"
@@ -91,8 +98,8 @@ class Cuboid:
 
     @property
     def upper_idx(self) -> tuple[int, int, int]:
-        remote_arr = self.get_remote_arr()
-        shape = remote_arr.shape
+        remote_array = self.ds.remote_array(level=0)
+        shape = remote_array.shape
 
         return (
             min(self.centre_point[0] + self.size_xy, shape[0]),

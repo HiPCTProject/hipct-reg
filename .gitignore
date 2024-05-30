@@ -171,6 +171,8 @@ _version.py
 scripts/data
 scripts/*.json
 notebooks/*.json
+common_points.csv
+common_points_new.csv
 
 # Docs
 docs/auto_examples
