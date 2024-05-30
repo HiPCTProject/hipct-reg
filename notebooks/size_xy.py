@@ -3,6 +3,7 @@
 #
 # This notebook tests the effect of the size of data in the x-y plane on image registration results.
 
+# mypy: ignore-errors
 # %%
 import json
 import logging
