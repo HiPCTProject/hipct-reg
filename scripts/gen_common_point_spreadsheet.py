@@ -31,6 +31,10 @@ if __name__ == "__main__":
 
     for dataset in inventory_reg:
         if dataset.tx is not None:
+            # Already registered
+            continue
+        if dataset.common_point_parent_x is not None and dataset.notes is None:
+            # Already picked but not registered
             continue
 
         parent_ng = neuroglancer_link(inventory[dataset.parent_name])
@@ -60,4 +64,4 @@ if __name__ == "__main__":
             data["Notes"].append("")
 
     df = pd.DataFrame(data)
-    df.to_csv("common_points_new.csv", index=False)
+    df.to_csv("common_points_new.csv", index=False, mode="w")
