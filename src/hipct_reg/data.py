@@ -99,7 +99,11 @@ class Cuboid:
     @property
     def upper_idx(self) -> tuple[int, int, int]:
         remote_array = self.ds.remote_array(level=0)
-        shape = remote_array.shape
+        shape = remote_array.shape[::-1]
+
+        for i in range(3):
+            if self.centre_point[i] > shape[i]:
+                raise RuntimeError(f"Centre point ({self.centre_point[i]}) is outside array bounds ({shape[i]}) in dimension {i} for dataset {self.ds.name}")
 
         return (
             min(self.centre_point[0] + self.size_xy, shape[0]),
