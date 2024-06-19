@@ -3,7 +3,7 @@ import pandas as pd
 import hipct_reg.inventory
 
 if __name__ == "__main__":
-    df = pd.read_csv("common_points.csv")
+    df = pd.read_csv("common_points.csv", dtype={"Notes": str})
     inventory = {d.name: d for d in hipct_reg.inventory.load_datasets()}
 
     for idx, row in df.dropna(
@@ -31,7 +31,8 @@ if __name__ == "__main__":
 
         dataset = inventory[name]
 
-        if row["Notes"]:
+        if str(row["Notes"]) != "nan":
+            print(row["Notes"])
             dataset.notes = row["Notes"]
 
     hipct_reg.inventory.save_datasets(list(inventory.values()))
