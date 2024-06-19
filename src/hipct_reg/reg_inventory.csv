@@ -1,33 +1,33 @@
 name,parent_name,common_point_x,common_point_y,common_point_z,common_point_parent_x,common_point_parent_y,common_point_parent_z,notes,tx,ty,tz,rotation,scale,reg_metric
-FO-20-129_lung_left_upper_lobe_VOI-01.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,,,,,,,"Small VOI, tricky to find",,,,,,
-FO-20-129_lung_left_upper_lobe_VOI-01.2b_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,3126.0,1619.0,23428.0,2410.0,1979.0,2896.0,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-01.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,1666.0,1597.0,1967.0,1636.0,2175.0,1180.0,"Small VOI, tricky to find",,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-01.2b_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,2033.0,1613.0,2356.0,2441.0,2189.0,1145.0,,,,,,,
 FO-20-129_lung_left_upper_lobe_VOI-01_6.24um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,1490.0,1597.0,2830.0,1960.0,2128.0,869.0,,1623.5023552658643,1735.7584064956043,193.41711435433322,-2.2999924564564536,0.23654188617292649,-0.3131210509467263
 FO-20-129_lung_left_upper_lobe_VOI-02.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,2830.0,1531.0,9495.0,1439.0,1849.0,4582.0,,1199.8460767456922,1729.1126260428284,3784.0994369230298,1.7002339252181466,0.08415481376670611,-0.1930881698504742
 FO-20-129_lung_left_upper_lobe_VOI-02_6.24um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,2269.0,2991.0,6776.0,737.0,1940.0,4508.0,,193.58666240923017,1234.2607359019505,2905.5950432867326,0.29988629662090655,0.23654284274186782,-0.39445009892020166
-FO-20-129_lung_left_upper_lobe_VOI-03.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,2764.0,1053.0,4110.0,1233.0,2263.0,3681.0,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-03.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,2060.0,525.0,4458.0,1204.0,2418.0,3928.0,,,,,,,
 FO-20-129_lung_left_upper_lobe_VOI-03_6.24um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,1086.0,2706.0,1235.0,2112.0,1032.0,1360.0,,1891.594678389483,375.33228610622297,1065.0199111117088,-3.7001956896839436,0.23654075732673377,-0.1495357824794223
-FO-20-129_lung_left_upper_lobe_VOI-03b-bis_2.2um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,,,,,,,,,,,,,
-FO-20-129_lung_left_upper_lobe_VOI-04-bis_6.5um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,,,,,,,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-03b-bis_2.2um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,1687.0,303.0,4718.0,2342.0,687.0,4067.0,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-04-bis_6.5um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,1986.0,1200.0,1151.0,979.0,2560.0,3984.0,,,,,,,
 FO-20-129_lung_left_upper_lobe_VOI-04.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,1645.0,3079.0,15127.0,653.0,1737.0,4898.0,,511.8966950877511,1462.1541977478028,3567.7332157785463,-1.1001302195652043,0.08792065738441676,-0.17588311480060953
 FO-20-129_lung_left_upper_lobe_VOI-04_6.24um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,2826.0,692.0,2022.0,1174.0,2245.0,3720.0,,508.2249463550199,2065.081133669733,3241.5104239988814,-1.2999575957739415,0.23654262453742209,-0.6926724233054062
 FO-20-129_lung_left_upper_lobe_VOI-05.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,975.0,1602.0,25325.0,2165.0,1611.0,4332.0,,2081.6101979710515,1469.1879047474629,2105.8862750183807,-1.4000687136867085,0.08792103345587314,-0.25554133152679054
 FO-20-129_lung_left_upper_lobe_VOI-05_6.24um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,2011.0,1682.0,2887.0,703.0,728.0,2506.0,,228.7571882104245,325.3723505600049,1823.7779815695862,-0.29994279879601615,0.2365431762369693,-0.3021607680446213
-FO-20-129_lung_left_upper_lobe_VOI-08.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,,,,,,,"Small VOI, tricky to find",,,,,,
-FO-20-129_lung_left_upper_lobe_VOI-09.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,,,,,,,"Small VOI, tricky to find",,,,,,
-FO-20-129_lung_left_upper_lobe_VOI-10.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,,,,,,,"Small VOI, tricky to find",,,,,,
-FO-20-129_lung_left_upper_lobe_VOI-aa-bis_2.2um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,1685.0,886.0,2748.0,1204.0,2450.0,3943.0,,,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-08.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,1798.0,1318.0,5517.0,2467.0,2524.0,5210.0,"Small VOI, tricky to find",,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-09.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,860.0,1665.0,3446.0,1483.0,2085.0,5205.0,"Small VOI, tricky to find",,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-10.2_2.22um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,984.0,2645.0,2191.0,2334.0,1767.0,2466.0,"Small VOI, tricky to find",,,,,,
+FO-20-129_lung_left_upper_lobe_VOI-aa-bis_2.2um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,1817.0,867.0,1613.0,1214.0,2448.0,3836.0,,,,,,,
 FO-20-129_lung_left_upper_lobe_VOI-aa_0.65um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe-bis_25.25um_bm05,,,,,,,"Small VOI, tricky to find",,,,,,
 FO-20-129_lung_left_upper_lobe_VOI-sx20_6.24um_bm05,FO-20-129_lung_left_upper_lobe_complete-upper-lobe_26.38um_bm05,2510.0,3222.0,12601.0,1720.0,1259.0,4372.0,,1133.054974685774,493.4918368288356,1391.9476947790604,-0.5001013671389449,0.23654286045463202,-0.2625749904849849
 LADAF-2020-27_heart_L-vent-muscle_2.22um_bm05,LADAF-2020-27_heart_complete-organ_25.08um_bm05,2468.0,3252.0,136.0,2788.0,2339.0,3558.0,,2625.230560497797,2018.327139631631,3543.9270523661153,-10.100117314518169,0.08851658498342181,-0.19857142532125677
-LADAF-2020-27_heart_LR-vent-muscles-ramus-interventricularis-anterior_6.05um_bm05,LADAF-2020-27_heart_complete-organ_25.08um_bm05,1936.0,2312.0,4992.0,3514.0,2172.0,4412.0,"Reg okay, but common point could be better",,,,,,
+LADAF-2020-27_heart_LR-vent-muscles-ramus-interventricularis-anterior_6.05um_bm05,LADAF-2020-27_heart_complete-organ_25.08um_bm05,1393.0,773.0,5253.0,3454.0,1781.0,4476.0,,,,,,,
 LADAF-2020-27_kidney_left_central-column_1.29um_bm05,LADAF-2020-27_kidney_left_complete-organ_25.08um_bm05,1043.0,855.0,2981.0,1412.0,1628.0,2272.0,,,,,,,
 LADAF-2020-27_kidney_left_central-column_6.05um_bm05,LADAF-2020-27_kidney_left_complete-organ_25.08um_bm05,660.0,1032.0,2728.0,1174.0,1464.0,1566.0,,1015.647710639054,1216.3270767034828,906.143929656302,-0.09977031883926162,0.24122780183119433,-0.6383036357162171
-LADAF-2020-27_lung_left_FSC-A_2.51um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,"Small VOI, tricky to find",,,,,,
+LADAF-2020-27_lung_left_FSC-A_2.51um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,Doesn't need registering,,,,,,
 LADAF-2020-27_lung_left_FSC-A_25.25um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,Doesn't need registering,,,,,,
-LADAF-2020-27_lung_left_FSC-A_6.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,"Small VOI, tricky to find",,,,,,
-LADAF-2020-27_lung_left_FSC-B_2.51um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,"Small VOI, tricky to find",,,,,,
+LADAF-2020-27_lung_left_FSC-A_6.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,Doesn't need registering,,,,,,
+LADAF-2020-27_lung_left_FSC-B_2.51um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,Doesn't need registering,,,,,,
 LADAF-2020-27_lung_left_FSC-B_25.25um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,Doesn't need registering,,,,,,
-LADAF-2020-27_lung_left_FSC-B_6.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,"Small VOI, tricky to find",,,,,,
+LADAF-2020-27_lung_left_FSC-B_6.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,,,,,,,Doesn't need registering,,,,,,
 LADAF-2020-27_lung_left_VOI-01-upper-lobe-apical_2.45um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,2287.0,2144.0,2192.0,2528.0,2071.0,1710.0,,2318.4394144810663,1849.001817582029,1493.227518704038,-3.499779265959912,0.0976873880912458,-0.16913708218735618
 LADAF-2020-27_lung_left_VOI-01-upper-lobe-apical_2.5um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,1748.0,2012.0,254.0,3705.0,2203.0,376.0,,3625.3920771345684,1948.5707416994328,347.7407668598542,-23.699895243590177,0.0996806794858343,-0.26409495259579663
 LADAF-2020-27_lung_left_VOI-01-upper-lobe-apical_6.05um_bm05,LADAF-2020-27_lung_left_complete-organ_25.08um_bm05,713.0,2095.0,710.0,2199.0,2074.0,1672.0,,2050.4009152973654,1562.2481331326685,1499.3408276283722,-2.5999893931395057,0.24122819239826837,-0.0924571809405516
