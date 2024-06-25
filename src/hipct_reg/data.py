@@ -103,7 +103,9 @@ class Cuboid:
 
         for i in range(3):
             if self.centre_point[i] > shape[i]:
-                raise RuntimeError(f"Centre point ({self.centre_point[i]}) is outside array bounds ({shape[i]}) in dimension {i} for dataset {self.ds.name}")
+                raise RuntimeError(
+                    f"Centre point ({self.centre_point[i]}) is outside array bounds ({shape[i]}) in dimension {i} for dataset {self.ds.name}"
+                )
 
         return (
             min(self.centre_point[0] + self.size_xy, shape[0]),
