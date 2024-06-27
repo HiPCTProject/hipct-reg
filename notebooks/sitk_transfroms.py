@@ -50,7 +50,7 @@ plt.imshow(data_full.T, cmap="Grays", origin="lower")
 # - The pixel spacing in physical distance units.
 # - The physical coordinate of the (0, 0) pixel.
 #
-# Here we put the raw data array into an `Image`, but for now leave the spacing and origin as default values. We also define a helper funciton to plot an `Image`, which we'll use throughout this notebook to understand what's going on.
+# Here we put the raw data array into an `Image`, but for now leave the spacing and origin as default values. We also define a helper function to plot an `Image`, which we'll use throughout this notebook to understand what's going on.
 
 
 # %%
@@ -79,7 +79,7 @@ show_image(image_full, ax)
 ax.set_title("Full resolution image")
 
 # %% [markdown]
-# To start with we'll just try registring a cut out of this image to the full image. This will illustrate how the translation element of transformations works.
+# To start with we'll just try registering a cut out of this image to the full image. This will illustrate how the translation element of transformations works.
 
 # %%
 offset_cutout = (150, 100)
@@ -159,7 +159,7 @@ def get_reg_method() -> sitk.ImageRegistrationMethod:
 
 
 # %% [markdown]
-# Now we can get an instance of the registration method, and set the initial transform. In order to avoid changing the scaling or rotation angle during optimization we set the optimizer weights for these paramters to zero.
+# Now we can get an instance of the registration method, and set the initial transform. In order to avoid changing the scaling or rotation angle during optimization we set the optimizer weights for these parameters to zero.
 #
 # Then we run the registration, and check the results...
 
