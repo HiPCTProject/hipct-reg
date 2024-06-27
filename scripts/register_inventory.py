@@ -26,7 +26,9 @@ from hipct_reg.types import RegistrationInput
 
 # Uncomment these lines, and set the path to where you want data downloaded:
 # import hipct_reg.data
-# hipct_reg.data.STORAGE_DIR = Path("/Volumes/Media/Data/hipct_reg")
+# import hipct_reg.data
+# from pathlib import Path
+# hipct_reg.data.STORAGE_DIR = Path(...)
 
 
 logging.basicConfig(level=logging.INFO)
