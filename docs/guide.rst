@@ -21,7 +21,7 @@ This provides a starting point for the registration code.
 
 Initial rotational registration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The first step of the automated pipeline finds the approximate relative rotation about the z-axis betweeen the two datasets.
+The first step of the automated pipeline finds the approximate relative rotation about the z-axis between the two datasets.
 It does this by fixing the centre of rotation at the common point identified in both datasets, and then:
 
 1. Scanning through the whole 0 - 360 degree angle range at a resolution of 2 degrees, and identifying the best match.

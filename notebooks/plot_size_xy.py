@@ -125,7 +125,7 @@ axs[2, 1].axis("off")
 
 # %% [markdown]
 # ## Context
-# The goal of this experiement is to verify the variation in registration parameters (rotation, translation, scale) as the size of the cuboids being registered increases. This should show at what point the registration converges (ie at what point adding more pixels isn't adding anything to the registration).
+# The goal of this experiment is to verify the variation in registration parameters (rotation, translation, scale) as the size of the cuboids being registered increases. This should show at what point the registration converges (ie at what point adding more pixels isn't adding anything to the registration).
 #
 # ## Figure overview
 # Each registration parameter (y-axis) is plotted against the size of the full-organ cuboid in the x-y plane. All cuboids have a thickness along the z-axis of 32 pixels. The high-resolution ROI cuboids have a larger number of pixels so they are the same physical size as the full-organ cuboids. Each colour represents a different dataset, taken from three different organs.

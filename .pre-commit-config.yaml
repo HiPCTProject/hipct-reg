@@ -25,6 +25,12 @@ repos:
     rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.6
+    hooks:
+      - id: codespell
+        args: [--write-changes]
+        exclude: src/hipct_reg/reg_inventory.csv
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:

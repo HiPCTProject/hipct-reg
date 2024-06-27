@@ -151,7 +151,7 @@ def get_reg_input(
 
     The size of the full-organ scan cube can be changed.
 
-    Data is cahed on disk to ~/hipct/reg_data so it doesn't need to be re-downloaded.
+    Data is cached on disk to ~/hipct/reg_data so it doesn't need to be re-downloaded.
     """
     full_dataset = datasets[full_name]
     assert (

@@ -13,7 +13,7 @@ from hipct_reg.types import RegistrationInput
 
 class PixelTransformDict(TypedDict):
     """
-    Parameters for a pixel-to-pixel transfrom, mapping from a ROI to a full-organ
+    Parameters for a pixel-to-pixel transform, mapping from a ROI to a full-organ
     image.
     """
 
@@ -29,7 +29,7 @@ def get_pixel_transform_params(
     coord_transform: sitk.Similarity3DTransform,
 ) -> PixelTransformDict:
     """
-    Convert the registered transform to a pixel-to-pixel transfrom mapping from a ROI
+    Convert the registered transform to a pixel-to-pixel transform mapping from a ROI
     to a full-organ image.
     """
     translation = coord_transform.TransformPoint((0, 0, 0))

@@ -37,7 +37,7 @@ will be shown in three panels, which show:
 2. The registered ROI dataset (in the registered coordinates).
 3. The original full-organ dataset.
 
-Compare panels 2 and 3. If the reigstration looks good, hit the "Good" button
+Compare panels 2 and 3. If the registration looks good, hit the "Good" button
 and the registration parameters will be save to the registration inventory.
 If the registration looks bad, type a reason in the notes text entry and
 hit the "Bad" button. This will save the notes in the registration inventory.

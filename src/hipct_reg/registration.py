@@ -145,7 +145,7 @@ def registration_rigid(
     """
     Run a registration using a full rigid transform.
 
-    The returned transform maps from the ROI iamge to the full-organ image.
+    The returned transform maps from the ROI image to the full-organ image.
 
     Parameters
     ----------
@@ -155,7 +155,7 @@ def registration_rigid(
     Returns
     -------
     transform :
-        Registered transform from ROI iamge to the full-organ image.
+        Registered transform from ROI image to the full-organ image.
 
     metric :
         Registration metric at the final step. The registration metric is
@@ -276,7 +276,7 @@ def run_registration(
     Returns
     -------
     transform :
-        Registered transform from ROI iamge to the full-organ image.
+        Registered transform from ROI image to the full-organ image.
 
     metric :
         Registration metric at the final step. The registration metric is

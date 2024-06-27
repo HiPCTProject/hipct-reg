@@ -56,7 +56,7 @@ reg_input = get_reg_input(
 transform, reg_metric = run_registration(reg_input)
 
 # %%
-# This resturns two objects - the registered transform, and the registration metric.
+# This returns two objects - the registered transform, and the registration metric.
 # The transform maps from the physical coordinates of the ROI image to the physical
 # coordinates of the full-organ image. For HiP-CT data these are just the voxel
 # coordinates multiplied by the image resolution.
