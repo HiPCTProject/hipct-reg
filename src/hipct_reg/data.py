@@ -154,7 +154,7 @@ class Cuboid:
                 "create": True,
                 "delete_existing": True,
                 "dtype": "uint16",
-                "metadata": {"shape": delayed.shape},
+                "metadata": {"shape": delayed.shape, "chunks": [256, 256, 256]},
                 "kvstore": {"driver": "file", "path": str(self.local_zarr_path)},
             }
         ).result()
