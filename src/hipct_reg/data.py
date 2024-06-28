@@ -11,14 +11,11 @@ import hoa_tools.inventory
 import numpy as np
 import numpy.typing as npt
 import SimpleITK as sitk
+import tensorstore as ts
 import zarr.convenience
 import zarr.core
 from hoa_tools.dataset import Dataset, get_dataset
 from hoa_tools.inventory import load_inventory
-from tqdm import tqdm
-from numcodecs import Blosc
-import tensorstore as ts
-import numpy as np
 
 from hipct_reg.types import RegistrationInput
 
@@ -127,35 +124,32 @@ class Cuboid:
         path = f"/{self.ds.donor}/{self.ds.organ}"
         if self.ds.organ_context:
             path += f"-{self.ds.organ_context}"
-        path += f"/{self.ds.resolution.to_value('um')}um_{self.ds.roi}_{self.ds.beamline}"
+        path += (
+            f"/{self.ds.resolution.to_value('um')}um_{self.ds.roi}_{self.ds.beamline}"
+        )
         path = f"gs://ucl-hip-ct-35a68e99feaae8932b1d44da0358940b{path}/s0"
 
-
-        dataset_remote = ts.open({
-            'driver':
-                'n5',
-            'kvstore':
-                path,
-        }
+        dataset_remote = ts.open(
+            {
+                "driver": "n5",
+                "kvstore": path,
+            }
         ).result()
-        delayed = dataset_remote[self.lower_idx[2] : self.upper_idx[2],
+        delayed = dataset_remote[
+            self.lower_idx[2] : self.upper_idx[2],
             self.lower_idx[1] : self.upper_idx[1],
             self.lower_idx[0] : self.upper_idx[0],
         ].T
-        data_local = ts.open({
-            "driver": "zarr",
-            "create": True,
-            "delete_existing": True,
-            "dtype": "uint16",
-            "metadata":{
-                "shape": delayed.shape
-            },
-            "kvstore": {
-                "driver": "file",
-                "path": str(self.local_zarr_path)
+        data_local = ts.open(
+            {
+                "driver": "zarr",
+                "create": True,
+                "delete_existing": True,
+                "dtype": "uint16",
+                "metadata": {"shape": delayed.shape},
+                "kvstore": {"driver": "file", "path": str(self.local_zarr_path)},
             }
-        }).result()
-
+        ).result()
 
         data_local[:].write(delayed).result()
 
