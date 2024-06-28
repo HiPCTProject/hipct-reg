@@ -87,7 +87,16 @@ class Cuboid:
         if not self.local_zarr_path.exists():
             self.download_cube()
         logging.info(f"Reading {self.local_zarr_path}")
-        return zarr.load(self.local_zarr_path)[:]
+        data_local = ts.open({
+            "driver": "zarr",
+            "dtype": "uint16",
+            "kvstore": {
+                "driver": "file",
+                "path": str(self.local_zarr_path)
+            }
+        }).result()
+        print(data_local.shape)
+        return data_local[:].read().result()
 
     @property
     def lower_idx(self) -> tuple[int, int, int]:
