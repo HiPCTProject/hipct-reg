@@ -87,14 +87,13 @@ class Cuboid:
         if not self.local_zarr_path.exists():
             self.download_cube()
         logging.info(f"Reading {self.local_zarr_path}")
-        data_local = ts.open({
-            "driver": "zarr",
-            "dtype": "uint16",
-            "kvstore": {
-                "driver": "file",
-                "path": str(self.local_zarr_path)
+        data_local = ts.open(
+            {
+                "driver": "zarr",
+                "dtype": "uint16",
+                "kvstore": {"driver": "file", "path": str(self.local_zarr_path)},
             }
-        }).result()
+        ).result()
         print(data_local.shape)
         return data_local[:].read().result()
 
@@ -145,10 +144,10 @@ class Cuboid:
             }
         ).result()
         delayed = dataset_remote[
-            self.lower_idx[2] : self.upper_idx[2],
-            self.lower_idx[1] : self.upper_idx[1],
             self.lower_idx[0] : self.upper_idx[0],
-        ].T
+            self.lower_idx[1] : self.upper_idx[1],
+            self.lower_idx[2] : self.upper_idx[2],
+        ]
         data_local = ts.open(
             {
                 "driver": "zarr",
