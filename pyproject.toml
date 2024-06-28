@@ -24,6 +24,7 @@ dependencies = [
     "psutil==5.9.8",
     "scikit-image==0.23.2",
     "simpleitk==2.3.1",
+    "tensorstore==0.1.63",
     "zarr==2.18.1",
 ]
 description = "Code to register regions of interest with full organ datasets."
