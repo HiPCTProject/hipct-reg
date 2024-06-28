@@ -15,7 +15,10 @@ def keep_dataset(d: HiPCTDataSet) -> bool:
     """
     Return whether to keep the dataset and add it to the registration inventory.
     """
-    return d.public or d.release == "hoa"  # type: ignore[no-any-return]
+    for parent in d.parent_datasets():
+        if parent.release == "complete-hearts":
+            return True
+    return False
 
 
 def parent_date(parent: HiPCTDataSet) -> datetime:
@@ -52,41 +55,31 @@ def select_parent(
 
 
 if __name__ == "__main__":
-    datasets = hipct_data_tools.load_datasets()
-    datasets = [d for d in datasets if keep_dataset(d)]
-    dataset_names = [d.name for d in datasets]
-    datasets_reg_names = {
-        d.name: d
-        for d in hipct_reg.inventory.load_datasets()
-        if d.name in dataset_names
-    }
+    all_datasets = hipct_data_tools.load_datasets()
+    new_datasets = [d for d in all_datasets if keep_dataset(d)]
+    if not len(new_datasets):
+        raise RuntimeError("No datasets kept to add to inventory")
 
-    for d in datasets:
+    new_dataset_names = [d.name for d in new_datasets]
+    datasets_reg_names = {d.name: d for d in hipct_reg.inventory.load_datasets()}
+
+    for d in new_datasets:
         if d.is_complete_organ:
             continue
         parents = d.parent_datasets()
-        # Filter out non public/HOA datasets
-        parents = [p for p in parents if p in datasets]
 
-        if not len(parents):
-            print(f"Could not find any parent datasets for {d.name}")
-            datasets_reg_names.pop(d.name, None)
-            continue
+        # if not len(parents):
+        #    print(f"Could not find any parent datasets for {d.name}")
+        #    datasets_reg_names.pop(d.name, None)
+        #    continue
 
         parent = select_parent(d, parents)
 
         if d.name not in datasets_reg_names:
+            print(f"Adding {d.name} to inventory")
             # Create new dataset
             datasets_reg_names[d.name] = hipct_reg.inventory.RegDataset(
                 name=d.name, parent_name=parent.name
             )
-
-        else:
-            # Check that parent is the correct one selected by select_parent();
-            # if not delete registration parameters and update parent name
-            dataset = datasets_reg_names[d.name]
-            if dataset.parent_name != parent.name:
-                dataset.reset_reg_params()
-                dataset.parent_name = parent.name
 
     hipct_reg.inventory.save_datasets(list(datasets_reg_names.values()))
