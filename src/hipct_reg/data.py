@@ -41,12 +41,15 @@ class Cuboid:
         Half the size of an edge of cuboid in the x-y plane.
     size_z :
         Half the thickness of the cuboid along the z-axis.
+    mirror_y_axis :
+        Whether to mirror the y-axis of the data.
     """
 
     ds: Dataset
     centre_point: tuple[int, int, int]
     size_xy: int
     size_z: int
+    mirror_y_axis: bool
 
     @property
     def local_zarr_path(self) -> Path:
@@ -86,10 +89,17 @@ class Cuboid:
         if not self.local_zarr_path.exists():
             self.download_cube()
 
-        return zarr.load(self.local_zarr_path)[:]
+        arr = zarr.load(self.local_zarr_path)[:]
+        if self.mirror_y_axis:
+            arr = arr[:, ::-1, :]
+
+        return arr  # type: ignore[no-any-return]
 
     @property
     def lower_idx(self) -> tuple[int, int, int]:
+        """
+        Index of the lower corner within the full dataset.
+        """
         return (
             max(0, self.centre_point[0] - self.size_xy),
             max(0, self.centre_point[1] - self.size_xy),
@@ -98,6 +108,10 @@ class Cuboid:
 
     @property
     def upper_idx(self) -> tuple[int, int, int]:
+        """
+        Index of the upper corner within the full dataset.
+        """
+        # Need to get shape to clip at array bounds
         remote_array = self.ds.remote_array(level=0)
         shape = remote_array.shape[::-1]
 
@@ -142,6 +156,7 @@ def get_reg_input(
     roi_point: tuple[int, int, int],
     full_point: tuple[int, int, int],
     full_size_xy: int = 64,
+    mirror_voi_y_axis: bool = False
 ) -> RegistrationInput:
     """
     Given the dataset of a ROI scan, get:
@@ -159,7 +174,7 @@ def get_reg_input(
     ), "Full dataset name given is not a full organ dataset"
     full_size_z = 16
     full_cube = Cuboid(
-        full_dataset, full_point, size_xy=full_size_xy, size_z=full_size_z
+        full_dataset, full_point, size_xy=full_size_xy, size_z=full_size_z, mirror_y_axis=False
     )
 
     roi_dataset = datasets[roi_name]
@@ -170,7 +185,7 @@ def get_reg_input(
     assert not roi_dataset.is_full_organ, "ROI dataset name given is a ROI dataset"
     roi_size_xy = int(full_size_xy * full_resolution_um / roi_resolution_um)
     roi_size_z = int(full_size_z * full_resolution_um / roi_resolution_um)
-    roi_cube = Cuboid(roi_dataset, roi_point, size_xy=roi_size_xy, size_z=roi_size_z)
+    roi_cube = Cuboid(roi_dataset, roi_point, size_xy=roi_size_xy, size_z=roi_size_z, mirror_y_axis=mirror_voi_y_axis)
 
     return RegistrationInput(
         roi_name=roi_name,

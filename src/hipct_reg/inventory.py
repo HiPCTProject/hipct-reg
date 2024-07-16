@@ -29,6 +29,8 @@ class Dataset(BaseModel):
 
     # Free text notes, mainly to note bad data quality
     notes: str | None = None
+    # Whether the VOI data needs to be mirrored along the x-axis first
+    mirror_voi_y_axis: bool
 
     # Registration parameters
     tx: float | None = None

@@ -67,6 +67,7 @@ def register(ds: Dataset) -> tuple[RegistrationInput, sitk.Similarity3DTransform
             ds.common_point_parent_z,
         ),
         full_size_xy=64,
+        mirror_voi_y_axis=ds.mirror_voi_y_axis
     )
     transform, metric = run_registration(reg_input)
     pix_transform_params = get_pixel_transform_params(reg_input, transform)

@@ -44,3 +44,13 @@ hit the "Bad" button. This will save the notes in the registration inventory.
 
 You can keep going, registering multiple datasets with the widget open. Once done
 make sure to commit the updates to the registration inventory.
+
+Flipped ROI datasets
+--------------------
+Some datasets have their ROI flipped along the y-axis relative to the
+complete organ dataset. This can be spotted when you do the registration and
+view the results - the common point looks okay, but you can see that the
+ROI data is mirrored.
+
+If this is the case, manually edit the "mirror_voi_y_axis" column in the
+registration inventory, and the registration pipeline will take this into account.

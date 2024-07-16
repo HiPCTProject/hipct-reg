@@ -8,7 +8,9 @@ class RegistrationInput:
     """
     A container for all the data needed to register a ROI to a full-organ scan.
 
-    Contains both images, and pixel indices of a common point in both images.
+    Contains
+    - both images
+    - pixel indices of a common point in both images.
     """
 
     roi_name: str
