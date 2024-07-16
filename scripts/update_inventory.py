@@ -77,7 +77,7 @@ if __name__ == "__main__":
 
         if d.name not in datasets_reg_names:
             # Create new dataset
-            datasets_reg_names[d.name] = hipct_reg.inventory.Dataset(
+            datasets_reg_names[d.name] = hipct_reg.inventory.RegDataset(
                 name=d.name, parent_name=parent.name
             )
 
