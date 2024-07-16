@@ -9,7 +9,7 @@ from pydantic import BaseModel
 INVENTORY_FILE = Path(__file__).parent / "reg_inventory.csv"
 
 
-class Dataset(BaseModel):
+class RegDataset(BaseModel):
     """
     A dataset that can be, or has been registered.
     """
@@ -146,7 +146,7 @@ class Dataset(BaseModel):
         return link
 
 
-def save_datasets(datasets: list[Dataset]) -> None:
+def save_datasets(datasets: list[RegDataset]) -> None:
     """
     Save a list of datasets to the .csv inventory file.
     """
@@ -155,17 +155,17 @@ def save_datasets(datasets: list[Dataset]) -> None:
     df.to_csv(INVENTORY_FILE, index=False, lineterminator="\n")
 
 
-def load_datasets() -> list[Dataset]:
+def load_datasets() -> list[RegDataset]:
     """
     Load a list of datasets from the .csv inventory file.
     """
     df = pd.read_csv(INVENTORY_FILE, na_filter=False)
 
-    def parse_row(row: "pd.Series[Any]") -> Dataset:
+    def parse_row(row: "pd.Series[Any]") -> RegDataset:
         d = dict(row)
         for key in d:
             if d[key] == "":
                 d[key] = None
-        return Dataset(**d)
+        return RegDataset(**d)
 
     return [parse_row(row) for i, row in df.iterrows()]

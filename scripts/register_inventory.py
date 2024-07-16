@@ -20,7 +20,7 @@ from hipct_reg.helpers import (
     resample_roi_image,
     show_image,
 )
-from hipct_reg.inventory import Dataset, load_datasets, save_datasets
+from hipct_reg.inventory import RegDataset, load_datasets, save_datasets
 from hipct_reg.registration import run_registration
 from hipct_reg.types import RegistrationInput
 
@@ -39,7 +39,7 @@ root.setLevel(logging.INFO)
 DATASETS = {d.name: d for d in load_datasets()}
 
 
-def register(ds: Dataset) -> tuple[RegistrationInput, sitk.Similarity3DTransform]:
+def register(ds: RegDataset) -> tuple[RegistrationInput, sitk.Similarity3DTransform]:
     """
     Register a single dataset.
 
@@ -113,7 +113,7 @@ def plot_central_slice(
         ax.grid(color="k")
 
 
-def keep_dataset(d: Dataset) -> bool:
+def keep_dataset(d: RegDataset) -> bool:
     """
     Whether to keep a dataset for listing in the registration widget.
     """
