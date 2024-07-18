@@ -63,15 +63,17 @@ if __name__ == "__main__":
     new_dataset_names = [d.name for d in new_datasets]
     datasets_reg_names = {d.name: d for d in hipct_reg.inventory.load_datasets()}
 
+    new_datasets = [d for d in new_datasets if not d.is_complete_organ]
+    if not len(new_datasets):
+        raise RuntimeError("All new datasets are complete organ datasets")
+
     for d in new_datasets:
-        if d.is_complete_organ:
-            continue
         parents = d.parent_datasets()
 
-        # if not len(parents):
-        #    print(f"Could not find any parent datasets for {d.name}")
-        #    datasets_reg_names.pop(d.name, None)
-        #    continue
+        if not len(parents):
+            print(f"Could not find any parent datasets for {d.name}")
+            datasets_reg_names.pop(d.name, None)
+            continue
 
         parent = select_parent(d, parents)
 
