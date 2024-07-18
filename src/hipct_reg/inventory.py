@@ -82,8 +82,8 @@ class RegDataset(BaseModel):
             dim: (full_dataset.resolution_um, "um") for dim in ["x", "y", "z"]
         }
 
-        full_layer = dataset_to_layer(full_dataset, add_transform=False).to_json()
-        roi_layer = dataset_to_layer(roi_dataset, add_transform=False).to_json()
+        full_layer = dataset_to_layer(full_dataset).to_json()
+        roi_layer = dataset_to_layer(roi_dataset).to_json()
 
         # Add transform information to ROI layer
         res_ratio = full_dataset.resolution_um / roi_dataset.resolution_um
