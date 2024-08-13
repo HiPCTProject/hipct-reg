@@ -1,11 +1,17 @@
 # hipct-reg
 
 [![License][license-badge]](./LICENSE.md)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12568798.svg)](https://doi.org/10.5281/zenodo.12568798)
 
 [![Tests status][tests-badge]][tests-link]
 [![codecov](https://codecov.io/gh/HiPCTProject/hipct-reg/graph/badge.svg?token=KCHTIG4HH5)](https://codecov.io/gh/HiPCTProject/hipct-reg)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/HiPCTProject/hipct-reg/main.svg)](https://results.pre-commit.ci/latest/github/HiPCTProject/hipct-reg/main)
 [![Documentation Status](https://readthedocs.org/projects/hipct-reg/badge/?version=latest)](https://hipct-reg.readthedocs.io/en/latest/?badge=latest)
+
+
+
+
+
 
 <!--
 [![PyPI version][pypi-version]][pypi-link]
