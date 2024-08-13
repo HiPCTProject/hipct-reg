@@ -8,11 +8,6 @@
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/HiPCTProject/hipct-reg/main.svg)](https://results.pre-commit.ci/latest/github/HiPCTProject/hipct-reg/main)
 [![Documentation Status](https://readthedocs.org/projects/hipct-reg/badge/?version=latest)](https://hipct-reg.readthedocs.io/en/latest/?badge=latest)
 
-
-
-
-
-
 <!--
 [![PyPI version][pypi-version]][pypi-link]
 [![Conda-Forge][conda-badge]][conda-link]
