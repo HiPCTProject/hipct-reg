@@ -58,7 +58,7 @@ test = [
     "pooch",
     "pytest",
     "pytest-cov",
-    "tifffile==2024.1.30",
+    "tifffile==2024.8.30",
 ]
 
 [tool.coverage]
