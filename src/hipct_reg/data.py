@@ -99,7 +99,7 @@ class Cuboid:
     @property
     def upper_idx(self) -> tuple[int, int, int]:
         remote_array = self.ds.remote_array(level=0)
-        
+
         if self.ds.gcs_format == "n5":
             shape = remote_array.shape[::-1]
         else:
