@@ -17,7 +17,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "dask-image==2024.5.0",
+    "dask-image==2024.5.3",
     "hoa-tools @ git+https://github.com/HumanOrganAtlas/hoa-tools.git@main",
     "matplotlib==3.9.2",
     "numpy==2.1.1",
