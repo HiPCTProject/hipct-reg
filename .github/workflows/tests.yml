@@ -18,16 +18,16 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
       - name: Cache tox
-        uses: actions/cache@13aacd865c20de90d75de3b17ebe84f7a17d57d2 # v4
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4
         with:
           path: .tox
           key: tox-${{hashFiles('pyproject.toml') }}
 
       - name: Set up python
-        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5
+        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -42,4 +42,5 @@ jobs:
       - uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
         with:
           fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }} # required
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
