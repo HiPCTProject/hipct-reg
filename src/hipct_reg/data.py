@@ -99,7 +99,11 @@ class Cuboid:
     @property
     def upper_idx(self) -> tuple[int, int, int]:
         remote_array = self.ds.remote_array(level=0)
-        shape = remote_array.shape[::-1]
+
+        if self.ds.gcs_format == "n5":
+            shape = remote_array.shape[::-1]
+        else:
+            shape = remote_array.shape
 
         for i in range(3):
             if self.centre_point[i] > shape[i]:
@@ -121,11 +125,19 @@ class Cuboid:
             f"Downloading cube for {self.ds.name}, {self.lower_idx} --> {self.upper_idx}"
         )
         remote_arr = self.get_remote_arr()
-        data = remote_arr[
-            self.lower_idx[2] : self.upper_idx[2],
-            self.lower_idx[1] : self.upper_idx[1],
-            self.lower_idx[0] : self.upper_idx[0],
-        ].T
+        if self.ds.gcs_format == "n5":
+            data = remote_arr[
+                self.lower_idx[2] : self.upper_idx[2],
+                self.lower_idx[1] : self.upper_idx[1],
+                self.lower_idx[0] : self.upper_idx[0],
+            ].T
+        else:
+            data = remote_arr[
+                self.lower_idx[0] : self.upper_idx[0],
+                self.lower_idx[1] : self.upper_idx[1],
+                self.lower_idx[2] : self.upper_idx[2],
+            ]
+
         zarr.convenience.save(self.local_zarr_path, data)
 
     def get_remote_arr(self) -> zarr.core.Array:
