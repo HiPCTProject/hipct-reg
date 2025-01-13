@@ -166,9 +166,9 @@ def get_reg_input(
     Data is cached on disk to ~/hipct/reg_data so it doesn't need to be re-downloaded.
     """
     full_dataset = datasets[full_name]
-    assert (
-        full_dataset.is_full_organ
-    ), "Full dataset name given is not a full organ dataset"
+    assert full_dataset.is_full_organ, (
+        "Full dataset name given is not a full organ dataset"
+    )
     full_size_z = 16
     full_cube = Cuboid(
         full_dataset, full_point, size_xy=full_size_xy, size_z=full_size_z
