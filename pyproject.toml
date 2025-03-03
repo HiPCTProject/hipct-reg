@@ -24,7 +24,7 @@ dependencies = [
     "psutil==7.0.0",
     "scikit-image==0.24.0",
     "simpleitk==2.3.1",
-    "zarr==2.18.4",
+    "zarr==3.0.4",
 ]
 description = "Code to register regions of interest with full organ datasets."
 dynamic = [
