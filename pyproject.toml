@@ -22,7 +22,7 @@ dependencies = [
     "matplotlib==3.10.0",
     "numpy==2.2.3",
     "psutil==7.0.0",
-    "scikit-image==0.24.0",
+    "scikit-image==0.25.1",
     "simpleitk==2.3.1",
     "zarr==2.18.4",
 ]
