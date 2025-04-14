@@ -212,7 +212,7 @@ INFO Registration finished!
     )
 
 
-def test_registration_real(overview_scan: sitk.Image, zoom_image: sitk.Image) -> None:
+def test_registration_real(overview_image: sitk.Image, zoom_image: sitk.Image) -> None:
     """
     Test registration with some real data.
     """
@@ -221,8 +221,8 @@ def test_registration_real(overview_scan: sitk.Image, zoom_image: sitk.Image) ->
         zoom_name="zoom_name",
         overview_name="overview_name",
         zoom_image=zoom_image,
-        overview_image=overview_scan,
-        overview_common_point=get_central_pixel_index(overview_scan),
+        overview_image=overview_image,
+        overview_common_point=get_central_pixel_index(overview_image),
         zoom_common_point=get_central_pixel_index(zoom_image),
     )
 
