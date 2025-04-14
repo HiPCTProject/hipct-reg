@@ -6,15 +6,15 @@ import SimpleITK as sitk
 @dataclass
 class RegistrationInput:
     """
-    A container for all the data needed to register a ROI to a full-organ scan.
+    A container for all the data needed to register a zoom to an overview image.
 
     Contains both images, and pixel indices of a common point in both images.
     """
 
-    roi_name: str
-    full_name: str
-    roi_image: sitk.Image
-    full_image: sitk.Image
+    zoom_name: str
+    overview_name: str
+    zoom_image: sitk.Image
+    overview_image: sitk.Image
     # Common points are in units of pixels
-    common_point_roi: tuple[int, int, int]
-    common_point_full: tuple[int, int, int]
+    zoom_common_point: tuple[int, int, int]
+    overview_common_point: tuple[int, int, int]

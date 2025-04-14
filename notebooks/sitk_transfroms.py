@@ -188,7 +188,7 @@ compare_images(
 # %% [markdown]
 # The two images overlap much better, so a successful registration!
 #
-# Because the registration maps the full resolution dataset to the ROI, to convert the other way we can just use the inverse of the transform:
+# Because the registration maps the full resolution dataset to the zoom, to convert the other way we can just use the inverse of the transform:
 
 
 # %%

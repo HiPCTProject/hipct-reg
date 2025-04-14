@@ -23,12 +23,12 @@ from hipct_reg.registration import (
 )
 from hipct_reg.types import RegistrationInput
 
-# Pixel size of full resolution (ROI) pixels
+# Pixel size of full resolution (zoom) pixels
 PIXEL_SIZE_UM = 5
 BIN_FACTOR = 4
-# Offset in units of full-resolution (ROI) pixels
-ROI_OFFSET = 128
-ROI_SIZE = 64
+# Offset in units of full-resolution (zoom) pixels
+ZOOM_OFFSET = 128
+ZOOM_SIZE = 64
 
 
 @pytest.fixture
@@ -60,66 +60,68 @@ def ground_truth(rng: np.random.Generator) -> npt.NDArray[np.uint16]:
 
 
 @pytest.fixture
-def full_organ_scan_folder(
+def overview_organ_scan_folder(
     tmp_path: Path, ground_truth: npt.NDArray[np.float32]
 ) -> Path:
-    full_organ_scan = block_reduce(
+    overview_organ_scan = block_reduce(
         ground_truth, (BIN_FACTOR, BIN_FACTOR, BIN_FACTOR), np.mean
     )
-    full_organ_folder = tmp_path / "20.0um_full_organ"
-    full_organ_folder.mkdir()
-    write_array_to_stack(full_organ_scan, full_organ_folder)
-    return full_organ_folder
+    overview_organ_folder = tmp_path / "20.0um_overview_organ"
+    overview_organ_folder.mkdir()
+    write_array_to_stack(overview_organ_scan, overview_organ_folder)
+    return overview_organ_folder
 
 
 @pytest.fixture
-def full_organ_scan(
-    full_organ_scan_folder: Path,
+def overview_organ_scan(
+    overview_organ_scan_folder: Path,
 ) -> sitk.Image:
     """
-    Downsampled ground truth data, to mimic a full organ scan.
+    Downsampled ground truth data, to mimic a overview image.
     """
-    return import_im(full_organ_scan_folder, pixel_size=PIXEL_SIZE_UM * BIN_FACTOR)
+    return import_im(overview_organ_scan_folder, pixel_size=PIXEL_SIZE_UM * BIN_FACTOR)
 
 
 @pytest.fixture
-def roi_scan_folder(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> Path:
-    roi_scan = ground_truth[
-        ROI_OFFSET : ROI_OFFSET + ROI_SIZE,
-        ROI_OFFSET : ROI_OFFSET + ROI_SIZE,
-        ROI_OFFSET : ROI_OFFSET + ROI_SIZE,
+def zoom_scan_folder(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> Path:
+    zoom_scan = ground_truth[
+        ZOOM_OFFSET : ZOOM_OFFSET + ZOOM_SIZE,
+        ZOOM_OFFSET : ZOOM_OFFSET + ZOOM_SIZE,
+        ZOOM_OFFSET : ZOOM_OFFSET + ZOOM_SIZE,
     ]
-    roi_folder = tmp_path / "5.0um_roi"
-    roi_folder.mkdir()
-    write_array_to_stack(roi_scan, roi_folder)
-    return roi_folder
+    zoom_folder = tmp_path / "5.0um_zoom"
+    zoom_folder.mkdir()
+    write_array_to_stack(zoom_scan, zoom_folder)
+    return zoom_folder
 
 
 @pytest.fixture
-def roi_scan(roi_scan_folder: Path) -> sitk.Image:
+def zoom_scan(zoom_scan_folder: Path) -> sitk.Image:
     """
-    Sub-volume of ground truth data, to mimic ROI data.
+    Sub-volume of ground truth data, to mimic zoom data.
     """
-    return import_im(roi_scan_folder, pixel_size=PIXEL_SIZE_UM)
+    return import_im(zoom_scan_folder, pixel_size=PIXEL_SIZE_UM)
 
 
 @pytest.fixture
-def reg_input(roi_scan: sitk.Image, full_organ_scan: sitk.Image) -> RegistrationInput:
-    common_point_roi = arr_to_index_tuple(np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2)
-    common_point_full = arr_to_index_tuple(
+def reg_input(zoom_scan: sitk.Image, overview_scan: sitk.Image) -> RegistrationInput:
+    common_point_zoom = arr_to_index_tuple(
+        np.array([ZOOM_SIZE, ZOOM_SIZE, ZOOM_SIZE]) / 2
+    )
+    common_point_overview = arr_to_index_tuple(
         (
-            np.array([ROI_OFFSET, ROI_OFFSET, ROI_OFFSET])
-            + np.array([ROI_SIZE, ROI_SIZE, ROI_SIZE]) / 2
+            np.array([ZOOM_OFFSET, ZOOM_OFFSET, ZOOM_OFFSET])
+            + np.array([ZOOM_SIZE, ZOOM_SIZE, ZOOM_SIZE]) / 2
         )
         / BIN_FACTOR
     )
     return RegistrationInput(
-        roi_name="roi_name",
-        full_name="full_name",
-        roi_image=roi_scan,
-        full_image=full_organ_scan,
-        common_point_roi=common_point_roi,
-        common_point_full=common_point_full,
+        zoom_name="zoom_name",
+        overview_name="overview_name",
+        zoom_image=zoom_scan,
+        overview_image=overview_scan,
+        zoom_common_point=common_point_zoom,
+        overview_common_point=common_point_overview,
     )
 
 
@@ -178,7 +180,7 @@ INFO Registered rotation angle = 0.0 deg
 def test_registration_rigid(
     reg_input: RegistrationInput, caplog: pytest.LogCaptureFixture
 ) -> None:
-    # Rotate the ROI slightly initially to give the registration something to do
+    # Rotate the zoom slightly initially to give the registration something to do
     zrot = np.deg2rad(1)
     with caplog.at_level(logging.INFO):
         final_registration, final_metric = registration_rigid(
@@ -212,18 +214,20 @@ INFO Registration finished!
     )
 
 
-def test_registration_real(full_organ_image: sitk.Image, roi_image: sitk.Image) -> None:
+def test_registration_real(
+    overview_organ_image: sitk.Image, zoom_image: sitk.Image
+) -> None:
     """
     Test registration with some real data.
     """
 
     reg_input = RegistrationInput(
-        roi_name="roi_name",
-        full_name="full_name",
-        roi_image=roi_image,
-        full_image=full_organ_image,
-        common_point_full=get_central_pixel_index(full_organ_image),
-        common_point_roi=get_central_pixel_index(roi_image),
+        zoom_name="zoom_name",
+        overview_name="overview_name",
+        zoom_image=zoom_image,
+        overview_image=overview_organ_image,
+        overview_common_point=get_central_pixel_index(overview_organ_image),
+        zoom_common_point=get_central_pixel_index(zoom_image),
     )
 
     transform, reg_metric = run_registration(reg_input)

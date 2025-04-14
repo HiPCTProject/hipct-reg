@@ -29,7 +29,7 @@ datasets = {name: get_dataset(name) for name in inventory.index}
 @dataclass
 class Cuboid:
     """
-    Represents a small cuboid of data located within a full dataset.
+    Represents a small cuboid of data located within an overview image.
 
     Attributes
     ----------
@@ -149,46 +149,53 @@ class Cuboid:
 
 def get_reg_input(
     *,
-    roi_name: str,
-    full_name: str,
-    roi_point: tuple[int, int, int],
-    full_point: tuple[int, int, int],
-    full_size_xy: int = 64,
+    zoom_name: str,
+    overview_name: str,
+    zoom_point: tuple[int, int, int],
+    overview_point: tuple[int, int, int],
+    overview_size_xy: int = 64,
 ) -> RegistrationInput:
     """
-    Given the dataset of a ROI scan, get:
-        - a ``(full_size_xy * 2), (full_size_xy * 2), 32`` shaped cubiod of it's parent
-          full-organ scan.
-        - the equivalent (larger) cube of the ROI itself.
+    Given the dataset of a zoom image, get:
+        - a ``(overview_size_xy * 2), (overview_size_xy * 2), 32`` shaped cubiod of it's parent
+          overview.
+        - the equivalent (larger) cube of the zoom itself.
 
-    The size of the full-organ scan cube can be changed.
+    The size of the overview image cube can be changed.
 
     Data is cached on disk to ~/hipct/reg_data so it doesn't need to be re-downloaded.
     """
-    full_dataset = datasets[full_name]
-    assert full_dataset.is_full_organ, (
-        "Full dataset name given is not a full organ dataset"
+    overview_dataset = datasets[overview_name]
+    assert overview_dataset.is_full_organ, (
+        "Overview dataset name given is not an overview dataset"
     )
-    full_size_z = 16
-    full_cube = Cuboid(
-        full_dataset, full_point, size_xy=full_size_xy, size_z=full_size_z
+    overview_size_z = 16
+    overview_cube = Cuboid(
+        overview_dataset,
+        overview_point,
+        size_xy=overview_size_xy,
+        size_z=overview_size_z,
     )
 
-    roi_dataset = datasets[roi_name]
+    zoom_dataset = datasets[zoom_name]
 
-    full_resolution_um = full_dataset.resolution.to_value("um")
-    roi_resolution_um = roi_dataset.resolution.to_value("um")
+    overview_resolution_um = overview_dataset.resolution.to_value("um")
+    zoom_resolution_um = zoom_dataset.resolution.to_value("um")
 
-    assert not roi_dataset.is_full_organ, "ROI dataset name given is a ROI dataset"
-    roi_size_xy = int(full_size_xy * full_resolution_um / roi_resolution_um)
-    roi_size_z = int(full_size_z * full_resolution_um / roi_resolution_um)
-    roi_cube = Cuboid(roi_dataset, roi_point, size_xy=roi_size_xy, size_z=roi_size_z)
+    assert not zoom_dataset.is_full_organ, (
+        "zoom dataset name given is a overview dataset"
+    )
+    zoom_size_xy = int(overview_size_xy * overview_resolution_um / zoom_resolution_um)
+    zoom_size_z = int(overview_size_z * overview_resolution_um / zoom_resolution_um)
+    zoom_cube = Cuboid(
+        zoom_dataset, zoom_point, size_xy=zoom_size_xy, size_z=zoom_size_z
+    )
 
     return RegistrationInput(
-        roi_name=roi_name,
-        full_name=full_name,
-        roi_image=roi_cube.get_image(),
-        full_image=full_cube.get_image(),
-        common_point_full=(full_size_xy, full_size_xy, full_size_z),
-        common_point_roi=(roi_size_xy, roi_size_xy, roi_size_z),
+        zoom_name=zoom_name,
+        overview_name=overview_name,
+        zoom_image=zoom_cube.get_image(),
+        overview_image=overview_cube.get_image(),
+        overview_common_point=(overview_size_xy, overview_size_xy, overview_size_z),
+        zoom_common_point=(zoom_size_xy, zoom_size_xy, zoom_size_z),
     )

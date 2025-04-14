@@ -20,27 +20,27 @@ from hipct_reg.types import RegistrationInput
 # # Load data
 
 # %%
-roi_name = "A135_lung_VOI-01_2.0um_bm18"
-full_name = "A135_lung_complete-organ_10.005um_bm18"
-roi_point = (3462, 2447, 4107)
-full_point = (4580, 4750, 6822)
+zoom_name = "A135_lung_VOI-01_2.0um_bm18"
+overview_name = "A135_lung_complete-organ_10.005um_bm18"
+zoom_point = (3462, 2447, 4107)
+overview_point = (4580, 4750, 6822)
 
 logging.basicConfig(level=logging.INFO)
 # Get input data
 reg_input = get_reg_input(
-    roi_name=roi_name,
-    roi_point=roi_point,
-    full_name=full_name,
-    full_point=full_point,
-    full_size_xy=64,
+    zoom_name=zoom_name,
+    zoom_point=zoom_point,
+    overview_name=overview_name,
+    overview_point=overview_point,
+    overview_size_xy=64,
 )
 
 # %% [markdown]
 # # Do the registration
 
 # %%
-xyz_roi = reg_input.roi_image.GetSize()
-xyz_full = reg_input.full_image.GetSize()
+xyz_zoom = reg_input.zoom_image.GetSize()
+xyz_overview = reg_input.overview_image.GetSize()
 
 
 def run_reg(dxy_full: int) -> tuple[RegistrationInput, sitk.Similarity3DTransform]:
@@ -53,47 +53,49 @@ def run_reg(dxy_full: int) -> tuple[RegistrationInput, sitk.Similarity3DTransfor
     if dxy_full < 0:
         raise ValueError("dxy_full must be >= 0")
 
-    dxy_roi = math.floor(
+    dxy_zoom = math.floor(
         dxy_full
-        * reg_input.full_image.GetSpacing()[0]
-        / reg_input.roi_image.GetSpacing()[0]
+        * reg_input.overview_image.GetSpacing()[0]
+        / reg_input.zoom_image.GetSpacing()[0]
     )
 
     full_image = sitk.Crop(
-        reg_input.full_image, (dxy_full, dxy_full, 0), (dxy_full, dxy_full, 0)
+        reg_input.overview_image, (dxy_full, dxy_full, 0), (dxy_full, dxy_full, 0)
     )
-    roi_image = sitk.Crop(
-        reg_input.roi_image,
-        (dxy_roi, dxy_roi, 0),
-        (dxy_roi, dxy_roi, 0),
+    zoom_image = sitk.Crop(
+        reg_input.zoom_image,
+        (dxy_zoom, dxy_zoom, 0),
+        (dxy_zoom, dxy_zoom, 0),
     )
-    common_point_roi = (
-        reg_input.common_point_roi[0] - dxy_roi,
-        reg_input.common_point_roi[1] - dxy_roi,
-        reg_input.common_point_roi[2],
+    common_point_zoom = (
+        reg_input.zoom_common_point[0] - dxy_zoom,
+        reg_input.zoom_common_point[1] - dxy_zoom,
+        reg_input.zoom_common_point[2],
     )
-    common_point_full = (
-        reg_input.common_point_full[0] - dxy_full,
-        reg_input.common_point_full[1] - dxy_full,
-        reg_input.common_point_full[2],
+    common_point_overview = (
+        reg_input.overview_common_point[0] - dxy_full,
+        reg_input.overview_common_point[1] - dxy_full,
+        reg_input.overview_common_point[2],
     )
 
     new_reg_input = RegistrationInput(
-        roi_name,
-        full_name,
-        roi_image,
+        zoom_name,
+        overview_name,
+        zoom_image,
         full_image,
-        common_point_roi,
-        common_point_full,
+        common_point_zoom,
+        common_point_overview,
     )
 
     transform = run_registration(new_reg_input)
     transform_dict: dict = dict(transform_to_dict(transform))
-    transform_dict["full_dataset"] = full_name
-    transform_dict["roi_datset"] = roi_name
-    transform_dict["full_size"] = new_reg_input.full_image.GetSize()
-    transform_dict["roi_size"] = new_reg_input.roi_image.GetSize()
-    with open(f"data/xy/transform_{roi_name}_{full_image.GetSize()[0]}.json", "w") as f:
+    transform_dict["overview_dataset"] = overview_name
+    transform_dict["zoom_datset"] = zoom_name
+    transform_dict["overview_size"] = new_reg_input.overview_image.GetSize()
+    transform_dict["zoom_size"] = new_reg_input.zoom_image.GetSize()
+    with open(
+        f"data/xy/transform_{zoom_name}_{full_image.GetSize()[0]}.json", "w"
+    ) as f:
         f.write(json.dumps(transform_dict, indent=4))
 
     return new_reg_input, transform
