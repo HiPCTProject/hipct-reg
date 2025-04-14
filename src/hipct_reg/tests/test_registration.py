@@ -60,26 +60,24 @@ def ground_truth(rng: np.random.Generator) -> npt.NDArray[np.uint16]:
 
 
 @pytest.fixture
-def overview_organ_scan_folder(
-    tmp_path: Path, ground_truth: npt.NDArray[np.float32]
-) -> Path:
-    overview_organ_scan = block_reduce(
+def overview_scan_folder(tmp_path: Path, ground_truth: npt.NDArray[np.float32]) -> Path:
+    overview_scan = block_reduce(
         ground_truth, (BIN_FACTOR, BIN_FACTOR, BIN_FACTOR), np.mean
     )
-    overview_organ_folder = tmp_path / "20.0um_overview_organ"
-    overview_organ_folder.mkdir()
-    write_array_to_stack(overview_organ_scan, overview_organ_folder)
-    return overview_organ_folder
+    overview_folder = tmp_path / "20.0um_overview_organ"
+    overview_folder.mkdir()
+    write_array_to_stack(overview_scan, overview_folder)
+    return overview_folder
 
 
 @pytest.fixture
-def overview_organ_scan(
-    overview_organ_scan_folder: Path,
+def overview_scan(
+    overview_scan_folder: Path,
 ) -> sitk.Image:
     """
     Downsampled ground truth data, to mimic a overview image.
     """
-    return import_im(overview_organ_scan_folder, pixel_size=PIXEL_SIZE_UM * BIN_FACTOR)
+    return import_im(overview_scan_folder, pixel_size=PIXEL_SIZE_UM * BIN_FACTOR)
 
 
 @pytest.fixture
