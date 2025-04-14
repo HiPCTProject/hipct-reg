@@ -71,16 +71,18 @@ def registration_rot(
 
     R.SetOptimizerScalesFromPhysicalShift()
     # These variables are in physical coordinates
-    # Rotation centre of transform in ROI image
-    rotation_center = reg_input.roi_image.TransformIndexToPhysicalPoint(
-        reg_input.common_point_roi
+    # Rotation centre of transform in zoom image
+    rotation_center = reg_input.zoom_image.TransformIndexToPhysicalPoint(
+        reg_input.zoom_common_point
     )
-    # Translation from ROI image to full image
+    # Translation from zoom image to overview image
     translation = -np.array(rotation_center) + np.array(
-        reg_input.full_image.TransformIndexToPhysicalPoint(reg_input.common_point_full)
+        reg_input.overview_image.TransformIndexToPhysicalPoint(
+            reg_input.overview_common_point
+        )
     )
     logging.debug(f"rotation center = {rotation_center}")
-    logging.debug(f"translation from ROI to full organ = {translation}")
+    logging.debug(f"translation from zoom to overview = {translation}")
 
     # Initial transform angles in radians
     theta_x = 0.0
@@ -124,7 +126,7 @@ def registration_rot(
 
     logging.info("Starting rotational registration...")
     transform_rotation: sitk.Euler3DTransform = R.Execute(
-        reg_input.roi_image, reg_input.full_image
+        reg_input.zoom_image, reg_input.overview_image
     )
     logging.info("Registration finished!")
 
@@ -145,7 +147,7 @@ def registration_rigid(
     """
     Run a registration using a full rigid transform.
 
-    The returned transform maps from the ROI image to the full-organ image.
+    The returned transform maps from the zoom image to the overview image.
 
     Parameters
     ----------
@@ -155,7 +157,7 @@ def registration_rigid(
     Returns
     -------
     transform :
-        Registered transform from ROI image to the full-organ image.
+        Registered transform from zoom image to the overview image.
 
     metric :
         Registration metric at the final step. The registration metric is
@@ -164,7 +166,7 @@ def registration_rigid(
     """
     logging.info("Starting full registration...")
     logging.info(f"Initial rotation = {zrot:.02f} deg")
-    pixel_size_roi: int = reg_input.roi_image.GetSpacing()[0]
+    pixel_size_zoom: int = reg_input.zoom_image.GetSpacing()[0]
 
     R = sitk.ImageRegistrationMethod()
 
@@ -185,13 +187,15 @@ def registration_rigid(
     # R.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
 
     # These variables are in physical coordinates
-    # Rotation centre of transform in ROI image
-    rotation_center = reg_input.roi_image.TransformIndexToPhysicalPoint(
-        reg_input.common_point_roi
+    # Rotation centre of transform in zoom image
+    rotation_center = reg_input.zoom_image.TransformIndexToPhysicalPoint(
+        reg_input.zoom_common_point
     )
-    # Translation from ROI image to full image
+    # Translation from zoom image to overview image
     translation = -np.array(rotation_center) + np.array(
-        reg_input.full_image.TransformIndexToPhysicalPoint(reg_input.common_point_full)
+        reg_input.overview_image.TransformIndexToPhysicalPoint(
+            reg_input.overview_common_point
+        )
     )
     logging.debug(f"rotation center = {rotation_center}")
 
@@ -240,16 +244,16 @@ def registration_rigid(
 
     R.AddCommand(
         sitk.sitkIterationEvent,
-        lambda: command_iteration(R, initial_transform, pixel_size_roi),
+        lambda: command_iteration(R, initial_transform, pixel_size_zoom),
     )
 
-    translation_pix = reg_input.roi_image.TransformPhysicalPointToContinuousIndex(
+    translation_pix = reg_input.zoom_image.TransformPhysicalPointToContinuousIndex(
         initial_transform.GetTranslation()
     )
     logging.info(f"Initial translation = {translation_pix} pix")
     logging.info("Starting registration...")
     final_transform: sitk.Similarity3DTransform = R.Execute(
-        reg_input.roi_image, reg_input.full_image
+        reg_input.zoom_image, reg_input.overview_image
     )
     logging.info("Registration finished!")
     logging.debug(f"Final metric value: {R.GetMetricValue()}")
@@ -257,7 +261,7 @@ def registration_rigid(
         f"Optimizer's stopping condition, {R.GetOptimizerStopConditionDescription()}"
     )
 
-    translation_pix = reg_input.roi_image.TransformPhysicalPointToContinuousIndex(
+    translation_pix = reg_input.zoom_image.TransformPhysicalPointToContinuousIndex(
         final_transform.GetTranslation()
     )
     rotation = np.rad2deg(np.array(final_transform.GetVersor()))
@@ -276,7 +280,7 @@ def run_registration(
     Returns
     -------
     transform :
-        Registered transform from ROI image to the full-organ image.
+        Registered transform from zoom image to the overview image.
 
     metric :
         Registration metric at the final step. The registration metric is
@@ -284,10 +288,10 @@ def run_registration(
     """
 
     logging.info("Runinng registration...")
-    logging.info(f"Full array size: {reg_input.full_image.GetSize()} pix")
-    logging.info(f"Full voxel size = {reg_input.full_image.GetSpacing()} um")
-    logging.info(f"ROI array size: {reg_input.roi_image.GetSize()} pix")
-    logging.info(f"ROI voxel size = {reg_input.roi_image.GetSpacing()} um")
+    logging.info(f"Overview array size: {reg_input.overview_image.GetSize()} pix")
+    logging.info(f"Overview voxel size = {reg_input.overview_image.GetSpacing()} um")
+    logging.info(f"Zoom array size: {reg_input.zoom_image.GetSize()} pix")
+    logging.info(f"Zoom voxel size = {reg_input.zoom_image.GetSpacing()} um")
     logging.info("")
     zrot = 0
 

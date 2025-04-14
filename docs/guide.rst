@@ -4,12 +4,12 @@ Guide
 High level overview
 -------------------
 
-The goal of this package is to provide reproducible and tested code to register (align) high-resolution region of interest (ROI) scans with low-resolution full organ scans.
+The goal of this package is to provide reproducible and tested code to register (align) high-resolution zoom scans with lower-resolution overview scans.
 It does this using the registration framework of ``SimpleITK``.
 
 Within the ``SimpleITK`` framework registration maps points from one image to another image (or in our case one volume to another volume - to keep it simple we'll just use image from now on).
 In ``SimpleITK`` language, we are looking for a transformation from a **fixed image** coordinate system to a **moving image** coordinate system.
-Because we are looking for a transform to map the ROI to full organ, we will set the fixed image to be the ROI and moving image to be the full organ.
+Because we are looking for a transform to map the zoom to overview, we will set the fixed image to be the zoom and moving image to be the full organ.
 
 The registration is done in several steps, described in the following sections.
 

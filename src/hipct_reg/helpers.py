@@ -13,7 +13,7 @@ from hipct_reg.types import RegistrationInput
 
 class PixelTransformDict(TypedDict):
     """
-    Parameters for a pixel-to-pixel transform, mapping from a ROI to a full-organ
+    Parameters for a pixel-to-pixel transform, mapping from a zoom to a overview
     image.
     """
 
@@ -29,8 +29,8 @@ def get_pixel_transform_params(
     coord_transform: sitk.Similarity3DTransform,
 ) -> PixelTransformDict:
     """
-    Convert the registered transform to a pixel-to-pixel transform mapping from a ROI
-    to a full-organ image.
+    Convert the registered transform to a pixel-to-pixel transform mapping from a zoom
+    to a overview image.
     """
     translation = coord_transform.TransformPoint((0, 0, 0))
 
@@ -38,17 +38,17 @@ def get_pixel_transform_params(
     new_transform.SetParameters(coord_transform.GetParameters())
     new_transform.SetTranslation(translation)
 
-    full_spacing = reg_input.full_image.GetSpacing()[0]
-    roi_spacing = reg_input.roi_image.GetSpacing()[0]
+    spacing_overview = reg_input.overview_image.GetSpacing()[0]
+    spacing_zoom = reg_input.zoom_image.GetSpacing()[0]
 
     rotation = np.arctan2(new_transform.GetMatrix()[1], new_transform.GetMatrix()[0])
-    scale = new_transform.GetScale() * roi_spacing / full_spacing
+    scale = new_transform.GetScale() * spacing_zoom / spacing_overview
 
     transform_dict = PixelTransformDict(
         {
-            "tx_pix": new_transform.GetTranslation()[0] / full_spacing,
-            "ty_pix": new_transform.GetTranslation()[1] / full_spacing,
-            "tz_pix": new_transform.GetTranslation()[2] / full_spacing,
+            "tx_pix": new_transform.GetTranslation()[0] / spacing_overview,
+            "ty_pix": new_transform.GetTranslation()[1] / spacing_overview,
+            "tz_pix": new_transform.GetTranslation()[2] / spacing_overview,
             "rotation_deg": np.rad2deg(rotation),
             "scale": scale,
         }
@@ -57,30 +57,30 @@ def get_pixel_transform_params(
     return transform_dict
 
 
-def resample_roi_image(
+def resample_zoom_image(
     reg_input: RegistrationInput, transform: sitk.Transform
 ) -> sitk.Image:
     """
-    Resample the region of interest image on to the full-organ grid using the
+    Resample the region of interest image on to the overview image grid using the
     registered transform.
 
     Parameters
     ----------
     reg_input :
-        Registration input (contains the ROI and full-organ images).
+        Registration input (contains the zoom and overview images).
     transform :
         Registered transform.
 
     Returns
     -------
-    roi_resampled :
-        ROI image transformed and resampled on to the same grid as the full-organ image.
+    zoom_resampled :
+        zoom image transformed and resampled on to the same grid as the overview image.
     """
     return sitk.Resample(
-        reg_input.roi_image,
-        reg_input.roi_image.GetSize(),
-        outputOrigin=reg_input.full_image.GetOrigin(),
-        outputSpacing=reg_input.roi_image.GetSpacing(),
+        reg_input.zoom_image,
+        reg_input.zoom_image.GetSize(),
+        outputOrigin=reg_input.overview_image.GetOrigin(),
+        outputSpacing=reg_input.zoom_image.GetSpacing(),
         transform=transform.GetInverse(),
         defaultPixelValue=np.nan,
         interpolator=sitk.sitkNearestNeighbor,

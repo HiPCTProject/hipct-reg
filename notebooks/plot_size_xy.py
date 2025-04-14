@@ -39,7 +39,7 @@ datasets = [
 
 for dataset in datasets:
     reg_files = Path("data/xy").glob(f"transform_{dataset}_*.json")
-    full_res = 6.5
+    overview_res = 6.5
 
     all_data_json = []
     for file in reg_files:
@@ -51,13 +51,13 @@ for dataset in datasets:
     def get_rot(df: pd.DataFrame) -> float:
         return float(np.rad2deg(np.arccos(df["rotation_matrix"][0] / df["scale"])))
 
-    all_data["full_size"] = all_data["full_size"].map(lambda x: x[0])
-    all_data["roi_size"] = all_data["roi_size"].map(lambda x: x[0])
-    all_data["tx"] = all_data["translation"].map(lambda x: x[0] / full_res)
-    all_data["ty"] = all_data["translation"].map(lambda x: x[1] / full_res)
-    all_data["tz"] = all_data["translation"].map(lambda x: x[2] / full_res)
+    all_data["overview_size"] = all_data["overview_size"].map(lambda x: x[0])
+    all_data["zoom_size"] = all_data["zoom_size"].map(lambda x: x[0])
+    all_data["tx"] = all_data["translation"].map(lambda x: x[0] / overview_res)
+    all_data["ty"] = all_data["translation"].map(lambda x: x[1] / overview_res)
+    all_data["tz"] = all_data["translation"].map(lambda x: x[2] / overview_res)
     all_data["rotation"] = all_data.apply(get_rot, axis=1)
-    all_data = all_data.sort_values("full_size")
+    all_data = all_data.sort_values("overview_size")
 
     all_datasets[dataset] = all_data
 
@@ -77,37 +77,37 @@ for dataset in datasets:
     ax = axs[0, 0]
     ax.set_title("Translation (x)")
     ax.plot(
-        all_data["full_size"],
+        all_data["overview_size"],
         all_data["tx"] - all_data["tx"].iloc[-1],
         label=dataset.split("_")[1],
         **kwargs,
     )
-    ax.set_ylabel("ROI pix")
+    ax.set_ylabel("zoom pix")
     ax.legend()
 
     ax = axs[1, 0]
     ax.set_title("Translation (y)")
     ax.plot(
-        all_data["full_size"],
+        all_data["overview_size"],
         all_data["ty"] - all_data["ty"].iloc[-1],
         **kwargs,
     )
-    ax.set_ylabel("ROI pix")
+    ax.set_ylabel("zoom pix")
 
     ax = axs[2, 0]
     ax.set_title("Translation (z)")
     ax.plot(
-        all_data["full_size"],
+        all_data["overview_size"],
         all_data["tz"] - all_data["tz"].iloc[-1],
         **kwargs,
     )
-    ax.set_ylabel("ROI pix")
+    ax.set_ylabel("zoom pix")
     ax.set_xlabel("Full organ x-y size")
 
     ax = axs[0, 1]
     ax.set_title("Rotation")
     ax.plot(
-        all_data["full_size"],
+        all_data["overview_size"],
         all_data["rotation"] - all_data["rotation"].iloc[-1],
         **kwargs,
     )
@@ -116,7 +116,7 @@ for dataset in datasets:
 
     ax = axs[1, 1]
     ax.set_title("Scale")
-    ax.plot(all_data["full_size"], all_data["scale"] - 1, **kwargs)
+    ax.plot(all_data["overview_size"], all_data["scale"] - 1, **kwargs)
 
 for ax in axs.ravel():
     ax.xaxis.grid(color="k", linewidth=0.5, alpha=0.5)
@@ -128,7 +128,7 @@ axs[2, 1].axis("off")
 # The goal of this experiment is to verify the variation in registration parameters (rotation, translation, scale) as the size of the cuboids being registered increases. This should show at what point the registration converges (ie at what point adding more pixels isn't adding anything to the registration).
 #
 # ## Figure overview
-# Each registration parameter (y-axis) is plotted against the size of the full-organ cuboid in the x-y plane. All cuboids have a thickness along the z-axis of 32 pixels. The high-resolution ROI cuboids have a larger number of pixels so they are the same physical size as the full-organ cuboids. Each colour represents a different dataset, taken from three different organs.
+# Each registration parameter (y-axis) is plotted against the size of the full-organ cuboid in the x-y plane. All cuboids have a thickness along the z-axis of 32 pixels. The high-resolution zoom cuboids have a larger number of pixels so they are the same physical size as the full-organ cuboids. Each colour represents a different dataset, taken from three different organs.
 #
 # ## Interpretation
 # 1. The registration parameters converge (ie stop varying) at different sizes for each dataset - after 100 pixels for the kidney, 40 pixels for the heart, and 60 pixels for the lung. Since running a registration with 100 pixels does not take too long (~minutes on my laptop), choosing an **x-y size of 110** is a safe choice.
