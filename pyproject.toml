@@ -1,14 +1,9 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = [
-    "setuptools",
-    "setuptools-scm",
-]
+requires = ["setuptools", "setuptools-scm"]
 
 [project]
-authors = [
-    {email = "d.stansby@ucl.ac.uk", name = "David Stansby"},
-]
+authors = [{ email = "d.stansby@ucl.ac.uk", name = "David Stansby" }]
 classifiers = [
     "Operating System :: POSIX",
     "Programming Language :: Python :: 3",
@@ -20,18 +15,15 @@ dependencies = [
     "dask-image==2024.5.0",
     "hoa-tools @ git+https://github.com/HumanOrganAtlas/hoa-tools.git@main",
     "matplotlib==3.10.1",
-    "numpy==2.2.3",
+    "numpy==2.2.4",
     "psutil==7.0.0",
     "scikit-image==0.24.0",
     "simpleitk==2.3.1",
-    "zarr==2.18.4",
+    "zarr==2.18.7",
 ]
 description = "Code to register regions of interest with full organ datasets."
-dynamic = [
-    "version",
-]
-keywords = [
-]
+dynamic = ["version"]
+keywords = []
 name = "hipct-reg"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -48,35 +40,17 @@ dev = [
     "tox>=4",
     "twine",
 ]
-docs = [
-    "pydata-sphinx-theme",
-    "sphinx",
-    "sphinx-autoapi",
-    "sphinx-gallery",
-]
-test = [
-    "pooch",
-    "pytest",
-    "pytest-cov",
-    "tifffile==2025.3.30",
-]
+docs = ["pydata-sphinx-theme", "sphinx", "sphinx-autoapi", "sphinx-gallery"]
+test = ["pooch", "pytest", "pytest-cov", "tifffile==2025.3.30"]
 
 [tool.coverage]
-run = {source = [
-    "hipct_reg",
-]}
-paths.source = [
-    "src",
-]
+run = { source = ["hipct_reg"] }
+paths.source = ["src"]
 
 [tool.mypy]
 disallow_any_generics = false
 disallow_untyped_calls = false
-exclude = [
-    'build/.*',
-    'docs/auto_examples/*',
-    'notebooks/.*',
-]
+exclude = ['build/.*', 'docs/auto_examples/*', 'notebooks/.*']
 ignore_missing_imports = true
 plugins = ["pydantic.mypy"]
 strict = true
@@ -88,28 +62,14 @@ target-version = "py311"
 
 [tool.ruff.lint]
 ignore = [
-    "E501", # Line length
+    "E501",   # Line length
     "NPY002", # Use new numpy RNG
 ]
-per-file-ignores = {"tests*" = [
-    "INP001",
-    "S101",
-]}
-select = [
-    "E",
-    "F",
-    "I",
-    "NPY",
-    "UP",
-    "W",
-]
-isort.known-first-party = [
-    "hipct_reg",
-]
+per-file-ignores = { "tests*" = ["INP001", "S101"] }
+select = ["E", "F", "I", "NPY", "UP", "W"]
+isort.known-first-party = ["hipct_reg"]
 mccabe.max-complexity = 18
-pep8-naming.classmethod-decorators = [
-    "classmethod",
-]
+pep8-naming.classmethod-decorators = ["classmethod"]
 
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
