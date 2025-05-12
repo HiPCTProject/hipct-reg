@@ -41,7 +41,7 @@ dev = [
     "twine",
 ]
 docs = ["pydata-sphinx-theme", "sphinx", "sphinx-autoapi", "sphinx-gallery"]
-test = ["pooch", "pytest", "pytest-cov", "tifffile==2025.3.30"]
+test = ["pooch", "pytest", "pytest-cov", "tifffile==2025.5.10"]
 
 [tool.coverage]
 run = { source = ["hipct_reg"] }
