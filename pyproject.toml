@@ -15,7 +15,7 @@ dependencies = [
     "dask-image==2024.5.0",
     "hoa-tools @ git+https://github.com/HumanOrganAtlas/hoa-tools.git@main",
     "matplotlib==3.10.3",
-    "numpy==2.2.6",
+    "numpy==2.3.1",
     "psutil==7.0.0",
     "scikit-image==0.25.1",
     "simpleitk==2.3.1",
