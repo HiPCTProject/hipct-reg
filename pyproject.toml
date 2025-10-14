@@ -31,17 +31,10 @@ license.file = "LICENSE.md"
 urls.homepage = "https://github.com/HiPCTProject/hipct-reg"
 
 [project.optional-dependencies]
-dev = [
-    "build",
-    "hipct-reg[test]",
-    "mypy",
-    "pre-commit",
-    "ruff",
-    "tox>=4",
-    "twine",
-]
 docs = ["pydata-sphinx-theme", "sphinx", "sphinx-autoapi", "sphinx-gallery"]
-test = ["pooch", "pytest", "pytest-cov", "tifffile==2025.10.4"]
+
+[dependency-groups]
+dev = ["pooch", "pytest", "pytest-cov", "tifffile==2025.10.4"]
 
 [tool.coverage]
 run = { source = ["hipct_reg"] }
