@@ -16,7 +16,7 @@ dependencies = [
     "hoa-tools @ git+https://github.com/HumanOrganAtlas/hoa-tools.git@main",
     "matplotlib==3.10.6",
     "numpy==2.3.3",
-    "psutil==7.1.0",
+    "psutil==7.1.1",
     "scikit-image==0.25.2",
     "simpleitk==2.5.2",
     "zarr==2.18.7",
