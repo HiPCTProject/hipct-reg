@@ -3,7 +3,7 @@ from pathlib import Path
 import pooch
 import pytest
 import SimpleITK as sitk
-import zarr.convenience
+import zarr
 
 DOI = "doi:10.5281/zenodo.10778257"
 
@@ -16,7 +16,7 @@ def overview_image() -> sitk.Image:
         known_hash=None,
         processor=pooch.Unzip(),
     )
-    arr = zarr.convenience.load(Path(file_paths[0]).parent)[:]
+    arr = zarr.load(Path(file_paths[0]).parent)[:]
 
     spacing = 25.08
     image = sitk.GetImageFromArray(arr.T)
@@ -34,7 +34,7 @@ def zoom_image() -> sitk.Image:
         known_hash=None,
         processor=pooch.Unzip(),
     )
-    arr = zarr.convenience.load(Path(file_paths[0]).parent)[:]
+    arr = zarr.load(Path(file_paths[0]).parent)[:]
 
     spacing = 6.05
     image = sitk.GetImageFromArray(arr.T)

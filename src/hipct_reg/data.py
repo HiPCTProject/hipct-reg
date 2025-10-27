@@ -11,8 +11,7 @@ import hoa_tools.inventory
 import numpy as np
 import numpy.typing as npt
 import SimpleITK as sitk
-import zarr.convenience
-import zarr.core
+import zarr
 from hoa_tools.dataset import Dataset, get_dataset
 from hoa_tools.inventory import load_inventory
 
@@ -138,9 +137,9 @@ class Cuboid:
                 self.lower_idx[2] : self.upper_idx[2],
             ]
 
-        zarr.convenience.save(self.local_zarr_path, data)
+        zarr.save(self.local_zarr_path, data)
 
-    def get_remote_arr(self) -> zarr.core.Array:
+    def get_remote_arr(self) -> zarr.Array:
         """
         Get remote GCS store for the cube.
         """
