@@ -15,7 +15,7 @@ dependencies = [
     "dask-image==2024.5.0",
     "hoa-tools @ git+https://github.com/HumanOrganAtlas/hoa-tools.git@2.0.0b1",
     "matplotlib==3.10.6",
-    "numpy==2.3.5",
+    "numpy==2.4.0",
     "psutil==7.1.0",
     "scikit-image==0.25.2",
     "simpleitk==2.5.2",
@@ -34,7 +34,7 @@ urls.homepage = "https://github.com/HiPCTProject/hipct-reg"
 docs = ["pydata-sphinx-theme", "sphinx", "sphinx-autoapi", "sphinx-gallery"]
 
 [dependency-groups]
-dev = ["pooch", "pytest", "pytest-cov", "tifffile==2025.10.4"]
+dev = ["pooch", "pytest", "pytest-cov", "tifffile==2025.10.16"]
 
 [tool.coverage]
 run = { source = ["hipct_reg"] }
