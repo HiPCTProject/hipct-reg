@@ -34,7 +34,7 @@ urls.homepage = "https://github.com/HiPCTProject/hipct-reg"
 docs = ["pydata-sphinx-theme", "sphinx", "sphinx-autoapi", "sphinx-gallery"]
 
 [dependency-groups]
-dev = ["pooch", "pytest", "pytest-cov", "tifffile==2025.10.16"]
+dev = ["pooch", "pytest", "pytest-cov", "tifffile==2025.12.20"]
 
 [tool.coverage]
 run = { source = ["hipct_reg"] }
