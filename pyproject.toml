@@ -13,7 +13,7 @@ classifiers = [
 ]
 dependencies = [
     "dask-image==2025.11.0",
-    "hoa-tools @ git+https://github.com/HumanOrganAtlas/hoa-tools.git@1.1",
+    "hoa-tools==1.1",
     "matplotlib==3.10.8",
     "numpy==2.4.1",
     "psutil==7.2.1",
