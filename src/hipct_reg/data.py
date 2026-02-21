@@ -28,7 +28,7 @@ datasets = {name: get_dataset(name) for name in inventory.index}
 @dataclass
 class Cuboid:
     """
-    Represents a small cuboid of data located within an overview image.
+    Represents a small cuboid of data located within an image.
 
     Attributes
     ----------
@@ -46,6 +46,7 @@ class Cuboid:
     centre_point: tuple[int, int, int]
     size_xy: int
     size_z: int
+    downsample_level: int
 
     @property
     def local_zarr_path(self) -> Path:
@@ -65,7 +66,7 @@ class Cuboid:
         """
         Get cube as a SimpleITK image.
         """
-        spacing = self.ds.resolution.to_value("um")
+        spacing = self.ds.resolution.to_value("um") * 2**self.downsample_level
         origin = [
             (self.lower_idx[0]) * spacing,
             (self.lower_idx[1]) * spacing,
@@ -90,14 +91,14 @@ class Cuboid:
     @property
     def lower_idx(self) -> tuple[int, int, int]:
         return (
-            max(0, self.centre_point[0] - self.size_xy),
-            max(0, self.centre_point[1] - self.size_xy),
-            max(0, self.centre_point[2] - self.size_z),
+            max(0, self.centre_point[0] // 2**self.downsample_level - self.size_xy),
+            max(0, self.centre_point[1] // 2**self.downsample_level - self.size_xy),
+            max(0, self.centre_point[2] // 2**self.downsample_level - self.size_z),
         )
 
     @property
     def upper_idx(self) -> tuple[int, int, int]:
-        remote_array = self.ds.remote_array(level=0)
+        remote_array = self.get_remote_arr()
 
         if self.ds.gcs_format == "n5":
             shape = remote_array.shape[::-1]
@@ -105,15 +106,23 @@ class Cuboid:
             shape = remote_array.shape
 
         for i in range(3):
-            if self.centre_point[i] > shape[i]:
+            if self.centre_point[i] // 2**self.downsample_level > shape[i]:
                 raise RuntimeError(
                     f"Centre point ({self.centre_point[i]}) is outside array bounds ({shape[i]}) in dimension {i} for dataset {self.ds.name}"
                 )
 
         return (
-            min(self.centre_point[0] + self.size_xy, shape[0]),
-            min(self.centre_point[1] + self.size_xy, shape[1]),
-            min(self.centre_point[2] + self.size_z, shape[2]),
+            min(
+                self.centre_point[0] // 2**self.downsample_level + self.size_xy,
+                shape[0],
+            ),
+            min(
+                self.centre_point[1] // 2**self.downsample_level + self.size_xy,
+                shape[1],
+            ),
+            min(
+                self.centre_point[2] // 2**self.downsample_level + self.size_z, shape[2]
+            ),
         )
 
     def download_cube(self) -> None:
@@ -143,7 +152,7 @@ class Cuboid:
         """
         Get remote GCS store for the cube.
         """
-        return self.ds.remote_array(level=0)
+        return self.ds.remote_array(level=self.downsample_level)
 
 
 def get_reg_input(
@@ -152,6 +161,7 @@ def get_reg_input(
     overview_name: str,
     zoom_point: tuple[int, int, int],
     overview_point: tuple[int, int, int],
+    downsample_level: int,
     overview_size_xy: int = 64,
 ) -> RegistrationInput:
     """
@@ -174,6 +184,7 @@ def get_reg_input(
         overview_point,
         size_xy=overview_size_xy,
         size_z=overview_size_z,
+        downsample_level=downsample_level,
     )
 
     zoom_dataset = datasets[zoom_name]
@@ -187,7 +198,11 @@ def get_reg_input(
     zoom_size_xy = int(overview_size_xy * overview_resolution_um / zoom_resolution_um)
     zoom_size_z = int(overview_size_z * overview_resolution_um / zoom_resolution_um)
     zoom_cube = Cuboid(
-        zoom_dataset, zoom_point, size_xy=zoom_size_xy, size_z=zoom_size_z
+        zoom_dataset,
+        zoom_point,
+        size_xy=zoom_size_xy,
+        size_z=zoom_size_z,
+        downsample_level=downsample_level,
     )
 
     return RegistrationInput(
