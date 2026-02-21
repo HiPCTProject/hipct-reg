@@ -272,10 +272,16 @@ def registration_rigid(
 
 
 def run_registration(
-    reg_input: RegistrationInput,
+    reg_input: RegistrationInput, *, find_rotation: bool=True
 ) -> tuple[sitk.Similarity3DTransform, float]:
     """
     Run registration pipeline on pre-loaded/pre-processed images.
+
+    Parameters
+    ----------
+    find_rotation: bool
+        If True, try and find the rotation first.
+        If False, start rigid registration with no rotation.
 
     Returns
     -------
@@ -293,29 +299,30 @@ def run_registration(
     logging.info(f"Zoom array size: {reg_input.zoom_image.GetSize()} pix")
     logging.info(f"Zoom voxel size = {reg_input.zoom_image.GetSpacing()} um")
     logging.info("")
+
     zrot = 0
+    if find_rotation:
+        # Try a full 360 deg first at a coarse step
+        angle_range = 360
+        angle_step = 2.0
+        transform_rotation, _ = registration_rot(
+            reg_input,
+            zrot=zrot,
+            angle_range=angle_range,
+            angle_step=angle_step,
+        )
+        zrot = np.rad2deg(np.array(transform_rotation.GetAngleZ()))
 
-    # Try a full 360 deg first at a coarse step
-    angle_range = 360
-    angle_step = 2.0
-    transform_rotation, _ = registration_rot(
-        reg_input,
-        zrot=zrot,
-        angle_range=angle_range,
-        angle_step=angle_step,
-    )
-    zrot = np.rad2deg(np.array(transform_rotation.GetAngleZ()))
-
-    # Now try a smaller angular step
-    angle_range = 5
-    angle_step = 0.1
-    transform_rotation, _ = registration_rot(
-        reg_input,
-        zrot=zrot,
-        angle_range=angle_range,
-        angle_step=angle_step,
-    )
-    zrot = np.rad2deg(np.array(transform_rotation.GetAngleZ()))
+        # Now try a smaller angular step
+        angle_range = 5
+        angle_step = 0.1
+        transform_rotation, _ = registration_rot(
+            reg_input,
+            zrot=zrot,
+            angle_range=angle_range,
+            angle_step=angle_step,
+        )
+        zrot = np.rad2deg(np.array(transform_rotation.GetAngleZ()))
 
     if zrot < 0:
         zrot = zrot + 360
