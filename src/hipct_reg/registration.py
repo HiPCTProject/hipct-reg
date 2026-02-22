@@ -173,7 +173,7 @@ def registration_rigid(
     # Set registration metric settings
     R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
     R.SetMetricSamplingStrategy(R.RANDOM)
-    R.SetMetricSamplingPercentage(0.01, seed=1)
+    R.SetMetricSamplingPercentage(0.02, seed=1)
 
     # Set registration interpolator
     R.SetInterpolator(sitk.sitkLinear)
