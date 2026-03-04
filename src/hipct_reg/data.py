@@ -3,6 +3,7 @@ Helper functions for downloading/managing data locally.
 """
 
 import logging
+import math
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -108,7 +109,7 @@ class Cuboid:
         for i in range(3):
             if self.centre_point[i] // 2**self.downsample_level > shape[i]:
                 raise RuntimeError(
-                    f"Centre point ({self.centre_point[i]//2**self.downsample_level}) is outside array bounds ({shape[i]}) in dimension {i} for dataset {self.ds.name}"
+                    f"Centre point ({self.centre_point[i] // 2**self.downsample_level}) is outside array bounds ({shape[i]}) in dimension {i} for dataset {self.ds.name}"
                 )
 
         return (
@@ -162,15 +163,13 @@ def get_reg_input(
     zoom_point: tuple[int, int, int],
     overview_point: tuple[int, int, int],
     downsample_level: int,
-    overview_size_xy: int = 64,
 ) -> RegistrationInput:
     """
     Given the dataset of a zoom image, get:
-        - a ``(overview_size_xy * 2), (overview_size_xy * 2), 32`` shaped cubiod of it's parent
-          overview.
-        - the equivalent (larger) cube of the zoom itself.
-
-    The size of the overview image cube can be changed.
+    - along z: 32 voxels from the overview
+    - along x/y: a 1/sqrt(2) shaped square from the centre of the zoom image.
+      this is the max data that can be taken while not including empty data
+      outside the topography circle
 
     Data is cached on disk to ~/hipct/reg_data so it doesn't need to be re-downloaded.
     """
@@ -178,7 +177,28 @@ def get_reg_input(
     assert overview_dataset.is_full_organ, (
         "Overview dataset name given is not an overview dataset"
     )
+    zoom_dataset = datasets[zoom_name]
+    assert not zoom_dataset.is_full_organ, (
+        "zoom dataset name given is a overview dataset"
+    )
+
+    overview_resolution_um = overview_dataset.resolution.to_value("um")
+    zoom_resolution_um = zoom_dataset.resolution.to_value("um")
+    res_ratio = overview_resolution_um / zoom_resolution_um
+    # z - get 32 voxels from overview
     overview_size_z = 16
+    zoom_size_z = int(overview_size_z * res_ratio)
+
+    # xy - get square the fills zoom but cuts off the tomography ring
+    if hasattr(zoom_dataset, "data"):
+        size_xy = zoom_dataset.data.shape[0] // 2**downsample_level
+    else:
+        size_xy = zoom_dataset.nx // 2**downsample_level
+    zoom_size_xy = math.floor(size_xy / math.sqrt(2) / 2)
+    overview_size_xy = math.ceil(zoom_size_xy / res_ratio)
+
+    # TODO: shift zoom common point so it's in the middle of the zoom dataset
+
     overview_cube = Cuboid(
         overview_dataset,
         overview_point,
@@ -187,16 +207,6 @@ def get_reg_input(
         downsample_level=downsample_level,
     )
 
-    zoom_dataset = datasets[zoom_name]
-
-    overview_resolution_um = overview_dataset.resolution.to_value("um")
-    zoom_resolution_um = zoom_dataset.resolution.to_value("um")
-
-    assert not zoom_dataset.is_full_organ, (
-        "zoom dataset name given is a overview dataset"
-    )
-    zoom_size_xy = int(overview_size_xy * overview_resolution_um / zoom_resolution_um)
-    zoom_size_z = int(overview_size_z * overview_resolution_um / zoom_resolution_um)
     zoom_cube = Cuboid(
         zoom_dataset,
         zoom_point,

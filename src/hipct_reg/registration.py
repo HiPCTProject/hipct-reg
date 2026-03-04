@@ -277,7 +277,7 @@ def registration_rigid(
 
 
 def run_registration(
-    reg_input: RegistrationInput, *, find_rotation: bool=True
+    reg_input: RegistrationInput, *, find_rotation: bool = True
 ) -> tuple[sitk.Similarity3DTransform, float]:
     """
     Run registration pipeline on pre-loaded/pre-processed images.
