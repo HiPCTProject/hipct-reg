@@ -173,13 +173,18 @@ def registration_rigid(
     # Set registration metric settings
     R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
     R.SetMetricSamplingStrategy(R.RANDOM)
-    R.SetMetricSamplingPercentage(0.01, seed=1)
+    R.SetMetricSamplingPercentage(0.02, seed=1)
 
     # Set registration interpolator
     R.SetInterpolator(sitk.sitkLinear)
 
     # Set registration optimiser settings
-    R.SetOptimizerAsOnePlusOneEvolutionary(numberOfIterations=1000, seed=1)
+    R.SetOptimizerAsGradientDescentLineSearch(
+        learningRate=1.0,
+        numberOfIterations=200,
+        convergenceMinimumValue=1e-5,
+        convergenceWindowSize=5,
+    )
 
     # Setup for the multi-resolution framework.
     # R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 2, 1, 1, 1])
@@ -216,8 +221,8 @@ def registration_rigid(
     # - Three rotation angles
     # - Three translation components
     # - Scale factor
-    w = 10
-    R.SetOptimizerWeights([0, 0, w, w, w, w, w / 1000])
+    w = 1
+    R.SetOptimizerWeights([0, 0, w, w, w, w, w])
     R.SetOptimizerScalesFromPhysicalShift()
 
     metric = []
@@ -272,7 +277,7 @@ def registration_rigid(
 
 
 def run_registration(
-    reg_input: RegistrationInput, *, find_rotation: bool=True
+    reg_input: RegistrationInput, *, find_rotation: bool = True
 ) -> tuple[sitk.Similarity3DTransform, float]:
     """
     Run registration pipeline on pre-loaded/pre-processed images.
