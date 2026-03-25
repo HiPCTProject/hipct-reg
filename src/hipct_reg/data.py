@@ -199,13 +199,14 @@ def get_reg_input(
         if hasattr(zoom_dataset, "data")
         else (zoom_dataset.nx, zoom_dataset.ny, zoom_dataset.nz)
     )
+    zoom_shape = tuple(z // 2**downsample_level for z in zoom_shape)
 
-    size_xy = zoom_shape[0] // 2**downsample_level
+    size_xy = zoom_shape[0]
     zoom_size_xy = math.floor(size_xy / math.sqrt(2) / 2)
     overview_size_xy = math.ceil(zoom_size_xy / res_ratio)
 
     # Shift common points so they correspond to the centre of the zoom image
-    shift_zoom = tuple(zs - zp for zs, zp in zip(zoom_shape, zoom_point))
+    shift_zoom = tuple(zs // 2 - zp for zs, zp in zip(zoom_shape, zoom_point))
 
     zoom_point = tuple(int(zp + sz) for zp, sz in zip(zoom_point, shift_zoom))  # type: ignore
     overview_point = tuple(  # type: ignore
