@@ -18,3 +18,4 @@ class RegistrationInput:
     # Common points are in units of pixels
     zoom_common_point: tuple[int, int, int]
     overview_common_point: tuple[int, int, int]
+    downsample_level: int

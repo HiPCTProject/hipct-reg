@@ -173,23 +173,24 @@ def registration_rigid(
     # Set registration metric settings
     R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
     R.SetMetricSamplingStrategy(R.RANDOM)
-    R.SetMetricSamplingPercentage(0.02, seed=1)
+    R.SetMetricSamplingPercentage(0.01, seed=1)
 
     # Set registration interpolator
     R.SetInterpolator(sitk.sitkLinear)
 
+    max_iter = 1000
     # Set registration optimiser settings
     R.SetOptimizerAsGradientDescentLineSearch(
         learningRate=1.0,
-        numberOfIterations=200,
-        convergenceMinimumValue=1e-5,
+        numberOfIterations=max_iter,
+        convergenceMinimumValue=1e-4,
         convergenceWindowSize=5,
     )
 
     # Setup for the multi-resolution framework.
-    # R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 2, 1, 1, 1])
-    # R.SetSmoothingSigmasPerLevel(smoothingSigmas=[2, 1, 1, 1, 1, 0])
-    # R.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
+    R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 2, 1, 1, 1])
+    R.SetSmoothingSigmasPerLevel(smoothingSigmas=[2, 1, 1, 1, 1, 0])
+    R.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
 
     # These variables are in physical coordinates
     # Rotation centre of transform in zoom image
@@ -300,8 +301,11 @@ def run_registration(
 
     logging.info("Runinng registration...")
     logging.info(f"Overview array size: {reg_input.overview_image.GetSize()} pix")
+    logging.info(f"Overview common point = {reg_input.overview_common_point} pix")
     logging.info(f"Overview voxel size = {reg_input.overview_image.GetSpacing()} um")
+    logging.info("")
     logging.info(f"Zoom array size: {reg_input.zoom_image.GetSize()} pix")
+    logging.info(f"Zoom common point = {reg_input.zoom_common_point} pix")
     logging.info(f"Zoom voxel size = {reg_input.zoom_image.GetSpacing()} um")
     logging.info("")
 

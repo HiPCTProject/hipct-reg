@@ -120,6 +120,7 @@ def reg_input(zoom_scan: sitk.Image, overview_scan: sitk.Image) -> RegistrationI
         overview_image=overview_scan,
         zoom_common_point=common_point_zoom,
         overview_common_point=common_point_overview,
+        downsample_level=0,
     )
 
 
@@ -218,6 +219,7 @@ def test_registration_real(overview_image: sitk.Image, zoom_image: sitk.Image) -
         overview_image=overview_image,
         overview_common_point=get_central_pixel_index(overview_image),
         zoom_common_point=get_central_pixel_index(zoom_image),
+        downsample_level=0,
     )
 
     transform, reg_metric = run_registration(reg_input)
