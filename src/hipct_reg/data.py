@@ -195,10 +195,12 @@ def get_reg_input(
 
     # xy - get square the fills zoom but cuts off the tomography ring
     zoom_shape: TPoint = (
-        zoom_dataset.data.shape[0] if hasattr(zoom_dataset, "data") else zoom_dataset.nx
+        zoom_dataset.data.shape
+        if hasattr(zoom_dataset, "data")
+        else (zoom_dataset.nx, zoom_dataset.ny, zoom_dataset.nz)
     )
 
-    size_xy = zoom_shape // 2**downsample_level
+    size_xy = zoom_shape[0] // 2**downsample_level
     zoom_size_xy = math.floor(size_xy / math.sqrt(2) / 2)
     overview_size_xy = math.ceil(zoom_size_xy / res_ratio)
 
