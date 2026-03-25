@@ -26,6 +26,9 @@ inventory = load_inventory()
 datasets = {name: get_dataset(name) for name in inventory.index}
 
 
+TPoint = tuple[int, int, int]
+
+
 @dataclass
 class Cuboid:
     """
@@ -184,20 +187,28 @@ def get_reg_input(
 
     overview_resolution_um = overview_dataset.resolution.to_value("um")
     zoom_resolution_um = zoom_dataset.resolution.to_value("um")
-    res_ratio = overview_resolution_um / zoom_resolution_um
+    res_ratio = overview_resolution_um / zoom_resolution_um  # this is > 1
+
     # z - get 32 voxels from overview
     overview_size_z = 16
     zoom_size_z = int(overview_size_z * res_ratio)
 
     # xy - get square the fills zoom but cuts off the tomography ring
-    if hasattr(zoom_dataset, "data"):
-        size_xy = zoom_dataset.data.shape[0] // 2**downsample_level
-    else:
-        size_xy = zoom_dataset.nx // 2**downsample_level
+    zoom_shape: TPoint = (
+        zoom_dataset.data.shape[0] if hasattr(zoom_dataset, "data") else zoom_dataset.nx
+    )
+
+    size_xy = zoom_shape // 2**downsample_level
     zoom_size_xy = math.floor(size_xy / math.sqrt(2) / 2)
     overview_size_xy = math.ceil(zoom_size_xy / res_ratio)
 
-    # TODO: shift zoom common point so it's in the middle of the zoom dataset
+    # Shift common points so they correspond to the centre of the zoom image
+    shift_zoom = tuple(zs - zp for zs, zp in zip(zoom_shape, zoom_point))
+
+    zoom_point = tuple(int(zp + sz) for zp, sz in zip(zoom_point, shift_zoom))  # type: ignore
+    overview_point = tuple(  # type: ignore
+        int(op * res_ratio + sz) for op, sz in zip(overview_point, shift_zoom)
+    )
 
     overview_cube = Cuboid(
         overview_dataset,

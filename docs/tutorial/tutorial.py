@@ -45,7 +45,6 @@ reg_input = get_reg_input(
     zoom_point=zoom_point,
     overview_name=overview_name,
     overview_point=full_point,
-    overview_size_xy=64,
     downsample_level=0,
 )
 

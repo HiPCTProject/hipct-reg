@@ -201,13 +201,7 @@ INFO Registration finished!
     # Final matrix should be close to the identity matrix
     np.testing.assert_almost_equal(
         np.array(final_registration.GetMatrix()).reshape((3, 3)),
-        np.array(
-            [
-                [1.00e00, -2.61e-04, 3.62e-04],
-                [2.62e-04, 1.00e00, -2.05e-04],
-                [-3.62e-04, 2.05e-04, 1.00e00],
-            ]
-        ),
+        np.array([[1.0, -0.02, 0.0], [0.02, 1.0, 0.0], [0.0, 0.0, 1.0]]),
         decimal=2,
     )
 
@@ -229,8 +223,8 @@ def test_registration_real(overview_image: sitk.Image, zoom_image: sitk.Image) -
     transform, reg_metric = run_registration(reg_input)
 
     pix_params = get_pixel_transform_params(reg_input, transform)
-    np.testing.assert_almost_equal(pix_params["rotation_deg"], -12.500016952667583)
-    np.testing.assert_almost_equal(pix_params["scale"], 0.24122965937810192)
-    np.testing.assert_almost_equal(pix_params["tx_pix"], 86.6939816914787)
-    np.testing.assert_almost_equal(pix_params["ty_pix"], -25.547054921144543)
-    np.testing.assert_almost_equal(pix_params["tz_pix"], -28.880310016699557)
+    np.testing.assert_almost_equal(pix_params["rotation_deg"], -11.373947711265545)
+    np.testing.assert_almost_equal(pix_params["scale"], 0.23715715003256346)
+    np.testing.assert_almost_equal(pix_params["tx_pix"], 85.50491368815666)
+    np.testing.assert_almost_equal(pix_params["ty_pix"], -20.874146824577394)
+    np.testing.assert_almost_equal(pix_params["tz_pix"], -25.198559704087096)
