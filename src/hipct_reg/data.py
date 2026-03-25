@@ -210,7 +210,8 @@ def get_reg_input(
 
     zoom_point = tuple(int(zp + sz) for zp, sz in zip(zoom_point, shift_zoom))  # type: ignore
     overview_point = tuple(  # type: ignore
-        int(op * res_ratio + sz) for op, sz in zip(overview_point, shift_zoom)
+        int(op * res_ratio // 2**downsample_level + sz)
+        for op, sz in zip(overview_point, shift_zoom)
     )
 
     overview_cube = Cuboid(
