@@ -15,7 +15,7 @@ dependencies = [
     "dask-image==2025.11.0",
     "hoa-tools==1.1.1",
     "matplotlib==3.10.8",
-    "numpy>=2",
+    "numpy>=2.4.4",
     "psutil==7.2.2",
     "scikit-image==0.26.0",
     "simpleitk==2.5.3",
