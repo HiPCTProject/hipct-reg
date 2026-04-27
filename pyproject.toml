@@ -18,7 +18,7 @@ dependencies = [
     "numpy>=2",
     "psutil==7.2.2",
     "scikit-image==0.26.0",
-    "simpleitk==2.5.3",
+    "simpleitk==2.5.4",
     "zarr==3.1.1",
 ]
 description = "Code to register regions of interest with full organ datasets."
