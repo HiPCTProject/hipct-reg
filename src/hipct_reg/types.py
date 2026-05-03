@@ -15,7 +15,9 @@ class RegistrationInput:
     overview_name: str
     zoom_image: sitk.Image
     overview_image: sitk.Image
+    # Downsample level for each image
+    zoom_level: int
+    overview_level: int
     # Common points are in units of pixels
     zoom_common_point: tuple[int, int, int]
     overview_common_point: tuple[int, int, int]
-    downsample_level: int

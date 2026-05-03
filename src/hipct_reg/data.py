@@ -25,7 +25,6 @@ hoa_tools.inventory.INVENTORY_PATH = Path.home() / "hoa_inventory.csv"
 inventory = load_inventory()
 datasets = {name: get_dataset(name) for name in inventory.index}
 
-
 TPoint = tuple[int, int, int]
 
 
@@ -167,7 +166,8 @@ def get_reg_input(
     overview_name: str,
     zoom_point: tuple[int, int, int],
     overview_point: tuple[int, int, int],
-    downsample_level: int,
+    zoom_level: int,
+    overview_level: int,
 ) -> RegistrationInput:
     """
     Given the dataset of a zoom image, get:
@@ -194,6 +194,7 @@ def get_reg_input(
     overview_resolution_um = overview_dataset.resolution.to_value("um")
     zoom_resolution_um = zoom_dataset.resolution.to_value("um")
     res_ratio = overview_resolution_um / zoom_resolution_um  # this is > 1
+    res_ratio = res_ratio * 2**overview_level / 2**zoom_level
 
     # Size along z - get 32 voxels from overview
     overview_size_z = 16
@@ -205,7 +206,7 @@ def get_reg_input(
         if hasattr(zoom_dataset, "data")
         else (zoom_dataset.nx, zoom_dataset.ny, zoom_dataset.nz)
     )
-    zoom_shape = tuple(z // 2**downsample_level for z in zoom_shape)
+    zoom_shape = tuple(z // 2**zoom_level for z in zoom_shape)
 
     zoom_size_xy = math.floor(zoom_shape[0] / math.sqrt(2) / 2)
     overview_size_xy = math.ceil(zoom_size_xy / res_ratio)
@@ -231,7 +232,7 @@ def get_reg_input(
         overview_point,
         size_xy=overview_size_xy,
         size_z=overview_size_z,
-        downsample_level=downsample_level,
+        downsample_level=overview_level,
     )
 
     zoom_cube = Cuboid(
@@ -239,7 +240,7 @@ def get_reg_input(
         zoom_point,
         size_xy=zoom_size_xy,
         size_z=zoom_size_z,
-        downsample_level=downsample_level,
+        downsample_level=zoom_level,
     )
 
     return RegistrationInput(
@@ -257,5 +258,6 @@ def get_reg_input(
             zoom_size_xy,
             zoom_size_z,
         ),
-        downsample_level=downsample_level,
+        zoom_level=zoom_level,
+        overview_level=overview_level,
     )
