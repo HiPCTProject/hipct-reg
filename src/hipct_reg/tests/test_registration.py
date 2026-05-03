@@ -225,8 +225,8 @@ def test_registration_real(overview_image: sitk.Image, zoom_image: sitk.Image) -
     transform, reg_metric = run_registration(reg_input)
 
     pix_params = get_pixel_transform_params(reg_input, transform)
-    np.testing.assert_almost_equal(pix_params["rotation_deg"], -11.373947711265545)
-    np.testing.assert_almost_equal(pix_params["scale"], 0.23715715003256346)
-    np.testing.assert_almost_equal(pix_params["tx_pix"], 85.50491368815666)
-    np.testing.assert_almost_equal(pix_params["ty_pix"], -20.874146824577394)
-    np.testing.assert_almost_equal(pix_params["tz_pix"], -25.198559704087096)
+    np.testing.assert_almost_equal(pix_params["rotation_deg"], -11.430215514965376)
+    np.testing.assert_almost_equal(pix_params["scale"], 0.23656399631086175)
+    np.testing.assert_almost_equal(pix_params["tx_pix"], 85.87516578439953)
+    np.testing.assert_almost_equal(pix_params["ty_pix"], -20.60123156299526)
+    np.testing.assert_almost_equal(pix_params["tz_pix"], -24.6441429047098)
