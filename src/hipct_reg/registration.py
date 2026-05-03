@@ -23,6 +23,7 @@ def registration_rot(
     zrot: float,
     angle_range: float,
     angle_step: float,
+    sampling_percentage: float = 0.01,
     verbose: bool = False,
 ) -> tuple[sitk.Euler3DTransform, RotRegMetrics]:
     """
@@ -40,6 +41,8 @@ def registration_rot(
         Step to take when scanning range of angles. In units of degrees.
     verbose :
         If True, log every step of the optimisation at debug level.
+    sampling_percentage :
+        Fraction of pixels sampled at each iteration. Must be between 0 and 1.
 
     Returns
     -------
@@ -54,7 +57,7 @@ def registration_rot(
     # Similarity metric settings.
     R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
     R.SetMetricSamplingStrategy(R.RANDOM)
-    R.SetMetricSamplingPercentage(0.01, seed=1)
+    R.SetMetricSamplingPercentage(sampling_percentage, seed=1)
 
     R.SetInterpolator(sitk.sitkLinear)
 
@@ -143,6 +146,7 @@ def registration_rigid(
     reg_input: RegistrationInput,
     *,
     zrot: float,
+    sampling_percentage: float = 0.01,
 ) -> tuple[sitk.Similarity3DTransform, float]:
     """
     Run a registration using a full rigid transform.
@@ -153,6 +157,8 @@ def registration_rigid(
     ----------
     zrot :
         Initial rotation for the registration. In units of degrees.
+    sampling_percentage :
+        Fraction of pixels sampled at each iteration. Must be between 0 and 1.
 
     Returns
     -------
@@ -173,7 +179,7 @@ def registration_rigid(
     # Set registration metric settings
     R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
     R.SetMetricSamplingStrategy(R.RANDOM)
-    R.SetMetricSamplingPercentage(0.01, seed=1)
+    R.SetMetricSamplingPercentage(sampling_percentage)
 
     # Set registration interpolator
     R.SetInterpolator(sitk.sitkLinear)
@@ -278,7 +284,10 @@ def registration_rigid(
 
 
 def run_registration(
-    reg_input: RegistrationInput, *, find_rotation: bool = True
+    reg_input: RegistrationInput,
+    *,
+    find_rotation: bool = True,
+    sampling_percentage: float = 0.01,
 ) -> tuple[sitk.Similarity3DTransform, float]:
     """
     Run registration pipeline on pre-loaded/pre-processed images.
@@ -288,6 +297,8 @@ def run_registration(
     find_rotation: bool
         If True, try and find the rotation first.
         If False, start rigid registration with no rotation.
+    sampling_percentage :
+        Fraction of pixels sampled at each iteration. Must be between 0 and 1.
 
     Returns
     -------
@@ -319,6 +330,7 @@ def run_registration(
             zrot=zrot,
             angle_range=angle_range,
             angle_step=angle_step,
+            sampling_percentage=sampling_percentage,
         )
         zrot = np.rad2deg(np.array(transform_rotation.GetAngleZ()))
 
@@ -340,6 +352,7 @@ def run_registration(
     final_transform, final_metric = registration_rigid(
         reg_input,
         zrot=zrot,
+        sampling_percentage=sampling_percentage,
     )
     logging.info("Similarity registration finished!")
     logging.info("")
