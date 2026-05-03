@@ -194,9 +194,9 @@ def registration_rigid(
     )
 
     # Setup for the multi-resolution framework.
-    # R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 2, 1, 1, 1])
-    # R.SetSmoothingSigmasPerLevel(smoothingSigmas=[2, 1, 1, 1, 1, 0])
-    # R.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
+    R.SetShrinkFactorsPerLevel(shrinkFactors=[2, 1, 1])
+    R.SetSmoothingSigmasPerLevel(smoothingSigmas=[1, 1, 0])
+    R.SmoothingSigmasAreSpecifiedInPhysicalUnitsOff()
 
     # These variables are in physical coordinates
     # Rotation centre of transform in zoom image
