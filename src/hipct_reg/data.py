@@ -177,7 +177,7 @@ def get_reg_input(
       this is the max data that can be taken while not including empty data
       outside the topography circle
 
-    Data is cached on disk to ~/hipct/reg_data so it doesn't need to be re-downloaded.
+    Data is cached on disk so it doesn't need to be re-downloaded.
 
     Parameters
     ----------
