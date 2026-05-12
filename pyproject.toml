@@ -39,7 +39,7 @@ dev = [
     "pytest",
     "pytest-cov",
     "ruff>=0.15.12",
-    "tifffile==2026.2.15",
+    "tifffile==2026.5.2",
 ]
 
 [tool.coverage]
