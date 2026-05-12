@@ -180,3 +180,7 @@ docs/sg_execution_times.rst
 
 # uv
 uv.lock
+
+# Pycharm
+
+.idea/
