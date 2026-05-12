@@ -14,7 +14,7 @@ classifiers = [
 dependencies = [
     "dask-image==2025.11.0",
     "hoa-tools==1.1.1",
-    "matplotlib==3.10.8",
+    "matplotlib==3.10.9",
     "numpy>=2",
     "psutil==7.2.2",
     "scikit-image==0.26.0",
