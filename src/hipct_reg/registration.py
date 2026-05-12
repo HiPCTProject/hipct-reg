@@ -209,7 +209,7 @@ def registration_rigid(
             reg_input.overview_common_point
         )
     )
-    logging.debug(f"rotation center = {rotation_center}")
+    logging.info(f"rotation center = {rotation_center}")
 
     theta_x = 0.0
     theta_y = 0.0
