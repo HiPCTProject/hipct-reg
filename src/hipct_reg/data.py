@@ -196,11 +196,6 @@ def get_reg_input(
     res_ratio = overview_resolution_um / zoom_resolution_um  # this is > 1
     res_ratio = res_ratio * 2**overview_level / 2**zoom_level
 
-    # Size along z - get 32 voxels from overview
-    overview_size_z = 16
-    zoom_size_z = int(overview_size_z * res_ratio)
-
-    # xy - get square the fills zoom but cuts off the tomography ring
     zoom_shape: TPoint = (
         zoom_dataset.data.shape
         if hasattr(zoom_dataset, "data")
@@ -208,6 +203,15 @@ def get_reg_input(
     )
     zoom_shape = tuple(z // 2**zoom_level for z in zoom_shape)
 
+    # Size along z - get 64 voxels from overview
+    overview_size_z = 32
+    # Make sure overview size isn't bigger than then size of the zoom
+    overview_size_z = math.floor(
+        min(overview_size_z * res_ratio, zoom_shape[2] / 2) / res_ratio
+    )
+    zoom_size_z = int(overview_size_z * res_ratio)
+
+    # xy - get square the fills zoom but cuts off the tomography ring
     zoom_size_xy = math.floor(zoom_shape[0] / math.sqrt(2) / 2)
     overview_size_xy = math.ceil(zoom_size_xy / res_ratio)
 
