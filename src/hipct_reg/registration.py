@@ -23,6 +23,7 @@ def registration_rot(
     zrot: float,
     angle_range: float,
     angle_step: float,
+    sampling_percentage: float = 0.01,
     verbose: bool = False,
 ) -> tuple[sitk.Euler3DTransform, RotRegMetrics]:
     """
@@ -40,6 +41,8 @@ def registration_rot(
         Step to take when scanning range of angles. In units of degrees.
     verbose :
         If True, log every step of the optimisation at debug level.
+    sampling_percentage :
+        Fraction of pixels sampled at each iteration. Must be between 0 and 1.
 
     Returns
     -------
@@ -54,7 +57,7 @@ def registration_rot(
     # Similarity metric settings.
     R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
     R.SetMetricSamplingStrategy(R.RANDOM)
-    R.SetMetricSamplingPercentage(0.01, seed=1)
+    R.SetMetricSamplingPercentage(sampling_percentage, seed=1)
 
     R.SetInterpolator(sitk.sitkLinear)
 
@@ -143,6 +146,7 @@ def registration_rigid(
     reg_input: RegistrationInput,
     *,
     zrot: float,
+    sampling_percentage: float = 0.01,
 ) -> tuple[sitk.Similarity3DTransform, float]:
     """
     Run a registration using a full rigid transform.
@@ -153,6 +157,8 @@ def registration_rigid(
     ----------
     zrot :
         Initial rotation for the registration. In units of degrees.
+    sampling_percentage :
+        Fraction of pixels sampled at each iteration. Must be between 0 and 1.
 
     Returns
     -------
@@ -173,18 +179,24 @@ def registration_rigid(
     # Set registration metric settings
     R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
     R.SetMetricSamplingStrategy(R.RANDOM)
-    R.SetMetricSamplingPercentage(0.01, seed=1)
+    R.SetMetricSamplingPercentage(sampling_percentage, seed=1)
 
     # Set registration interpolator
     R.SetInterpolator(sitk.sitkLinear)
 
+    max_iter = 1000
     # Set registration optimiser settings
-    R.SetOptimizerAsOnePlusOneEvolutionary(numberOfIterations=1000, seed=1)
+    R.SetOptimizerAsGradientDescentLineSearch(
+        learningRate=1.0,
+        numberOfIterations=max_iter,
+        convergenceMinimumValue=1e-4,
+        convergenceWindowSize=5,
+    )
 
     # Setup for the multi-resolution framework.
-    # R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 2, 1, 1, 1])
-    # R.SetSmoothingSigmasPerLevel(smoothingSigmas=[2, 1, 1, 1, 1, 0])
-    # R.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
+    R.SetShrinkFactorsPerLevel(shrinkFactors=[2, 1, 1])
+    R.SetSmoothingSigmasPerLevel(smoothingSigmas=[1, 1, 0])
+    R.SmoothingSigmasAreSpecifiedInPhysicalUnitsOff()
 
     # These variables are in physical coordinates
     # Rotation centre of transform in zoom image
@@ -197,7 +209,7 @@ def registration_rigid(
             reg_input.overview_common_point
         )
     )
-    logging.debug(f"rotation center = {rotation_center}")
+    logging.info(f"rotation center = {rotation_center}")
 
     theta_x = 0.0
     theta_y = 0.0
@@ -216,8 +228,8 @@ def registration_rigid(
     # - Three rotation angles
     # - Three translation components
     # - Scale factor
-    w = 10
-    R.SetOptimizerWeights([0, 0, w, w, w, w, w / 1000])
+    w = 1
+    R.SetOptimizerWeights([0, 0, w, w, w, w, w / 10])
     R.SetOptimizerScalesFromPhysicalShift()
 
     metric = []
@@ -272,7 +284,11 @@ def registration_rigid(
 
 
 def run_registration(
-    reg_input: RegistrationInput, *, find_rotation: bool=True
+    reg_input: RegistrationInput,
+    *,
+    find_rotation: bool = True,
+    initial_rotation: float | None = None,
+    sampling_percentage: float = 0.01,
 ) -> tuple[sitk.Similarity3DTransform, float]:
     """
     Run registration pipeline on pre-loaded/pre-processed images.
@@ -282,6 +298,10 @@ def run_registration(
     find_rotation: bool
         If True, try and find the rotation first.
         If False, start rigid registration with no rotation.
+    initial_rotation: float
+        Force the initial rotation of the rigid registration to a specific value.
+    sampling_percentage :
+        Fraction of pixels sampled at each iteration. Must be between 0 and 1.
 
     Returns
     -------
@@ -295,13 +315,18 @@ def run_registration(
 
     logging.info("Runinng registration...")
     logging.info(f"Overview array size: {reg_input.overview_image.GetSize()} pix")
+    logging.info(f"Overview common point = {reg_input.overview_common_point} pix")
     logging.info(f"Overview voxel size = {reg_input.overview_image.GetSpacing()} um")
+    logging.info("")
     logging.info(f"Zoom array size: {reg_input.zoom_image.GetSize()} pix")
+    logging.info(f"Zoom common point = {reg_input.zoom_common_point} pix")
     logging.info(f"Zoom voxel size = {reg_input.zoom_image.GetSpacing()} um")
     logging.info("")
 
-    zrot = 0
-    if find_rotation:
+    zrot = 0.0
+    if find_rotation and initial_rotation is None:
+        if initial_rotation is not None:
+            logging.warning(f"find_rotation=True, ignoring {initial_rotation=}")
         # Try a full 360 deg first at a coarse step
         angle_range = 360
         angle_step = 2.0
@@ -310,6 +335,7 @@ def run_registration(
             zrot=zrot,
             angle_range=angle_range,
             angle_step=angle_step,
+            sampling_percentage=sampling_percentage,
         )
         zrot = np.rad2deg(np.array(transform_rotation.GetAngleZ()))
 
@@ -322,7 +348,9 @@ def run_registration(
             angle_range=angle_range,
             angle_step=angle_step,
         )
-        zrot = np.rad2deg(np.array(transform_rotation.GetAngleZ()))
+        zrot = float(np.rad2deg(np.array(transform_rotation.GetAngleZ())))
+    elif initial_rotation is not None:
+        zrot = initial_rotation
 
     if zrot < 0:
         zrot = zrot + 360
@@ -331,6 +359,7 @@ def run_registration(
     final_transform, final_metric = registration_rigid(
         reg_input,
         zrot=zrot,
+        sampling_percentage=sampling_percentage,
     )
     logging.info("Similarity registration finished!")
     logging.info("")

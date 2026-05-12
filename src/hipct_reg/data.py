@@ -3,6 +3,7 @@ Helper functions for downloading/managing data locally.
 """
 
 import logging
+import math
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -24,6 +25,8 @@ hoa_tools.inventory.INVENTORY_PATH = Path.home() / "hoa_inventory.csv"
 inventory = load_inventory()
 datasets = {name: get_dataset(name) for name in inventory.index}
 
+TPoint = tuple[int, int, int]
+
 
 @dataclass
 class Cuboid:
@@ -37,9 +40,11 @@ class Cuboid:
     centre_point :
         Index of the centre of the cube.
     size_xy :
-        Half the size of an edge of cuboid in the x-y plane.
+        Half the size of an edge of cuboid in the x-y plane, in pixels.
     size_z :
-        Half the thickness of the cuboid along the z-axis.
+        Half the thickness of the cuboid along the z-axis, in pixels.
+    downsample_level :
+        Downsample level to get data from.
     """
 
     ds: Dataset
@@ -91,9 +96,9 @@ class Cuboid:
     @property
     def lower_idx(self) -> tuple[int, int, int]:
         return (
-            max(0, self.centre_point[0] // 2**self.downsample_level - self.size_xy),
-            max(0, self.centre_point[1] // 2**self.downsample_level - self.size_xy),
-            max(0, self.centre_point[2] // 2**self.downsample_level - self.size_z),
+            max(0, self.centre_point[0] - self.size_xy),
+            max(0, self.centre_point[1] - self.size_xy),
+            max(0, self.centre_point[2] - self.size_z),
         )
 
     @property
@@ -106,23 +111,23 @@ class Cuboid:
             shape = remote_array.shape
 
         for i in range(3):
-            if self.centre_point[i] // 2**self.downsample_level > shape[i]:
+            if self.centre_point[i] > shape[i]:
                 raise RuntimeError(
                     f"Centre point ({self.centre_point[i]}) is outside array bounds ({shape[i]}) in dimension {i} for dataset {self.ds.name}"
                 )
 
         return (
-            min(
-                self.centre_point[0] // 2**self.downsample_level + self.size_xy,
-                shape[0],
-            ),
-            min(
-                self.centre_point[1] // 2**self.downsample_level + self.size_xy,
-                shape[1],
-            ),
-            min(
-                self.centre_point[2] // 2**self.downsample_level + self.size_z, shape[2]
-            ),
+            min(self.centre_point[0] + self.size_xy, shape[0]),
+            min(self.centre_point[1] + self.size_xy, shape[1]),
+            min(self.centre_point[2] + self.size_z, shape[2]),
+        )
+
+    @property
+    def shape(self) -> tuple[int, int, int]:
+        return (
+            self.upper_idx[0] - self.lower_idx[0],
+            self.upper_idx[1] - self.lower_idx[1],
+            self.upper_idx[2] - self.lower_idx[2],
         )
 
     def download_cube(self) -> None:
@@ -161,48 +166,101 @@ def get_reg_input(
     overview_name: str,
     zoom_point: tuple[int, int, int],
     overview_point: tuple[int, int, int],
-    downsample_level: int,
-    overview_size_xy: int = 64,
+    zoom_level: int,
+    overview_level: int,
+    overview_size_z: int = 32,
 ) -> RegistrationInput:
     """
     Given the dataset of a zoom image, get:
-        - a ``(overview_size_xy * 2), (overview_size_xy * 2), 32`` shaped cubiod of it's parent
-          overview.
-        - the equivalent (larger) cube of the zoom itself.
+    - along z: `overview_size_z * 2` voxels from the overview
+    - along x/y: a 1/sqrt(2) shaped square from the centre of the zoom image.
+      this is the max data that can be taken while not including empty data
+      outside the topography circle
 
-    The size of the overview image cube can be changed.
+    Data is cached on disk so it doesn't need to be re-downloaded.
 
-    Data is cached on disk to ~/hipct/reg_data so it doesn't need to be re-downloaded.
+    Parameters
+    ----------
+    zoom_name: str
+        Name of zoom dataset.
+    overview_name: str
+        Name of overview dataset.
+    zoom_point: tuple[int, int, int]
+        Central point of zoom image.
+    overview_point: tuple[int, int, int]
+        Central point of overview image.
+    zoom_level: int
+        Downsample level of zoom image.
+    overview_level: int
+        Downsample level of overview image.
+    overview_size_z: int
+        Half the number of voxels along the z-axis to fetch in the overview image.
+
+    Notes
+    -----
+    The zoom and overview points must be in pixel coordinates at the downsample level requested.
     """
     overview_dataset = datasets[overview_name]
     assert overview_dataset.is_full_organ, (
         "Overview dataset name given is not an overview dataset"
     )
-    overview_size_z = 16
+    zoom_dataset = datasets[zoom_name]
+    assert not zoom_dataset.is_full_organ, (
+        "zoom dataset name given is a overview dataset"
+    )
+
+    overview_resolution_um = overview_dataset.resolution.to_value("um")
+    zoom_resolution_um = zoom_dataset.resolution.to_value("um")
+    res_ratio = overview_resolution_um / zoom_resolution_um  # this is > 1
+    res_ratio = res_ratio * 2**overview_level / 2**zoom_level
+
+    zoom_shape: TPoint = (
+        zoom_dataset.data.shape
+        if hasattr(zoom_dataset, "data")
+        else (zoom_dataset.nx, zoom_dataset.ny, zoom_dataset.nz)
+    )
+    zoom_shape = tuple(z // 2**zoom_level for z in zoom_shape)
+
+    # Make sure overview size isn't bigger than then size of the zoom
+    overview_size_z = math.floor(
+        min(overview_size_z * res_ratio, zoom_shape[2] / 2) / res_ratio
+    )
+    zoom_size_z = int(overview_size_z * res_ratio)
+
+    # xy - get square the fills zoom but cuts off the tomography ring
+    zoom_size_xy = math.floor(zoom_shape[0] / math.sqrt(2) / 2)
+    overview_size_xy = math.ceil(zoom_size_xy / res_ratio)
+
+    # Shift common points so they correspond to the centre of the zoom image
+    shift_zoom = tuple(
+        zs / 2 - zp for zs, zp in zip(zoom_shape, zoom_point, strict=True)
+    )
+    shift_overview = tuple(sz / res_ratio for sz in shift_zoom)
+    zoom_point = (
+        int(zoom_point[0] + shift_zoom[0]),
+        int(zoom_point[1] + shift_zoom[1]),
+        int(zoom_point[2] + shift_zoom[2]),
+    )
+    overview_point = (
+        int(overview_point[0] + shift_overview[0]),
+        int(overview_point[1] + shift_overview[1]),
+        int(overview_point[2] + shift_overview[2]),
+    )
+
     overview_cube = Cuboid(
         overview_dataset,
         overview_point,
         size_xy=overview_size_xy,
         size_z=overview_size_z,
-        downsample_level=downsample_level,
+        downsample_level=overview_level,
     )
 
-    zoom_dataset = datasets[zoom_name]
-
-    overview_resolution_um = overview_dataset.resolution.to_value("um")
-    zoom_resolution_um = zoom_dataset.resolution.to_value("um")
-
-    assert not zoom_dataset.is_full_organ, (
-        "zoom dataset name given is a overview dataset"
-    )
-    zoom_size_xy = int(overview_size_xy * overview_resolution_um / zoom_resolution_um)
-    zoom_size_z = int(overview_size_z * overview_resolution_um / zoom_resolution_um)
     zoom_cube = Cuboid(
         zoom_dataset,
         zoom_point,
         size_xy=zoom_size_xy,
         size_z=zoom_size_z,
-        downsample_level=downsample_level,
+        downsample_level=zoom_level,
     )
 
     return RegistrationInput(
@@ -210,6 +268,16 @@ def get_reg_input(
         overview_name=overview_name,
         zoom_image=zoom_cube.get_image(),
         overview_image=overview_cube.get_image(),
-        overview_common_point=(overview_size_xy, overview_size_xy, overview_size_z),
-        zoom_common_point=(zoom_size_xy, zoom_size_xy, zoom_size_z),
+        overview_common_point=(
+            overview_size_xy,
+            overview_size_xy,
+            overview_size_z,
+        ),
+        zoom_common_point=(
+            zoom_size_xy,
+            zoom_size_xy,
+            zoom_size_z,
+        ),
+        zoom_level=zoom_level,
+        overview_level=overview_level,
     )

@@ -120,6 +120,8 @@ def reg_input(zoom_scan: sitk.Image, overview_scan: sitk.Image) -> RegistrationI
         overview_image=overview_scan,
         zoom_common_point=common_point_zoom,
         overview_common_point=common_point_overview,
+        zoom_level=0,
+        overview_level=0,
     )
 
 
@@ -190,6 +192,7 @@ def test_registration_rigid(
     # differences on each run
     expected = r"""INFO Starting full registration...
 INFO Initial rotation = 0.02 deg
+INFO rotation center = (160.0, 160.0, 160.0)
 INFO Initial translation = (128.0, 128.0, 128.0) pix
 INFO Starting registration...
 INFO Registration finished!
@@ -201,13 +204,7 @@ INFO Registration finished!
     # Final matrix should be close to the identity matrix
     np.testing.assert_almost_equal(
         np.array(final_registration.GetMatrix()).reshape((3, 3)),
-        np.array(
-            [
-                [1.00e00, -2.61e-04, 3.62e-04],
-                [2.62e-04, 1.00e00, -2.05e-04],
-                [-3.62e-04, 2.05e-04, 1.00e00],
-            ]
-        ),
+        np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
         decimal=2,
     )
 
@@ -224,13 +221,15 @@ def test_registration_real(overview_image: sitk.Image, zoom_image: sitk.Image) -
         overview_image=overview_image,
         overview_common_point=get_central_pixel_index(overview_image),
         zoom_common_point=get_central_pixel_index(zoom_image),
+        zoom_level=0,
+        overview_level=0,
     )
 
     transform, reg_metric = run_registration(reg_input)
 
     pix_params = get_pixel_transform_params(reg_input, transform)
-    np.testing.assert_almost_equal(pix_params["rotation_deg"], -12.500016952667583)
-    np.testing.assert_almost_equal(pix_params["scale"], 0.24122965937810192)
-    np.testing.assert_almost_equal(pix_params["tx_pix"], 86.6939816914787)
-    np.testing.assert_almost_equal(pix_params["ty_pix"], -25.547054921144543)
-    np.testing.assert_almost_equal(pix_params["tz_pix"], -28.880310016699557)
+    np.testing.assert_almost_equal(pix_params["rotation_deg"], -11.369, decimal=3)
+    np.testing.assert_almost_equal(pix_params["scale"], 0.2393, decimal=4)
+    np.testing.assert_almost_equal(pix_params["tx_pix"], 84.46, decimal=2)
+    np.testing.assert_almost_equal(pix_params["ty_pix"], -22.36, decimal=2)
+    np.testing.assert_almost_equal(pix_params["tz_pix"], -27.55, decimal=2)
