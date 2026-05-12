@@ -168,15 +168,33 @@ def get_reg_input(
     overview_point: tuple[int, int, int],
     zoom_level: int,
     overview_level: int,
+    overview_size_z: int = 32,
 ) -> RegistrationInput:
     """
     Given the dataset of a zoom image, get:
-    - along z: 32 voxels from the overview
+    - along z: `overview_size_z * 2` voxels from the overview
     - along x/y: a 1/sqrt(2) shaped square from the centre of the zoom image.
       this is the max data that can be taken while not including empty data
       outside the topography circle
 
     Data is cached on disk to ~/hipct/reg_data so it doesn't need to be re-downloaded.
+
+    Parameters
+    ----------
+    zoom_name: str
+        Name of zoom dataset.
+    overview_name: str
+        Name of overview dataset.
+    zoom_point: tuple[int, int, int]
+        Central point of zoom image.
+    overview_point: tuple[int, int, int]
+        Central point of overview image.
+    zoom_level: int
+        Downsample level of zoom image.
+    overview_level: int
+        Downsample level of overview image.
+    overview_size_z: int
+        Half the number of voxels along the z-axis to fetch in the overview image.
 
     Notes
     -----
@@ -203,8 +221,6 @@ def get_reg_input(
     )
     zoom_shape = tuple(z // 2**zoom_level for z in zoom_shape)
 
-    # Size along z - get 64 voxels from overview
-    overview_size_z = 32
     # Make sure overview size isn't bigger than then size of the zoom
     overview_size_z = math.floor(
         min(overview_size_z * res_ratio, zoom_shape[2] / 2) / res_ratio
